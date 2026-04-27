@@ -61,12 +61,12 @@ export async function withTenant<T = Record<string, unknown>>(
  * for the duration of the transaction.
  */
 export async function withBypass<T = Record<string, unknown>>(
-  build: (sql: ReturnType<typeof neon>) => NeonQueryPromise<false, false>,
+  build: (sql: ReturnType<typeof neon>) => AnyQuery,
 ): Promise<T[]> {
   const sql = getNeon();
   const setStmt = sql`SELECT set_config('app.tenant_bypass', 'on', true)`;
   const userStmt = build(sql);
-  const results = (await sql.transaction([setStmt, userStmt])) as unknown as Array<
+  const results = (await sql.transaction([setStmt, userStmt] as AnyQuery)) as unknown as Array<
     Array<Record<string, unknown>>
   >;
   return (results[1] ?? []) as T[];
