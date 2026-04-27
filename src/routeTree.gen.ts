@@ -11,10 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
+import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
+import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
+import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsIndexRoute = ApiProjectsIndexRouteImport.update({
+  id: '/api/projects/',
+  path: '/api/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSignupRoute = ApiAuthSignupRouteImport.update({
@@ -46,6 +56,26 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
+  id: '/api/projects/$id/',
+  path: '/api/projects/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsIdVerifyRoute = ApiProjectsIdVerifyRouteImport.update({
+  id: '/api/projects/$id/verify',
+  path: '/api/projects/$id/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsIdImportRoute = ApiProjectsIdImportRouteImport.update({
+  id: '/api/projects/$id/import',
+  path: '/api/projects/$id/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
+  id: '/api/projects/$id/analyze',
+  path: '/api/projects/$id/analyze',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +84,11 @@ export interface FileRoutesByFullPath {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
+  '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +97,11 @@ export interface FileRoutesByTo {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/projects': typeof ApiProjectsIndexRoute
+  '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
+  '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/projects/$id': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +111,11 @@ export interface FileRoutesById {
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
+  '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +126,11 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/projects/'
+    | '/api/projects/$id/analyze'
+    | '/api/projects/$id/import'
+    | '/api/projects/$id/verify'
+    | '/api/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +139,11 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/projects'
+    | '/api/projects/$id/analyze'
+    | '/api/projects/$id/import'
+    | '/api/projects/$id/verify'
+    | '/api/projects/$id'
   id:
     | '__root__'
     | '/'
@@ -97,6 +152,11 @@ export interface FileRouteTypes {
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/projects/'
+    | '/api/projects/$id/analyze'
+    | '/api/projects/$id/import'
+    | '/api/projects/$id/verify'
+    | '/api/projects/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +166,11 @@ export interface RootRouteChildren {
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiAuthSignupRoute: typeof ApiAuthSignupRoute
+  ApiProjectsIndexRoute: typeof ApiProjectsIndexRoute
+  ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
+  ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
+  ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
+  ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -122,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/': {
+      id: '/api/projects/'
+      path: '/api/projects'
+      fullPath: '/api/projects/'
+      preLoaderRoute: typeof ApiProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/signup': {
@@ -152,6 +224,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/projects/$id/': {
+      id: '/api/projects/$id/'
+      path: '/api/projects/$id'
+      fullPath: '/api/projects/$id/'
+      preLoaderRoute: typeof ApiProjectsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/$id/verify': {
+      id: '/api/projects/$id/verify'
+      path: '/api/projects/$id/verify'
+      fullPath: '/api/projects/$id/verify'
+      preLoaderRoute: typeof ApiProjectsIdVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/$id/import': {
+      id: '/api/projects/$id/import'
+      path: '/api/projects/$id/import'
+      fullPath: '/api/projects/$id/import'
+      preLoaderRoute: typeof ApiProjectsIdImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/$id/analyze': {
+      id: '/api/projects/$id/analyze'
+      path: '/api/projects/$id/analyze'
+      fullPath: '/api/projects/$id/analyze'
+      preLoaderRoute: typeof ApiProjectsIdAnalyzeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,7 +262,21 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiAuthSignupRoute: ApiAuthSignupRoute,
+  ApiProjectsIndexRoute: ApiProjectsIndexRoute,
+  ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
+  ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
+  ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
+  ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
