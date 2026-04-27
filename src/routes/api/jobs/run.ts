@@ -19,6 +19,7 @@ import { dispatch } from "@/lib/queue/handlers.server";
 export const Route = createFileRoute("/api/jobs/run")({
   server: {
     handlers: {
+      GET: async () => jsonError(405, "method_not_allowed"),
       POST: async ({ request }) => {
         try {
           const session = await requireSession(request);
