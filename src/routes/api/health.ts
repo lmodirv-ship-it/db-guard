@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { createFileRoute } from "@/lib/route-helpers";
 import { checkEnv } from "@/lib/env.server";
 import { pingDb } from "@/lib/db/client.server";
