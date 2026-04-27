@@ -1,6 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-// Triggers TS module augmentation that adds the `server` property to route options.
-import type {} from "@tanstack/start-client-core";
+import { createFileRoute } from "@/lib/route-helpers";
 import { checkEnv } from "@/lib/env.server";
 import { pingDb } from "@/lib/db/client.server";
 
