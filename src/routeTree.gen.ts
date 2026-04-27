@@ -9,9 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
+import { Route as ApiJobsIndexRouteImport } from './routes/api/jobs/index'
+import { Route as ApiJobsRunRouteImport } from './routes/api/jobs/run'
+import { Route as ApiFilesFileIdRouteImport } from './routes/api/files/$fileId'
 import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
@@ -19,11 +26,32 @@ import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
+import { Route as ApiProjectsIdFilesRouteImport } from './routes/api/projects/$id/files'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIdRoute = ProjectsIdRouteImport.update({
+  id: '/projects/$id',
+  path: '/projects/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -34,6 +62,21 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
 const ApiProjectsIndexRoute = ApiProjectsIndexRouteImport.update({
   id: '/api/projects/',
   path: '/api/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiJobsIndexRoute = ApiJobsIndexRouteImport.update({
+  id: '/api/jobs/',
+  path: '/api/jobs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiJobsRunRoute = ApiJobsRunRouteImport.update({
+  id: '/api/jobs/run',
+  path: '/api/jobs/run',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesFileIdRoute = ApiFilesFileIdRouteImport.update({
+  id: '/api/files/$fileId',
+  path: '/api/files/$fileId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSignupRoute = ApiAuthSignupRouteImport.update({
@@ -71,6 +114,11 @@ const ApiProjectsIdImportRoute = ApiProjectsIdImportRouteImport.update({
   path: '/api/projects/$id/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProjectsIdFilesRoute = ApiProjectsIdFilesRouteImport.update({
+  id: '/api/projects/$id/files',
+  path: '/api/projects/$id/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
   id: '/api/projects/$id/analyze',
   path: '/api/projects/$id/analyze',
@@ -79,26 +127,42 @@ const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/projects/$id': typeof ProjectsIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/jobs/run': typeof ApiJobsRunRoute
+  '/api/jobs/': typeof ApiJobsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/files': typeof ApiProjectsIdFilesRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/projects/$id': typeof ProjectsIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/jobs/run': typeof ApiJobsRunRoute
+  '/api/jobs': typeof ApiJobsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/files': typeof ApiProjectsIdFilesRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
@@ -106,13 +170,21 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/projects/$id': typeof ProjectsIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/jobs/run': typeof ApiJobsRunRoute
+  '/api/jobs/': typeof ApiJobsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
+  '/api/projects/$id/files': typeof ApiProjectsIdFilesRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
@@ -121,39 +193,63 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
     | '/api/health'
+    | '/projects/$id'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/files/$fileId'
+    | '/api/jobs/run'
+    | '/api/jobs/'
     | '/api/projects/'
     | '/api/projects/$id/analyze'
+    | '/api/projects/$id/files'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
     | '/api/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
     | '/api/health'
+    | '/projects/$id'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/files/$fileId'
+    | '/api/jobs/run'
+    | '/api/jobs'
     | '/api/projects'
     | '/api/projects/$id/analyze'
+    | '/api/projects/$id/files'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
     | '/api/projects/$id'
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
     | '/api/health'
+    | '/projects/$id'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/files/$fileId'
+    | '/api/jobs/run'
+    | '/api/jobs/'
     | '/api/projects/'
     | '/api/projects/$id/analyze'
+    | '/api/projects/$id/files'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
     | '/api/projects/$id/'
@@ -161,13 +257,21 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ProjectsIdRoute: typeof ProjectsIdRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiAuthSignupRoute: typeof ApiAuthSignupRoute
+  ApiFilesFileIdRoute: typeof ApiFilesFileIdRoute
+  ApiJobsRunRoute: typeof ApiJobsRunRoute
+  ApiJobsIndexRoute: typeof ApiJobsIndexRoute
   ApiProjectsIndexRoute: typeof ApiProjectsIndexRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
+  ApiProjectsIdFilesRoute: typeof ApiProjectsIdFilesRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
@@ -175,11 +279,39 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$id': {
+      id: '/projects/$id'
+      path: '/projects/$id'
+      fullPath: '/projects/$id'
+      preLoaderRoute: typeof ProjectsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -194,6 +326,27 @@ declare module '@tanstack/react-router' {
       path: '/api/projects'
       fullPath: '/api/projects/'
       preLoaderRoute: typeof ApiProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/jobs/': {
+      id: '/api/jobs/'
+      path: '/api/jobs'
+      fullPath: '/api/jobs/'
+      preLoaderRoute: typeof ApiJobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/jobs/run': {
+      id: '/api/jobs/run'
+      path: '/api/jobs/run'
+      fullPath: '/api/jobs/run'
+      preLoaderRoute: typeof ApiJobsRunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/files/$fileId': {
+      id: '/api/files/$fileId'
+      path: '/api/files/$fileId'
+      fullPath: '/api/files/$fileId'
+      preLoaderRoute: typeof ApiFilesFileIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/signup': {
@@ -245,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/projects/$id/files': {
+      id: '/api/projects/$id/files'
+      path: '/api/projects/$id/files'
+      fullPath: '/api/projects/$id/files'
+      preLoaderRoute: typeof ApiProjectsIdFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/analyze': {
       id: '/api/projects/$id/analyze'
       path: '/api/projects/$id/analyze'
@@ -257,13 +417,21 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ProjectsIdRoute: ProjectsIdRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiAuthSignupRoute: ApiAuthSignupRoute,
+  ApiFilesFileIdRoute: ApiFilesFileIdRoute,
+  ApiJobsRunRoute: ApiJobsRunRoute,
+  ApiJobsIndexRoute: ApiJobsIndexRoute,
   ApiProjectsIndexRoute: ApiProjectsIndexRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
+  ApiProjectsIdFilesRoute: ApiProjectsIdFilesRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
