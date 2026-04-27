@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/files/$fileId")({
           const obj = await getStorage().get(key);
           if (!obj) return jsonError(404, "object_missing");
 
-          return new Response(obj.bytes, {
+          return new Response(obj.bytes as unknown as BodyInit, {
             status: 200,
             headers: {
               "Content-Type": obj.contentType ?? rows[0].mime_type ?? "application/octet-stream",
