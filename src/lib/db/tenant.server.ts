@@ -12,8 +12,13 @@
  * still blocks cross-tenant rows. If RLS is somehow disabled, the
  * application WHERE clause still blocks them.
  */
-import { neon, type NeonQueryPromise } from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
 import { requireEnv } from "../env.server";
+
+// Loose alias — the Neon HTTP driver's generics are too strict to mix with
+// generic helpers; we accept any pre-built query promise.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyQuery = any;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -38,16 +43,13 @@ function assertUuid(v: string, label: string): string {
  */
 export async function withTenant<T = Record<string, unknown>>(
   tenantId: string,
-  build: (sql: ReturnType<typeof neon>) => NeonQueryPromise<false, false>,
+  build: (sql: ReturnType<typeof neon>) => AnyQuery,
 ): Promise<T[]> {
   const tid = assertUuid(tenantId, "tenantId");
   const sql = getNeon();
-  // sql.transaction accepts an array of pre-built queries. The first sets
-  // the tenant id for the duration of the transaction; the second runs
-  // the actual query. Both run on the same connection, so SET LOCAL applies.
   const setStmt = sql`SELECT set_config('app.tenant_id', ${tid}, true)`;
   const userStmt = build(sql);
-  const results = (await sql.transaction([setStmt, userStmt])) as unknown as Array<
+  const results = (await sql.transaction([setStmt, userStmt] as AnyQuery)) as unknown as Array<
     Array<Record<string, unknown>>
   >;
   return (results[1] ?? []) as T[];
