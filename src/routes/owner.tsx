@@ -15,6 +15,18 @@ type User = {
   created_at: string;
 };
 
+type AuditLog = {
+  id: string;
+  ts: string;
+  action: string;
+  target: string | null;
+  actor_user_id: string | null;
+  actor_email: string | null;
+  ip: string | null;
+  user_agent: string | null;
+  meta: Record<string, unknown> | null;
+};
+
 export const Route = createFileRoute("/owner")({
   head: () => ({ meta: [{ title: "Owner Console — db-guard" }] }),
   component: OwnerConsole,
@@ -24,7 +36,7 @@ function OwnerConsole() {
   const navigate = useNavigate();
   const [me, setMe] = useState<Me | null>(null);
   const [forbidden, setForbidden] = useState(false);
-  const [tab, setTab] = useState<"db" | "users" | "password">("db");
+  const [tab, setTab] = useState<"db" | "users" | "password" | "audit">("db");
 
   useEffect(() => {
     (async () => {
