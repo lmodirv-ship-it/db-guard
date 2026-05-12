@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — db-guard" }] }),
@@ -92,14 +93,18 @@ export function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
-        <Link to="/" className="mb-10 font-mono text-sm">
-          ▣ db-guard
-        </Link>
-        <h1 className="text-2xl font-semibold">{title}</h1>
-        <p className="mb-8 mt-1 text-sm text-muted-foreground">{subtitle}</p>
-        {children}
+    <div className="relative min-h-screen bg-background text-foreground overflow-hidden">
+      <div className="pointer-events-none absolute inset-0" style={{ background: "var(--gradient-glow)" }} />
+      <div className="pointer-events-none absolute inset-0 cyber-grid" />
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
+        <div className="mb-8 flex justify-center">
+          <Logo animated />
+        </div>
+        <div className="rounded-2xl glass p-8 shadow-[var(--shadow-glow)]">
+          <h1 className="text-2xl font-bold">{title}</h1>
+          <p className="mb-6 mt-1 text-sm text-muted-foreground">{subtitle}</p>
+          {children}
+        </div>
       </div>
     </div>
   );
