@@ -1,6 +1,6 @@
 /**
  * Server-only environment validation.
- * Never import from client code. All five vars are mandatory.
+ * Never import from client code.
  */
 
 export type ServerEnv = {
@@ -15,13 +15,11 @@ export type EnvCheck =
   | { ok: true; env: ServerEnv }
   | { ok: false; missing: string[]; invalid: string[] };
 
-const REQUIRED_KEYS = [
-  "HN_DB_URL",
-  "HN_DB_DIRECT_URL",
-  "HN_JWT_SECRET",
-  "RESEND_API_KEY",
-  "HN_MAIL_FROM",
-] as const;
+const REQUIRED_KEYS = ["HN_DB_DIRECT_URL", "HN_JWT_SECRET", "RESEND_API_KEY", "HN_MAIL_FROM"] as const;
+
+function isPostgresUrl(value: string | undefined): value is string {
+  return !!value && /^postgres(ql)?:\/\//.test(value);
+}
 
 export function checkEnv(): EnvCheck {
   const missing: string[] = [];
@@ -37,14 +35,14 @@ export function checkEnv(): EnvCheck {
     collected[key] = v.trim();
   }
 
-  if (collected.HN_DB_URL && !/^postgres(ql)?:\/\//.test(collected.HN_DB_URL)) {
-    invalid.push("HN_DB_URL");
-  }
-  if (
-    collected.HN_DB_DIRECT_URL &&
-    !/^postgres(ql)?:\/\//.test(collected.HN_DB_DIRECT_URL)
-  ) {
+  const runtimeDbUrl = process.env.HN_DB_URL?.trim();
+  if (runtimeDbUrl) collected.HN_DB_URL = runtimeDbUrl;
+
+  if (collected.HN_DB_DIRECT_URL && !isPostgresUrl(collected.HN_DB_DIRECT_URL)) {
     invalid.push("HN_DB_DIRECT_URL");
+  }
+  if (runtimeDbUrl && !isPostgresUrl(runtimeDbUrl) && !isPostgresUrl(collected.HN_DB_DIRECT_URL)) {
+    invalid.push("HN_DB_URL");
   }
   if (collected.HN_JWT_SECRET && collected.HN_JWT_SECRET.length < 32) {
     invalid.push("HN_JWT_SECRET");
@@ -59,7 +57,13 @@ export function checkEnv(): EnvCheck {
   if (missing.length || invalid.length) {
     return { ok: false, missing, invalid };
   }
-  return { ok: true, env: collected as ServerEnv };
+  return {
+    ok: true,
+    env: {
+      ...(collected as Omit<ServerEnv, "HN_DB_URL">),
+      HN_DB_URL: isPostgresUrl(runtimeDbUrl) ? runtimeDbUrl : collected.HN_DB_DIRECT_URL,
+    },
+  };
 }
 
 /**
