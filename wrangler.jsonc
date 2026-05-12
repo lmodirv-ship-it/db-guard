@@ -4,4 +4,32 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+
+  // ─── R2: per-tenant private object storage ──────────────────────
+  // Create the bucket once:  wrangler r2 bucket create hn-projects
+  "r2_buckets": [
+    {
+      "binding": "HN_R2",
+      "bucket_name": "hn-projects",
+      "preview_bucket_name": "hn-projects-preview"
+    }
+  ],
+
+  // ─── Queues: producer + consumer (10 in-flight messages) ────────
+  // Create:  wrangler queues create hn-jobs && wrangler queues create hn-jobs-dlq
+  "queues": {
+    "producers": [
+      { "binding": "HN_JOBS", "queue": "hn-jobs" }
+    ],
+    "consumers": [
+      {
+        "queue": "hn-jobs",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_concurrency": 10,
+        "max_retries": 3,
+        "dead_letter_queue": "hn-jobs-dlq"
+      }
+    ]
+  }
 }
