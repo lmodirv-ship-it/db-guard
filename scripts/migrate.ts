@@ -55,16 +55,17 @@ async function main() {
     // The `neon` HTTP function accepts a string as a query when invoked as
     // `sql(text)`, returning rows.
     try {
-      // @ts-ignore — runtime shape supports raw string call
-      await sql(sqlText);
+      await pool.query(sqlText);
     } catch (err) {
       console.error(`✗ failed ${file}:`, err);
+      await pool.end();
       process.exit(1);
     }
     await sql`INSERT INTO schema_migrations (filename) VALUES (${file})`;
     console.log(`✓ done   ${file}`);
   }
 
+  await pool.end();
   console.log("All migrations applied.");
 }
 
