@@ -129,6 +129,12 @@ function Dashboard() {
             >
               {showPwd ? "Close" : "Change password"}
             </button>
+            <Link
+              to="/owner"
+              className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
+            >
+              Owner
+            </Link>
             <button onClick={logout} className="rounded-md border border-border px-3 py-1.5 hover:bg-muted">
               Logout
             </button>
