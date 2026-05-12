@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@600;800;900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -7,54 +7,42 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.99 0.005 95);
-  --foreground: oklch(0.18 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 260);
-  --primary: oklch(0.45 0.18 265);
-  --primary-foreground: oklch(0.99 0.005 95);
-  --primary-glow: oklch(0.62 0.2 265);
-  --secondary: oklch(0.96 0.01 260);
-  --secondary-foreground: oklch(0.22 0.02 260);
-  --muted: oklch(0.96 0.005 260);
-  --muted-foreground: oklch(0.5 0.015 260);
-  --accent: oklch(0.92 0.04 175);
-  --accent-foreground: oklch(0.2 0.05 175);
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.99 0.005 95);
-  --border: oklch(0.9 0.01 260);
-  --input: oklch(0.94 0.005 260);
-  --ring: oklch(0.45 0.18 265);
-  --radius: 0.625rem;
-  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
-  --shadow-elegant: 0 10px 30px -10px color-mix(in oklab, var(--primary) 30%, transparent);
+  /* Dark cyberpunk neon — default */
+  --background: oklch(0.13 0.025 270);
+  --foreground: oklch(0.97 0.01 260);
+  --card: oklch(0.18 0.03 270);
+  --card-foreground: oklch(0.97 0.01 260);
+  --popover: oklch(0.17 0.03 270);
+  --popover-foreground: oklch(0.97 0.01 260);
+  --primary: oklch(0.62 0.27 295);          /* neon purple #7B2EFF */
+  --primary-foreground: oklch(0.99 0.005 260);
+  --primary-glow: oklch(0.72 0.22 295);
+  --secondary: oklch(0.24 0.03 270);
+  --secondary-foreground: oklch(0.97 0.01 260);
+  --muted: oklch(0.22 0.025 270);
+  --muted-foreground: oklch(0.7 0.02 260);
+  --accent: oklch(0.7 0.2 230);             /* electric blue #00C2FF */
+  --accent-foreground: oklch(0.13 0.025 270);
+  --destructive: oklch(0.62 0.25 20);
+  --destructive-foreground: oklch(0.99 0.005 260);
+  --success: oklch(0.72 0.2 155);
+  --border: oklch(0.3 0.04 280 / 0.5);
+  --input: oklch(0.22 0.03 270);
+  --ring: oklch(0.7 0.2 295);
+  --radius: 0.875rem;
+
+  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.27 295), oklch(0.7 0.2 230));
+  --gradient-glow: radial-gradient(circle at 30% 20%, oklch(0.62 0.27 295 / 0.35), transparent 60%),
+                   radial-gradient(circle at 80% 80%, oklch(0.7 0.2 230 / 0.25), transparent 55%);
+  --gradient-hero: linear-gradient(180deg, oklch(0.13 0.025 270) 0%, oklch(0.16 0.04 280) 100%);
+
+  --shadow-elegant: 0 10px 40px -10px oklch(0.62 0.27 295 / 0.5);
+  --shadow-glow: 0 0 60px -10px oklch(0.62 0.27 295 / 0.6), 0 0 30px -5px oklch(0.7 0.2 230 / 0.4);
+  --shadow-neon: 0 0 20px oklch(0.7 0.2 295 / 0.5);
+
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-}
-
-.dark {
-  --background: oklch(0.16 0.015 260);
-  --foreground: oklch(0.97 0.005 95);
-  --card: oklch(0.2 0.02 260);
-  --card-foreground: oklch(0.97 0.005 95);
-  --popover: oklch(0.2 0.02 260);
-  --popover-foreground: oklch(0.97 0.005 95);
-  --primary: oklch(0.7 0.18 265);
-  --primary-foreground: oklch(0.16 0.015 260);
-  --primary-glow: oklch(0.78 0.16 265);
-  --secondary: oklch(0.25 0.02 260);
-  --secondary-foreground: oklch(0.97 0.005 95);
-  --muted: oklch(0.25 0.015 260);
-  --muted-foreground: oklch(0.7 0.015 260);
-  --accent: oklch(0.32 0.06 175);
-  --accent-foreground: oklch(0.95 0.02 175);
-  --destructive: oklch(0.65 0.2 27);
-  --destructive-foreground: oklch(0.97 0.005 95);
-  --border: oklch(0.3 0.02 260);
-  --input: oklch(0.28 0.015 260);
-  --ring: oklch(0.7 0.18 265);
+  --font-brand: "Orbitron", "Space Grotesk", sans-serif;
 }
 
 @theme inline {
@@ -66,6 +54,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -74,18 +63,20 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
+  --font-brand: var(--font-brand);
 }
 
 * {
   border-color: var(--border);
 }
 
-body {
+html, body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-display);
@@ -95,3 +86,43 @@ body {
 code, pre {
   font-family: var(--font-mono);
 }
+
+/* Cyber grid background */
+.cyber-grid {
+  background-image:
+    linear-gradient(oklch(0.7 0.2 295 / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.7 0.2 295 / 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+.glass {
+  background: oklch(0.2 0.03 270 / 0.5);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid oklch(0.7 0.2 295 / 0.15);
+}
+
+.neon-border {
+  border: 1px solid oklch(0.7 0.2 295 / 0.4);
+  box-shadow: inset 0 0 20px oklch(0.62 0.27 295 / 0.1), 0 0 20px oklch(0.62 0.27 295 / 0.15);
+}
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
