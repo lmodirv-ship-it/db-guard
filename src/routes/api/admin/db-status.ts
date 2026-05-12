@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/admin/db-status")({
     handlers: {
       GET: async ({ request }) => {
         try {
-          await requireOwner(request);
+          const session = await requireOwner(request);
           const ping = await pingDb();
           const sql = getSql();
           let migrations: Array<{ name: string; applied_at: string }> = [];
@@ -35,6 +35,13 @@ export const Route = createFileRoute("/api/admin/db-status")({
           } catch {
             // tables missing — schema not initialised
           }
+          await audit({
+            action: "db.status_checked",
+            actorUserId: session.sub,
+            tenantId: session.tid,
+            meta: { ok: ping.ok, latencyMs: ping.latencyMs },
+            request,
+          });
           return jsonOk({ ping, migrations, counts });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
