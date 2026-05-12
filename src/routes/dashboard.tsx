@@ -22,6 +22,34 @@ function Dashboard() {
   const [creating, setCreating] = useState(false);
   const [draining, setDraining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPwd, setShowPwd] = useState(false);
+  const [curPwd, setCurPwd] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [pwdMsg, setPwdMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [pwdSaving, setPwdSaving] = useState(false);
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    setPwdSaving(true);
+    setPwdMsg(null);
+    try {
+      const r = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: curPwd, newPassword: newPwd }),
+      });
+      const j = (await r.json()) as { ok: boolean; error?: string };
+      if (!j.ok) {
+        setPwdMsg({ kind: "err", text: j.error ?? "change_failed" });
+        return;
+      }
+      setPwdMsg({ kind: "ok", text: "Password changed successfully." });
+      setCurPwd("");
+      setNewPwd("");
+    } finally {
+      setPwdSaving(false);
+    }
+  }
 
   async function refresh() {
     const r = await fetch("/api/projects");
@@ -95,6 +123,12 @@ function Dashboard() {
               tenant: {me?.tenantId.slice(0, 8) ?? "…"}
             </span>
             <span className="text-muted-foreground">{me?.email}</span>
+            <button
+              onClick={() => setShowPwd((s) => !s)}
+              className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
+            >
+              {showPwd ? "Close" : "Change password"}
+            </button>
             <button onClick={logout} className="rounded-md border border-border px-3 py-1.5 hover:bg-muted">
               Logout
             </button>
@@ -103,6 +137,55 @@ function Dashboard() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
+        {showPwd && (
+          <form
+            onSubmit={changePassword}
+            className="mb-6 rounded-lg border border-border bg-card p-4"
+          >
+            <h2 className="mb-3 text-sm font-semibold">Change password</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                type="password"
+                required
+                placeholder="Current password"
+                autoComplete="current-password"
+                value={curPwd}
+                onChange={(e) => setCurPwd(e.target.value)}
+                className="rounded-md border border-border bg-input px-3 py-2"
+              />
+              <input
+                type="password"
+                required
+                minLength={8}
+                placeholder="New password (min 8 chars)"
+                autoComplete="new-password"
+                value={newPwd}
+                onChange={(e) => setNewPwd(e.target.value)}
+                className="rounded-md border border-border bg-input px-3 py-2"
+              />
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                type="submit"
+                disabled={pwdSaving}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {pwdSaving ? "Saving…" : "Update password"}
+              </button>
+              {pwdMsg && (
+                <span
+                  className={
+                    pwdMsg.kind === "ok"
+                      ? "text-sm text-primary"
+                      : "text-sm text-destructive"
+                  }
+                >
+                  {pwdMsg.text}
+                </span>
+              )}
+            </div>
+          </form>
+        )}
         <div className="flex items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>

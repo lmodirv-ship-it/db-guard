@@ -22,6 +22,7 @@ import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiAuthChangePasswordRouteImport } from './routes/api/auth/change-password'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
@@ -92,6 +93,11 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthChangePasswordRoute = ApiAuthChangePasswordRouteImport.update({
+  id: '/api/auth/change-password',
+  path: '/api/auth/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   id: '/api/projects/$id/',
   path: '/api/projects/$id/',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  ApiAuthChangePasswordRoute: typeof ApiAuthChangePasswordRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/change-password': {
+      id: '/api/auth/change-password'
+      path: '/api/auth/change-password'
+      fullPath: '/api/auth/change-password'
+      preLoaderRoute: typeof ApiAuthChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/': {
       id: '/api/projects/$id/'
       path: '/api/projects/$id'
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  ApiAuthChangePasswordRoute: ApiAuthChangePasswordRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
@@ -397,12 +418,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
