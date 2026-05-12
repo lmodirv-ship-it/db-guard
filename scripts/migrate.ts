@@ -7,7 +7,8 @@
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { neon } from "@neondatabase/serverless";
+import { neon, Pool } from "@neondatabase/serverless";
+import ws from "ws";
 
 async function main() {
   const url = process.env.HN_DB_DIRECT_URL;
@@ -16,6 +17,10 @@ async function main() {
     process.exit(1);
   }
   const sql = neon(url);
+  // Pool (websocket) supports multi-statement raw SQL needed for migrations.
+  // @ts-ignore - assign websocket constructor for Node runtime
+  (await import("@neondatabase/serverless")).neonConfig.webSocketConstructor = ws;
+  const pool = new Pool({ connectionString: url });
 
   // Bootstrap tracking table (idempotent, runs every time).
   await sql`
