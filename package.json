@@ -10,9 +10,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run tests/unit",
-    "test:int": "vitest run tests/integration",
-    "test:cov": "vitest run tests/unit --coverage"
+    "test": "node ./node_modules/vitest/vitest.mjs run tests/unit",
+    "test:int": "node ./node_modules/vitest/vitest.mjs run tests/integration",
+    "test:cov": "node ./node_modules/vitest/vitest.mjs run tests/unit --coverage"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
