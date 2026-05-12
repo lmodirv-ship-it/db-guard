@@ -23,7 +23,6 @@ describe("normalizeProjectUrl", () => {
     "http://169.254.169.254",
     "http://anything.localhost",
     "http://service.internal",
-    "http://service.internal",
   ])("rejects SSRF / invalid target %s", (input) => {
     expect(() => normalizeProjectUrl(input)).toThrow(UrlValidationError);
   });
