@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,14 +24,22 @@ import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthChangePasswordRouteImport } from './routes/api/auth/change-password'
+import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
+import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-status'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
+import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -98,6 +107,16 @@ const ApiAuthChangePasswordRoute = ApiAuthChangePasswordRouteImport.update({
   path: '/api/auth/change-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
+  id: '/api/admin/users',
+  path: '/api/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminDbStatusRoute = ApiAdminDbStatusRouteImport.update({
+  id: '/api/admin/db-status',
+  path: '/api/admin/db-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   id: '/api/projects/$id/',
   path: '/api/projects/$id/',
@@ -118,14 +137,22 @@ const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
   path: '/api/projects/$id/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiAdminUsersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/owner': typeof OwnerRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/db-status': typeof ApiAdminDbStatusRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -134,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -143,9 +171,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/owner': typeof OwnerRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/db-status': typeof ApiAdminDbStatusRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -154,6 +185,7 @@ export interface FileRoutesByTo {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/projects': typeof ApiProjectsIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -164,9 +196,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/owner': typeof OwnerRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/db-status': typeof ApiAdminDbStatusRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -175,6 +210,7 @@ export interface FileRoutesById {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -186,9 +222,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/owner'
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/db-status'
+    | '/api/admin/users'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
@@ -197,6 +236,7 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/projects/'
+    | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -206,9 +246,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/owner'
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/db-status'
+    | '/api/admin/users'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
@@ -217,6 +260,7 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/projects'
+    | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -226,9 +270,12 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/owner'
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/db-status'
+    | '/api/admin/users'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
@@ -237,6 +284,7 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/projects/'
+    | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -247,9 +295,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  OwnerRoute: typeof OwnerRoute
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
+  ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
   ApiAuthChangePasswordRoute: typeof ApiAuthChangePasswordRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
@@ -271,6 +322,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -364,6 +422,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthChangePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/users': {
+      id: '/api/admin/users'
+      path: '/api/admin/users'
+      fullPath: '/api/admin/users'
+      preLoaderRoute: typeof ApiAdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/db-status': {
+      id: '/api/admin/db-status'
+      path: '/api/admin/db-status'
+      fullPath: '/api/admin/db-status'
+      preLoaderRoute: typeof ApiAdminDbStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/': {
       id: '/api/projects/$id/'
       path: '/api/projects/$id'
@@ -392,16 +464,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdAnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/users/$id': {
+      id: '/api/admin/users/$id'
+      path: '/$id'
+      fullPath: '/api/admin/users/$id'
+      preLoaderRoute: typeof ApiAdminUsersIdRouteImport
+      parentRoute: typeof ApiAdminUsersRoute
+    }
   }
 }
+
+interface ApiAdminUsersRouteChildren {
+  ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
+}
+
+const ApiAdminUsersRouteChildren: ApiAdminUsersRouteChildren = {
+  ApiAdminUsersIdRoute: ApiAdminUsersIdRoute,
+}
+
+const ApiAdminUsersRouteWithChildren = ApiAdminUsersRoute._addFileChildren(
+  ApiAdminUsersRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  OwnerRoute: OwnerRoute,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
+  ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
   ApiAuthChangePasswordRoute: ApiAuthChangePasswordRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
