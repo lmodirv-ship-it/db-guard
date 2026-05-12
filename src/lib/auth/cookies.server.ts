@@ -10,7 +10,7 @@ export function buildSessionCookie(token: string): string {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=Lax",
+    "SameSite=None",
     `Max-Age=${SESSION_TTL_SECONDS}`,
   ];
   return parts.join("; ");
@@ -22,7 +22,7 @@ export function buildClearSessionCookie(): string {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=Lax",
+    "SameSite=None",
     "Max-Age=0",
   ].join("; ");
 }
