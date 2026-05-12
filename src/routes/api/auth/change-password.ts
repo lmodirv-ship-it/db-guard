@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSql } from "@/lib/db/client.server";
 import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { requireSession, jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { audit } from "@/lib/audit/log.server";
 
 const Schema = z.object({
   currentPassword: z.string().min(1).max(256),
@@ -48,6 +49,13 @@ export const Route = createFileRoute("/api/auth/change-password")({
           await sql`
             UPDATE users SET password_hash = ${newHash} WHERE id = ${session.sub}
           `;
+          await audit({
+            action: "auth.password_changed",
+            actorUserId: session.sub,
+            tenantId: session.tid,
+            target: session.sub,
+            request,
+          });
           return jsonOk({ changed: true });
         } catch (err) {
           console.error("change_password_failed", err);
