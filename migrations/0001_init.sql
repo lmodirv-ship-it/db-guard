@@ -3,6 +3,7 @@
 -- Every business table carries tenant_id NOT NULL.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
 
 -- ─────────────────────────────────────────────────────────────────
 -- Tenants
