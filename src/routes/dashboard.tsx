@@ -22,6 +22,34 @@ function Dashboard() {
   const [creating, setCreating] = useState(false);
   const [draining, setDraining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPwd, setShowPwd] = useState(false);
+  const [curPwd, setCurPwd] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [pwdMsg, setPwdMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [pwdSaving, setPwdSaving] = useState(false);
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    setPwdSaving(true);
+    setPwdMsg(null);
+    try {
+      const r = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: curPwd, newPassword: newPwd }),
+      });
+      const j = (await r.json()) as { ok: boolean; error?: string };
+      if (!j.ok) {
+        setPwdMsg({ kind: "err", text: j.error ?? "change_failed" });
+        return;
+      }
+      setPwdMsg({ kind: "ok", text: "Password changed successfully." });
+      setCurPwd("");
+      setNewPwd("");
+    } finally {
+      setPwdSaving(false);
+    }
+  }
 
   async function refresh() {
     const r = await fetch("/api/projects");
@@ -95,6 +123,12 @@ function Dashboard() {
               tenant: {me?.tenantId.slice(0, 8) ?? "…"}
             </span>
             <span className="text-muted-foreground">{me?.email}</span>
+            <button
+              onClick={() => setShowPwd((s) => !s)}
+              className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
+            >
+              {showPwd ? "Close" : "Change password"}
+            </button>
             <button onClick={logout} className="rounded-md border border-border px-3 py-1.5 hover:bg-muted">
               Logout
             </button>
