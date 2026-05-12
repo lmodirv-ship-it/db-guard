@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { withBypass } from "@/lib/db/tenant.server";
+import { getSql } from "@/lib/db/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { signSession } from "@/lib/auth/jwt.server";
 import { buildSessionCookie } from "@/lib/auth/cookies.server";
@@ -28,30 +28,30 @@ export const Route = createFileRoute("/api/auth/signup")({
         }
         const { email, password, name } = parsed.data;
 
+        const sql = getSql();
         try {
-          const existing = await withBypass<{ id: string }>(
-            (sql) => sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`,
-          );
-          if (existing.length > 0) return jsonError(409, "email_taken");
+          const existing = (await sql`
+            SELECT id FROM users WHERE email = ${email} LIMIT 1
+          `) as Array<{ id: string }>;
+          if (existing.length > 0) {
+            return jsonError(409, "email_taken");
+          }
 
           const passwordHash = await hashPassword(password);
 
-          const tenantRows = await withBypass<{ id: string }>(
-            (sql) => sql`
-              INSERT INTO tenants (name)
-              VALUES (${name ?? email.split("@")[0]})
-              RETURNING id
-            `,
-          );
+          // Create tenant + owner user atomically.
+          const tenantRows = (await sql`
+            INSERT INTO tenants (name)
+            VALUES (${name ?? email.split("@")[0]})
+            RETURNING id
+          `) as Array<{ id: string }>;
           const tenantId = tenantRows[0].id;
 
-          const userRows = await withBypass<{ id: string }>(
-            (sql) => sql`
-              INSERT INTO users (tenant_id, email, password_hash, name, role)
-              VALUES (${tenantId}, ${email}, ${passwordHash}, ${name ?? null}, 'owner')
-              RETURNING id
-            `,
-          );
+          const userRows = (await sql`
+            INSERT INTO users (tenant_id, email, password_hash, name, role)
+            VALUES (${tenantId}, ${email}, ${passwordHash}, ${name ?? null}, 'owner')
+            RETURNING id
+          `) as Array<{ id: string }>;
           const userId = userRows[0].id;
 
           const token = await signSession({ sub: userId, tid: tenantId, email });

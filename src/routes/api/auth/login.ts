@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { withBypass } from "@/lib/db/tenant.server";
+import { getSql } from "@/lib/db/client.server";
 import { verifyPassword } from "@/lib/auth/password.server";
 import { signSession } from "@/lib/auth/jwt.server";
 import { buildSessionCookie } from "@/lib/auth/cookies.server";
@@ -10,9 +10,6 @@ const LoginSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(255),
   password: z.string().min(1).max(256),
 });
-
-const DUMMY_HASH =
-  "pbkdf2$600000$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
 
 export const Route = createFileRoute("/api/auth/login")({
   server: {
@@ -28,23 +25,18 @@ export const Route = createFileRoute("/api/auth/login")({
         if (!parsed.success) return jsonError(400, "invalid_input");
         const { email, password } = parsed.data;
 
+        const sql = getSql();
         try {
-          const rows = await withBypass<{
-            id: string;
-            tenant_id: string;
-            password_hash: string;
-          }>(
-            (sql) => sql`
-              SELECT id, tenant_id, password_hash
-                FROM users
-               WHERE email = ${email}
-               LIMIT 1
-            `,
-          );
+          const rows = (await sql`
+            SELECT id, tenant_id, password_hash
+            FROM users
+            WHERE email = ${email}
+            LIMIT 1
+          `) as Array<{ id: string; tenant_id: string; password_hash: string }>;
 
           if (rows.length === 0) {
-            // constant-time-ish: still run pbkdf2 to mask user enumeration
-            await verifyPassword(password, DUMMY_HASH);
+            // Same delay path as wrong password to avoid user enumeration.
+            await verifyPassword(password, "pbkdf2$600000$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
             return jsonError(401, "invalid_credentials");
           }
 
