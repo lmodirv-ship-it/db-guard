@@ -106,12 +106,14 @@ function OwnerConsole() {
           <TabBtn active={tab === "db"} onClick={() => setTab("db")}>قاعدة البيانات</TabBtn>
           <TabBtn active={tab === "users"} onClick={() => setTab("users")}>المستخدمون</TabBtn>
           <TabBtn active={tab === "password"} onClick={() => setTab("password")}>كلمة المرور</TabBtn>
+          <TabBtn active={tab === "audit"} onClick={() => setTab("audit")}>سجل التدقيق</TabBtn>
         </nav>
 
         <section className="mt-8">
           {tab === "db" && <DbPanel />}
           {tab === "users" && <UsersPanel currentUserId={me?.id ?? null} />}
           {tab === "password" && <PasswordPanel />}
+          {tab === "audit" && <AuditPanel />}
         </section>
       </main>
     </div>
