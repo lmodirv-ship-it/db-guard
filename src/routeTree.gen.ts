@@ -23,6 +23,7 @@ import { Route as OwnerRolesRouteImport } from './routes/owner.roles'
 import { Route as OwnerRecordsRouteImport } from './routes/owner.records'
 import { Route as OwnerProjectsRouteImport } from './routes/owner.projects'
 import { Route as OwnerJobsRouteImport } from './routes/owner.jobs'
+import { Route as OwnerIntegrationsRouteImport } from './routes/owner.integrations'
 import { Route as OwnerHealthRouteImport } from './routes/owner.health'
 import { Route as OwnerFilesRouteImport } from './routes/owner.files'
 import { Route as OwnerAuditLogsRouteImport } from './routes/owner.audit-logs'
@@ -114,6 +115,11 @@ const OwnerProjectsRoute = OwnerProjectsRouteImport.update({
 const OwnerJobsRoute = OwnerJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerIntegrationsRoute = OwnerIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerHealthRoute = OwnerHealthRouteImport.update({
@@ -239,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
   '/owner/files': typeof OwnerFilesRoute
   '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
   '/owner/files': typeof OwnerFilesRoute
   '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
   '/owner/files': typeof OwnerFilesRoute
   '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/owner/audit-logs'
     | '/owner/files'
     | '/owner/health'
+    | '/owner/integrations'
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/owner/audit-logs'
     | '/owner/files'
     | '/owner/health'
+    | '/owner/integrations'
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/owner/audit-logs'
     | '/owner/files'
     | '/owner/health'
+    | '/owner/integrations'
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
@@ -580,6 +592,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/owner/jobs'
       preLoaderRoute: typeof OwnerJobsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/integrations': {
+      id: '/owner/integrations'
+      path: '/integrations'
+      fullPath: '/owner/integrations'
+      preLoaderRoute: typeof OwnerIntegrationsRouteImport
       parentRoute: typeof OwnerRoute
     }
     '/owner/health': {
@@ -745,6 +764,7 @@ interface OwnerRouteChildren {
   OwnerAuditLogsRoute: typeof OwnerAuditLogsRoute
   OwnerFilesRoute: typeof OwnerFilesRoute
   OwnerHealthRoute: typeof OwnerHealthRoute
+  OwnerIntegrationsRoute: typeof OwnerIntegrationsRoute
   OwnerJobsRoute: typeof OwnerJobsRoute
   OwnerProjectsRoute: typeof OwnerProjectsRoute
   OwnerRecordsRoute: typeof OwnerRecordsRoute
@@ -761,6 +781,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerAuditLogsRoute: OwnerAuditLogsRoute,
   OwnerFilesRoute: OwnerFilesRoute,
   OwnerHealthRoute: OwnerHealthRoute,
+  OwnerIntegrationsRoute: OwnerIntegrationsRoute,
   OwnerJobsRoute: OwnerJobsRoute,
   OwnerProjectsRoute: OwnerProjectsRoute,
   OwnerRecordsRoute: OwnerRecordsRoute,
