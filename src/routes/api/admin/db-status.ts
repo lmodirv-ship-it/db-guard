@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSql, pingDb } from "@/lib/db/client.server";
 import { requireOwner } from "@/lib/auth/owner.server";
 import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { audit } from "@/lib/audit/log.server";
 
 export const Route = createFileRoute("/api/admin/db-status")({
   server: {

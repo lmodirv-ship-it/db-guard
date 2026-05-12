@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSql } from "@/lib/db/client.server";
 import { requireOwner } from "@/lib/auth/owner.server";
 import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { audit } from "@/lib/audit/log.server";
 
 export const Route = createFileRoute("/api/admin/users/$id")({
   server: {
@@ -19,6 +20,13 @@ export const Route = createFileRoute("/api/admin/users/$id")({
             RETURNING id
           `) as Array<{ id: string }>;
           if (rows.length === 0) return jsonError(404, "not_found");
+          await audit({
+            action: "user.deleted",
+            actorUserId: session.sub,
+            tenantId: session.tid,
+            target: rows[0].id,
+            request,
+          });
           return jsonOk({ deleted: rows[0].id });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
