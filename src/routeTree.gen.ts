@@ -14,7 +14,21 @@ import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
+import { Route as OwnerUsersRouteImport } from './routes/owner.users'
+import { Route as OwnerTenantsRouteImport } from './routes/owner.tenants'
+import { Route as OwnerSettingsRouteImport } from './routes/owner.settings'
+import { Route as OwnerRolesRouteImport } from './routes/owner.roles'
+import { Route as OwnerRecordsRouteImport } from './routes/owner.records'
+import { Route as OwnerProjectsRouteImport } from './routes/owner.projects'
+import { Route as OwnerJobsRouteImport } from './routes/owner.jobs'
+import { Route as OwnerIntegrationsRouteImport } from './routes/owner.integrations'
+import { Route as OwnerHealthRouteImport } from './routes/owner.health'
+import { Route as OwnerFilesRouteImport } from './routes/owner.files'
+import { Route as OwnerAuditLogsRouteImport } from './routes/owner.audit-logs'
+import { Route as OwnerApiKeysRouteImport } from './routes/owner.api-keys'
+import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
@@ -58,10 +72,80 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OwnerIndexRoute = OwnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OwnerRoute,
+} as any)
 const ProjectsIdRoute = ProjectsIdRouteImport.update({
   id: '/projects/$id',
   path: '/projects/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerUsersRoute = OwnerUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerTenantsRoute = OwnerTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerSettingsRoute = OwnerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerRolesRoute = OwnerRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerRecordsRoute = OwnerRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerProjectsRoute = OwnerProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerJobsRoute = OwnerJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerIntegrationsRoute = OwnerIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerHealthRoute = OwnerHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerFilesRoute = OwnerFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAuditLogsRoute = OwnerAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerApiKeysRoute = OwnerApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAlertsRoute = OwnerAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => OwnerRoute,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
@@ -153,10 +237,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/owner': typeof OwnerRoute
+  '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/alerts': typeof OwnerAlertsRoute
+  '/owner/api-keys': typeof OwnerApiKeysRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/files': typeof OwnerFilesRoute
+  '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
+  '/owner/jobs': typeof OwnerJobsRoute
+  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/records': typeof OwnerRecordsRoute
+  '/owner/roles': typeof OwnerRolesRoute
+  '/owner/settings': typeof OwnerSettingsRoute
+  '/owner/tenants': typeof OwnerTenantsRoute
+  '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
@@ -178,10 +276,23 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/owner': typeof OwnerRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/alerts': typeof OwnerAlertsRoute
+  '/owner/api-keys': typeof OwnerApiKeysRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/files': typeof OwnerFilesRoute
+  '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
+  '/owner/jobs': typeof OwnerJobsRoute
+  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/records': typeof OwnerRecordsRoute
+  '/owner/roles': typeof OwnerRolesRoute
+  '/owner/settings': typeof OwnerSettingsRoute
+  '/owner/tenants': typeof OwnerTenantsRoute
+  '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/owner': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
@@ -204,10 +315,24 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/owner': typeof OwnerRoute
+  '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/alerts': typeof OwnerAlertsRoute
+  '/owner/api-keys': typeof OwnerApiKeysRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/files': typeof OwnerFilesRoute
+  '/owner/health': typeof OwnerHealthRoute
+  '/owner/integrations': typeof OwnerIntegrationsRoute
+  '/owner/jobs': typeof OwnerJobsRoute
+  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/records': typeof OwnerRecordsRoute
+  '/owner/roles': typeof OwnerRolesRoute
+  '/owner/settings': typeof OwnerSettingsRoute
+  '/owner/tenants': typeof OwnerTenantsRoute
+  '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
@@ -234,7 +359,21 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/owner/alerts'
+    | '/owner/api-keys'
+    | '/owner/audit-logs'
+    | '/owner/files'
+    | '/owner/health'
+    | '/owner/integrations'
+    | '/owner/jobs'
+    | '/owner/projects'
+    | '/owner/records'
+    | '/owner/roles'
+    | '/owner/settings'
+    | '/owner/tenants'
+    | '/owner/users'
     | '/projects/$id'
+    | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
@@ -256,10 +395,23 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
-    | '/owner'
     | '/signup'
     | '/api/health'
+    | '/owner/alerts'
+    | '/owner/api-keys'
+    | '/owner/audit-logs'
+    | '/owner/files'
+    | '/owner/health'
+    | '/owner/integrations'
+    | '/owner/jobs'
+    | '/owner/projects'
+    | '/owner/records'
+    | '/owner/roles'
+    | '/owner/settings'
+    | '/owner/tenants'
+    | '/owner/users'
     | '/projects/$id'
+    | '/owner'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
@@ -284,7 +436,21 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/owner/alerts'
+    | '/owner/api-keys'
+    | '/owner/audit-logs'
+    | '/owner/files'
+    | '/owner/health'
+    | '/owner/integrations'
+    | '/owner/jobs'
+    | '/owner/projects'
+    | '/owner/records'
+    | '/owner/roles'
+    | '/owner/settings'
+    | '/owner/tenants'
+    | '/owner/users'
     | '/projects/$id'
+    | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
@@ -307,7 +473,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
-  OwnerRoute: typeof OwnerRoute
+  OwnerRoute: typeof OwnerRouteWithChildren
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
@@ -365,12 +531,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/owner/': {
+      id: '/owner/'
+      path: '/'
+      fullPath: '/owner/'
+      preLoaderRoute: typeof OwnerIndexRouteImport
+      parentRoute: typeof OwnerRoute
+    }
     '/projects/$id': {
       id: '/projects/$id'
       path: '/projects/$id'
       fullPath: '/projects/$id'
       preLoaderRoute: typeof ProjectsIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/owner/users': {
+      id: '/owner/users'
+      path: '/users'
+      fullPath: '/owner/users'
+      preLoaderRoute: typeof OwnerUsersRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/tenants': {
+      id: '/owner/tenants'
+      path: '/tenants'
+      fullPath: '/owner/tenants'
+      preLoaderRoute: typeof OwnerTenantsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/settings': {
+      id: '/owner/settings'
+      path: '/settings'
+      fullPath: '/owner/settings'
+      preLoaderRoute: typeof OwnerSettingsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/roles': {
+      id: '/owner/roles'
+      path: '/roles'
+      fullPath: '/owner/roles'
+      preLoaderRoute: typeof OwnerRolesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/records': {
+      id: '/owner/records'
+      path: '/records'
+      fullPath: '/owner/records'
+      preLoaderRoute: typeof OwnerRecordsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/projects': {
+      id: '/owner/projects'
+      path: '/projects'
+      fullPath: '/owner/projects'
+      preLoaderRoute: typeof OwnerProjectsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/jobs': {
+      id: '/owner/jobs'
+      path: '/jobs'
+      fullPath: '/owner/jobs'
+      preLoaderRoute: typeof OwnerJobsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/integrations': {
+      id: '/owner/integrations'
+      path: '/integrations'
+      fullPath: '/owner/integrations'
+      preLoaderRoute: typeof OwnerIntegrationsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/health': {
+      id: '/owner/health'
+      path: '/health'
+      fullPath: '/owner/health'
+      preLoaderRoute: typeof OwnerHealthRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/files': {
+      id: '/owner/files'
+      path: '/files'
+      fullPath: '/owner/files'
+      preLoaderRoute: typeof OwnerFilesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/audit-logs': {
+      id: '/owner/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/owner/audit-logs'
+      preLoaderRoute: typeof OwnerAuditLogsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/api-keys': {
+      id: '/owner/api-keys'
+      path: '/api-keys'
+      fullPath: '/owner/api-keys'
+      preLoaderRoute: typeof OwnerApiKeysRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/alerts': {
+      id: '/owner/alerts'
+      path: '/alerts'
+      fullPath: '/owner/alerts'
+      preLoaderRoute: typeof OwnerAlertsRouteImport
+      parentRoute: typeof OwnerRoute
     }
     '/api/health': {
       id: '/api/health'
@@ -494,6 +758,42 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface OwnerRouteChildren {
+  OwnerAlertsRoute: typeof OwnerAlertsRoute
+  OwnerApiKeysRoute: typeof OwnerApiKeysRoute
+  OwnerAuditLogsRoute: typeof OwnerAuditLogsRoute
+  OwnerFilesRoute: typeof OwnerFilesRoute
+  OwnerHealthRoute: typeof OwnerHealthRoute
+  OwnerIntegrationsRoute: typeof OwnerIntegrationsRoute
+  OwnerJobsRoute: typeof OwnerJobsRoute
+  OwnerProjectsRoute: typeof OwnerProjectsRoute
+  OwnerRecordsRoute: typeof OwnerRecordsRoute
+  OwnerRolesRoute: typeof OwnerRolesRoute
+  OwnerSettingsRoute: typeof OwnerSettingsRoute
+  OwnerTenantsRoute: typeof OwnerTenantsRoute
+  OwnerUsersRoute: typeof OwnerUsersRoute
+  OwnerIndexRoute: typeof OwnerIndexRoute
+}
+
+const OwnerRouteChildren: OwnerRouteChildren = {
+  OwnerAlertsRoute: OwnerAlertsRoute,
+  OwnerApiKeysRoute: OwnerApiKeysRoute,
+  OwnerAuditLogsRoute: OwnerAuditLogsRoute,
+  OwnerFilesRoute: OwnerFilesRoute,
+  OwnerHealthRoute: OwnerHealthRoute,
+  OwnerIntegrationsRoute: OwnerIntegrationsRoute,
+  OwnerJobsRoute: OwnerJobsRoute,
+  OwnerProjectsRoute: OwnerProjectsRoute,
+  OwnerRecordsRoute: OwnerRecordsRoute,
+  OwnerRolesRoute: OwnerRolesRoute,
+  OwnerSettingsRoute: OwnerSettingsRoute,
+  OwnerTenantsRoute: OwnerTenantsRoute,
+  OwnerUsersRoute: OwnerUsersRoute,
+  OwnerIndexRoute: OwnerIndexRoute,
+}
+
+const OwnerRouteWithChildren = OwnerRoute._addFileChildren(OwnerRouteChildren)
+
 interface ApiAdminUsersRouteChildren {
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
 }
@@ -510,7 +810,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
-  OwnerRoute: OwnerRoute,
+  OwnerRoute: OwnerRouteWithChildren,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
