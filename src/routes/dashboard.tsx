@@ -137,6 +137,55 @@ function Dashboard() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
+        {showPwd && (
+          <form
+            onSubmit={changePassword}
+            className="mb-6 rounded-lg border border-border bg-card p-4"
+          >
+            <h2 className="mb-3 text-sm font-semibold">Change password</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                type="password"
+                required
+                placeholder="Current password"
+                autoComplete="current-password"
+                value={curPwd}
+                onChange={(e) => setCurPwd(e.target.value)}
+                className="rounded-md border border-border bg-input px-3 py-2"
+              />
+              <input
+                type="password"
+                required
+                minLength={8}
+                placeholder="New password (min 8 chars)"
+                autoComplete="new-password"
+                value={newPwd}
+                onChange={(e) => setNewPwd(e.target.value)}
+                className="rounded-md border border-border bg-input px-3 py-2"
+              />
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                type="submit"
+                disabled={pwdSaving}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {pwdSaving ? "Saving…" : "Update password"}
+              </button>
+              {pwdMsg && (
+                <span
+                  className={
+                    pwdMsg.kind === "ok"
+                      ? "text-sm text-primary"
+                      : "text-sm text-destructive"
+                  }
+                >
+                  {pwdMsg.text}
+                </span>
+              )}
+            </div>
+          </form>
+        )}
         <div className="flex items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
