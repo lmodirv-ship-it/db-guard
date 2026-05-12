@@ -18,6 +18,8 @@ import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as OwnerUsersRouteImport } from './routes/owner.users'
 import { Route as OwnerProjectsRouteImport } from './routes/owner.projects'
+import { Route as OwnerHealthRouteImport } from './routes/owner.health'
+import { Route as OwnerAuditLogsRouteImport } from './routes/owner.audit-logs'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
@@ -79,6 +81,16 @@ const OwnerUsersRoute = OwnerUsersRouteImport.update({
 const OwnerProjectsRoute = OwnerProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerHealthRoute = OwnerHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAuditLogsRoute = OwnerAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
   getParentRoute: () => OwnerRoute,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -174,6 +186,8 @@ export interface FileRoutesByFullPath {
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/health': typeof OwnerHealthRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
@@ -201,6 +215,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/health': typeof OwnerHealthRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
@@ -230,6 +246,8 @@ export interface FileRoutesById {
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/owner/audit-logs': typeof OwnerAuditLogsRoute
+  '/owner/health': typeof OwnerHealthRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
@@ -260,6 +278,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/owner/audit-logs'
+    | '/owner/health'
     | '/owner/projects'
     | '/owner/users'
     | '/projects/$id'
@@ -287,6 +307,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/health'
+    | '/owner/audit-logs'
+    | '/owner/health'
     | '/owner/projects'
     | '/owner/users'
     | '/projects/$id'
@@ -315,6 +337,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/owner/audit-logs'
+    | '/owner/health'
     | '/owner/projects'
     | '/owner/users'
     | '/projects/$id'
@@ -425,6 +449,20 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/owner/projects'
       preLoaderRoute: typeof OwnerProjectsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/health': {
+      id: '/owner/health'
+      path: '/health'
+      fullPath: '/owner/health'
+      preLoaderRoute: typeof OwnerHealthRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/audit-logs': {
+      id: '/owner/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/owner/audit-logs'
+      preLoaderRoute: typeof OwnerAuditLogsRouteImport
       parentRoute: typeof OwnerRoute
     }
     '/api/health': {
@@ -550,12 +588,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface OwnerRouteChildren {
+  OwnerAuditLogsRoute: typeof OwnerAuditLogsRoute
+  OwnerHealthRoute: typeof OwnerHealthRoute
   OwnerProjectsRoute: typeof OwnerProjectsRoute
   OwnerUsersRoute: typeof OwnerUsersRoute
   OwnerIndexRoute: typeof OwnerIndexRoute
 }
 
 const OwnerRouteChildren: OwnerRouteChildren = {
+  OwnerAuditLogsRoute: OwnerAuditLogsRoute,
+  OwnerHealthRoute: OwnerHealthRoute,
   OwnerProjectsRoute: OwnerProjectsRoute,
   OwnerUsersRoute: OwnerUsersRoute,
   OwnerIndexRoute: OwnerIndexRoute,
@@ -602,3 +644,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
