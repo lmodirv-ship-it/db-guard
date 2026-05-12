@@ -4,6 +4,7 @@ import { getSql } from "@/lib/db/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { requireOwner } from "@/lib/auth/owner.server";
 import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { audit } from "@/lib/audit/log.server";
 
 const CreateSchema = z.object({
   email: z.string().email().max(255),
@@ -52,6 +53,14 @@ export const Route = createFileRoute("/api/admin/users")({
             VALUES (${session.tid}, ${email}, ${hash}, ${name ?? null}, ${role})
             RETURNING id, email, name, role, created_at
           `) as Array<Record<string, unknown>>;
+          await audit({
+            action: "user.created",
+            actorUserId: session.sub,
+            tenantId: session.tid,
+            target: String(rows[0].id ?? email),
+            meta: { email, role },
+            request,
+          });
           return jsonOk({ user: rows[0] });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);

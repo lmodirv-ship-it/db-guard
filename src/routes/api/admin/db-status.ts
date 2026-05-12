@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSql, pingDb } from "@/lib/db/client.server";
 import { requireOwner } from "@/lib/auth/owner.server";
 import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { audit } from "@/lib/audit/log.server";
 
 export const Route = createFileRoute("/api/admin/db-status")({
   server: {
     handlers: {
       GET: async ({ request }) => {
         try {
-          await requireOwner(request);
+          const session = await requireOwner(request);
           const ping = await pingDb();
           const sql = getSql();
           let migrations: Array<{ name: string; applied_at: string }> = [];
@@ -34,6 +35,13 @@ export const Route = createFileRoute("/api/admin/db-status")({
           } catch {
             // tables missing — schema not initialised
           }
+          await audit({
+            action: "db.status_checked",
+            actorUserId: session.sub,
+            tenantId: session.tid,
+            meta: { ok: ping.ok, latencyMs: ping.latencyMs },
+            request,
+          });
           return jsonOk({ ping, migrations, counts });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);

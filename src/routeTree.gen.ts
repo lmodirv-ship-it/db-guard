@@ -26,6 +26,7 @@ import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthChangePasswordRouteImport } from './routes/api/auth/change-password'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-status'
+import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
@@ -117,6 +118,11 @@ const ApiAdminDbStatusRoute = ApiAdminDbStatusRouteImport.update({
   path: '/api/admin/db-status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminAuditLogsRoute = ApiAdminAuditLogsRouteImport.update({
+  id: '/api/admin/audit-logs',
+  path: '/api/admin/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   id: '/api/projects/$id/',
   path: '/api/projects/$id/',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
     | '/api/auth/change-password'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
     | '/api/auth/change-password'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/api/health'
     | '/projects/$id'
+    | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
     | '/api/auth/change-password'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  ApiAdminAuditLogsRoute: typeof ApiAdminAuditLogsRoute
   ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
   ApiAuthChangePasswordRoute: typeof ApiAuthChangePasswordRoute
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminDbStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/audit-logs': {
+      id: '/api/admin/audit-logs'
+      path: '/api/admin/audit-logs'
+      fullPath: '/api/admin/audit-logs'
+      preLoaderRoute: typeof ApiAdminAuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/': {
       id: '/api/projects/$id/'
       path: '/api/projects/$id'
@@ -494,6 +514,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  ApiAdminAuditLogsRoute: ApiAdminAuditLogsRoute,
   ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
   ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
   ApiAuthChangePasswordRoute: ApiAuthChangePasswordRoute,

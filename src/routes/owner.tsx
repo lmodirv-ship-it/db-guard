@@ -15,6 +15,18 @@ type User = {
   created_at: string;
 };
 
+type AuditLog = {
+  id: string;
+  ts: string;
+  action: string;
+  target: string | null;
+  actor_user_id: string | null;
+  actor_email: string | null;
+  ip: string | null;
+  user_agent: string | null;
+  meta: Record<string, unknown> | null;
+};
+
 export const Route = createFileRoute("/owner")({
   head: () => ({ meta: [{ title: "Owner Console — db-guard" }] }),
   component: OwnerConsole,
@@ -24,7 +36,7 @@ function OwnerConsole() {
   const navigate = useNavigate();
   const [me, setMe] = useState<Me | null>(null);
   const [forbidden, setForbidden] = useState(false);
-  const [tab, setTab] = useState<"db" | "users" | "password">("db");
+  const [tab, setTab] = useState<"db" | "users" | "password" | "audit">("db");
 
   useEffect(() => {
     (async () => {
@@ -94,12 +106,14 @@ function OwnerConsole() {
           <TabBtn active={tab === "db"} onClick={() => setTab("db")}>قاعدة البيانات</TabBtn>
           <TabBtn active={tab === "users"} onClick={() => setTab("users")}>المستخدمون</TabBtn>
           <TabBtn active={tab === "password"} onClick={() => setTab("password")}>كلمة المرور</TabBtn>
+          <TabBtn active={tab === "audit"} onClick={() => setTab("audit")}>سجل التدقيق</TabBtn>
         </nav>
 
         <section className="mt-8">
           {tab === "db" && <DbPanel />}
           {tab === "users" && <UsersPanel currentUserId={me?.id ?? null} />}
           {tab === "password" && <PasswordPanel />}
+          {tab === "audit" && <AuditPanel />}
         </section>
       </main>
     </div>
@@ -407,5 +421,111 @@ function PasswordPanel() {
         )}
       </div>
     </form>
+  );
+}
+
+const ACTION_LABEL: Record<string, string> = {
+  "auth.password_changed": "تغيير كلمة المرور",
+  "user.created": "إنشاء مستخدم",
+  "user.deleted": "حذف مستخدم",
+  "db.status_checked": "فحص اتصال قاعدة البيانات",
+};
+
+function AuditPanel() {
+  const [logs, setLogs] = useState<AuditLog[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState<string>("");
+
+  async function load() {
+    setLoading(true);
+    try {
+      const r = await fetch("/api/admin/audit-logs?limit=200");
+      const j = (await r.json()) as { ok: boolean; logs?: AuditLog[] };
+      if (j.ok && j.logs) setLogs(j.logs);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => { load(); }, []);
+
+  const filtered = (logs ?? []).filter(
+    (l) => !filter || l.action === filter,
+  );
+  const actions = Array.from(new Set((logs ?? []).map((l) => l.action)));
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">سجل التدقيق</h2>
+        <div className="flex items-center gap-2">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="rounded-md border border-border bg-input px-3 py-1.5 text-sm"
+          >
+            <option value="">كل الأحداث</option>
+            {actions.map((a) => (
+              <option key={a} value={a}>{ACTION_LABEL[a] ?? a}</option>
+            ))}
+          </select>
+          <button
+            onClick={load}
+            disabled={loading}
+            className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
+          >
+            {loading ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
+        {logs === null ? (
+          <p className="p-6 text-sm text-muted-foreground">Loading…</p>
+        ) : filtered.length === 0 ? (
+          <p className="p-6 text-sm text-muted-foreground">لا توجد سجلات.</p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="border-b border-border bg-muted/50 text-left">
+              <tr>
+                <th className="px-4 py-3 font-medium">الزمن</th>
+                <th className="px-4 py-3 font-medium">الحدث</th>
+                <th className="px-4 py-3 font-medium">المُنفِّذ</th>
+                <th className="px-4 py-3 font-medium">الهدف</th>
+                <th className="px-4 py-3 font-medium">IP</th>
+                <th className="px-4 py-3 font-medium">تفاصيل</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((l) => (
+                <tr key={l.id} className="border-b border-border last:border-0 align-top">
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
+                    {new Date(l.ts).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="rounded-full bg-primary/15 px-2 py-0.5 font-mono text-xs text-primary">
+                      {ACTION_LABEL[l.action] ?? l.action}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs">
+                    {l.actor_email ?? l.actor_user_id?.slice(0, 8) ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs">
+                    {l.target ? l.target.slice(0, 12) : "—"}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {l.ip ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {l.meta && Object.keys(l.meta).length > 0
+                      ? JSON.stringify(l.meta)
+                      : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }
