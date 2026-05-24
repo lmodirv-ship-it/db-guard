@@ -21,17 +21,22 @@ function SignupPage() {
     setLoading(true);
     setError(null);
     try {
+      const payload: Record<string, string> = { email, password };
+      const displayName = name.trim() || tenantName.trim();
+      if (displayName) payload.name = displayName;
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantName, name, email, password }),
+        body: JSON.stringify(payload),
       });
       const json = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !json.ok) {
         setError(json.error ?? "signup_failed");
         return;
       }
-      await navigate({ to: "/dashboard" });
+      // Hard navigation so the freshly-set session cookie is attached
+      // to the very next request to /api/auth/me on the dashboard.
+      window.location.href = "/dashboard";
     } catch {
       setError("network_error");
     } finally {

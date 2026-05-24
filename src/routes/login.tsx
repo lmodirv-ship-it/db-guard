@@ -29,7 +29,7 @@ function LoginPage() {
         setError(json.error ?? "login_failed");
         return;
       }
-      await navigate({ to: "/dashboard" });
+      window.location.href = "/dashboard";
     } catch {
       setError("network_error");
     } finally {
