@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, Trash2, Users as UsersIcon, Loader2 } from "lucide-react";
+import { Plus, Trash2, Users as UsersIcon, Loader2, ShieldCheck } from "lucide-react";
 import { PageHeader, Panel, EmptyState } from "@/components/owner/PageShell";
+
+const PROTECTED_OWNER_EMAIL = "lmodirv@gmail.com";
+const isProtected = (email: string) => email.trim().toLowerCase() === PROTECTED_OWNER_EMAIL;
 
 type User = { id: string; email: string; name: string | null; role: "owner" | "admin" | "member"; created_at: string };
 
@@ -47,9 +50,17 @@ function UsersPage() {
     } finally { setBusy(false); }
   }
 
-  async function remove(id: string) {
+  async function remove(u: User) {
+    if (isProtected(u.email)) {
+      alert("لا يمكن حذف المالك الرئيسي للموقع.");
+      return;
+    }
     if (!confirm("حذف هذا المستخدم؟")) return;
-    await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    const r = await fetch(`/api/admin/users/${u.id}`, { method: "DELETE" });
+    const j = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    if (!j.ok && j.error === "protected_owner") {
+      alert("هذا الحساب محمي ولا يمكن حذفه.");
+    }
     await load();
   }
 
@@ -92,9 +103,20 @@ function UsersPage() {
               <tr><th className="px-3 py-2">Email</th><th className="px-3 py-2">Name</th><th className="px-3 py-2">Role</th><th className="px-3 py-2">Created</th><th /></tr>
             </thead>
             <tbody>
-              {users.map((u) => (
+              {users.map((u) => {
+                const locked = isProtected(u.email) || u.id === meId;
+                return (
                 <tr key={u.id} className="border-t border-border">
-                  <td className="px-3 py-3 font-mono text-xs">{u.email}</td>
+                  <td className="px-3 py-3 font-mono text-xs">
+                    <div className="flex items-center gap-2">
+                      {u.email}
+                      {isProtected(u.email) && (
+                        <span title="حساب المالك الرئيسي — محمي" className="inline-flex items-center gap-1 rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-semibold">
+                          <ShieldCheck className="h-3 w-3" /> Protected
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-3 py-3">{u.name ?? "—"}</td>
                   <td className="px-3 py-3">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-mono ${
@@ -105,13 +127,15 @@ function UsersPage() {
                   </td>
                   <td className="px-3 py-3 text-muted-foreground">{new Date(u.created_at).toLocaleString()}</td>
                   <td className="px-3 py-3 text-right">
-                    <button onClick={() => remove(u.id)} disabled={u.id === meId}
-                      className="text-destructive hover:opacity-80 disabled:opacity-30 p-1.5 rounded-lg hover:bg-destructive/10">
+                    <button onClick={() => remove(u)} disabled={locked}
+                      title={isProtected(u.email) ? "محمي — لا يمكن حذفه" : undefined}
+                      className="text-destructive hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed p-1.5 rounded-lg hover:bg-destructive/10">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         )}
