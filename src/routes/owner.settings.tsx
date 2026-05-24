@@ -8,15 +8,29 @@ export const Route = createFileRoute("/owner/settings")({
   component: SettingsPage,
 });
 
+const ERROR_MESSAGES: Record<string, string> = {
+  invalid_credentials: "كلمة المرور الحالية غير صحيحة.",
+  invalid_input: "تأكد أن كلمة المرور الجديدة 8 أحرف على الأقل.",
+  same_password: "كلمة المرور الجديدة يجب أن تختلف عن الحالية.",
+  unauthenticated: "انتهت الجلسة، الرجاء تسجيل الدخول مجدداً.",
+  change_password_failed: "تعذّر تغيير كلمة المرور. حاول لاحقاً.",
+};
+
 function SettingsPage() {
   const [cur, setCur] = useState("");
   const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true); setMsg(null);
+    setMsg(null);
+    if (next !== confirm) {
+      setMsg({ kind: "err", text: "كلمتا المرور الجديدتان غير متطابقتين." });
+      return;
+    }
+    setBusy(true);
     try {
       const r = await fetch("/api/auth/change-password", {
         method: "POST",
@@ -24,9 +38,13 @@ function SettingsPage() {
         body: JSON.stringify({ currentPassword: cur, newPassword: next }),
       });
       const j = (await r.json()) as { ok: boolean; error?: string };
-      if (!j.ok) { setMsg({ kind: "err", text: j.error ?? "change_failed" }); return; }
+      if (!j.ok) {
+        const code = j.error ?? "change_password_failed";
+        setMsg({ kind: "err", text: ERROR_MESSAGES[code] ?? code });
+        return;
+      }
       setMsg({ kind: "ok", text: "تم تغيير كلمة المرور بنجاح." });
-      setCur(""); setNext("");
+      setCur(""); setNext(""); setConfirm("");
     } finally { setBusy(false); }
   }
 
@@ -42,6 +60,9 @@ function SettingsPage() {
               className="w-full h-10 rounded-xl bg-muted/40 border border-border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
             <input type="password" required minLength={8} autoComplete="new-password"
               placeholder="كلمة المرور الجديدة (8+)" value={next} onChange={(e) => setNext(e.target.value)}
+              className="w-full h-10 rounded-xl bg-muted/40 border border-border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            <input type="password" required minLength={8} autoComplete="new-password"
+              placeholder="تأكيد كلمة المرور الجديدة" value={confirm} onChange={(e) => setConfirm(e.target.value)}
               className="w-full h-10 rounded-xl bg-muted/40 border border-border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
             <div className="flex items-center gap-3 pt-1">
               <button type="submit" disabled={busy}
