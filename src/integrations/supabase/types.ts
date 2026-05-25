@@ -543,6 +543,68 @@ export type Database = {
         }
         Relationships: []
       }
+      id_user_records: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          owner_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          owner_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          owner_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "id_user_records_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "id_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      id_users: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          login_id: string
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          login_id: string
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          login_id?: string
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       password_reset_logs: {
         Row: {
           action: string
