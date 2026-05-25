@@ -1,53 +1,24 @@
 {
-  "app": {
-    "name": "DB-GUARD",
-    "tagline": "Multi-tenant database platform"
-  },
+  "app": { "name": "DB-GUARD", "tagline": "Multi-tenant database platform" },
   "nav": {
-    "overview": "Overview",
-    "databases": "Databases",
-    "tables": "Tables",
-    "records": "Records",
-    "apiKeys": "API Keys",
-    "backups": "Backups",
-    "logs": "Logs",
-    "team": "Team",
-    "billing": "Billing",
-    "settings": "Settings",
-    "files": "Files"
+    "overview": "Overview", "databases": "Databases", "tables": "Tables", "records": "Records",
+    "apiKeys": "API Keys", "backups": "Backups", "logs": "Logs", "team": "Team",
+    "billing": "Billing", "settings": "Settings", "files": "Files"
   },
   "actions": {
-    "create": "Create",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "confirm": "Confirm",
-    "back": "Back",
-    "next": "Next",
-    "continue": "Continue",
-    "loading": "Loading…",
-    "search": "Search",
-    "refresh": "Refresh",
-    "copy": "Copy",
-    "copied": "Copied",
-    "signOut": "Sign out",
-    "signIn": "Sign in",
-    "signUp": "Sign up"
+    "create": "Create", "save": "Save", "cancel": "Cancel", "delete": "Delete", "edit": "Edit",
+    "confirm": "Confirm", "back": "Back", "next": "Next", "continue": "Continue",
+    "loading": "Loading…", "search": "Search", "refresh": "Refresh",
+    "copy": "Copy", "copied": "Copied", "signOut": "Sign out", "signIn": "Sign in", "signUp": "Sign up"
   },
   "auth": {
     "loginTitle": "Sign in to your account",
     "loginSubtitle": "Enter your email to receive a verification code",
-    "emailLabel": "Email address",
-    "emailPlaceholder": "you@example.com",
-    "sendCode": "Send code",
-    "verifyTitle": "Enter verification code",
+    "emailLabel": "Email address", "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code", "verifyTitle": "Enter verification code",
     "verifySubtitle": "We sent a 6-digit code to {{email}}",
-    "codeLabel": "Verification code",
-    "verify": "Verify",
-    "resendIn": "Resend in {{seconds}}s",
-    "resend": "Resend code",
-    "changeEmail": "Change email",
+    "codeLabel": "Verification code", "verify": "Verify",
+    "resendIn": "Resend in {{seconds}}s", "resend": "Resend code", "changeEmail": "Change email",
     "errors": {
       "invalidEmail": "Please enter a valid email address",
       "invalidCode": "Invalid or expired code",
@@ -56,22 +27,39 @@
     }
   },
   "common": {
-    "language": "Language",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System",
-    "yes": "Yes",
-    "no": "No",
-    "empty": "No data yet",
-    "error": "Something went wrong",
-    "success": "Success"
+    "language": "Language", "theme": "Theme", "light": "Light", "dark": "Dark", "system": "System",
+    "yes": "Yes", "no": "No", "empty": "No data yet", "error": "Something went wrong", "success": "Success"
   },
   "plans": {
-    "free": "Free",
-    "pro": "Pro",
-    "enterprise": "Enterprise",
-    "currentPlan": "Current plan",
-    "upgrade": "Upgrade"
+    "free": "Free", "pro": "Pro", "enterprise": "Enterprise",
+    "currentPlan": "Current plan", "upgrade": "Upgrade"
+  },
+  "hn": {
+    "title": "Create your HN Account",
+    "subtitle": "One identity across all HN platforms.",
+    "unifiedFor": "Unified sign-in for HN apps",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "password": "Password",
+    "createAccount": "Create account",
+    "yourCode": "Your access code",
+    "saveCode": "Save this code — it is your key to your account.",
+    "verifyTitle": "Verify your email",
+    "verifySubtitle": "We sent a 6-digit code to",
+    "otpLabel": "Verification code",
+    "verifyButton": "Verify & continue",
+    "welcome": "Welcome to HN",
+    "doneSubtitle": "Your account is verified.",
+    "userCode": "User code",
+    "redirecting": "Redirecting you back to {{app}}…",
+    "allSet": "You can close this tab.",
+    "footer": "Protected by HN Account · One key for every HN service",
+    "errors": {
+      "emailTaken": "An account with this email already exists.",
+      "invalidCode": "Invalid or expired code.",
+      "tooMany": "Too many attempts. Please try again later.",
+      "internal": "Something went wrong. Please try again."
+    }
   }
 }
