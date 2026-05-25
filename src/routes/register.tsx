@@ -102,60 +102,57 @@ function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await register({
-        data: { full_name: fullName, email, phone, password, source_app, redirect_url },
+      console.log("[register-ui] submit", { email, source_app });
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          full_name: fullName, email, phone, password,
+          source_app: source_app || "db-guard",
+        }),
       });
-      if (!res.ok) {
-        setError(res.error === "email_taken" ? t("hn.errors.emailTaken") : t("hn.errors.internal"));
-      } else {
-        setCode(res.hn_user_code);
-        setStep("verify");
+      const json = (await res.json().catch(() => ({}))) as {
+        ok?: boolean; error?: string;
+        user?: { id: string; email: string; full_name: string; hn_user_code: string };
+      };
+      console.log("[register-ui] response", { status: res.status, body: json });
+      if (!res.ok || !json.ok || !json.user) {
+        const map: Record<string, string> = {
+          email_taken: t("hn.errors.emailTaken", "Email already registered"),
+          invalid_input: t("hn.errors.invalid", "Please check the form"),
+          register_failed: t("hn.errors.internal", "Registration failed"),
+        };
+        setError(map[json.error ?? "register_failed"] ?? json.error ?? "Registration failed");
+        return;
       }
+      // Stash for confirmation page (best-effort)
+      try {
+        sessionStorage.setItem("hn_account_created", JSON.stringify({
+          hn_user_code: json.user.hn_user_code,
+          user_id: json.user.id,
+          full_name: json.user.full_name,
+          email: json.user.email,
+        }));
+      } catch { /* ignore */ }
+
+      // Hard navigation so freshly-set session cookie is sent on next request
+      if (redirect_url) {
+        window.location.href = redirect_url;
+        return;
+      }
+      window.location.href = "/dashboard";
     } catch (err) {
+      console.error("[register-ui] network_error", err);
       setError((err as Error).message || "error");
     } finally {
       setLoading(false);
     }
   }
 
+  // Legacy OTP verify path (no longer used after direct registration, kept as no-op).
   async function onVerify(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await verify({ data: { email, code: otp } });
-      if (!res.ok) {
-        setError(res.error === "too_many_attempts" ? t("hn.errors.tooMany") : t("hn.errors.invalidCode"));
-      } else {
-        // Stash provisioning details in sessionStorage (avoid leaking API key in URL)
-        try {
-          sessionStorage.setItem("hn_account_created", JSON.stringify({
-            hn_user_code: res.hn_user_code,
-            user_id: res.user_id,
-            workspace_id: res.workspace_id,
-            database_id: res.database_id,
-            api_key: res.api_key ?? undefined,
-            full_name: res.full_name,
-            email: res.email,
-          }));
-        } catch { /* ignore */ }
-
-        if (res.redirect_url && res.session_token) {
-          const target = new URL(res.redirect_url);
-          target.searchParams.set("hn_token", res.session_token);
-          target.searchParams.set("hn_user_code", res.hn_user_code);
-          window.location.href = target.toString();
-          return;
-        }
-        await navigate({ to: "/account-created" });
-        return;
-      }
-
-    } catch (err) {
-      setError((err as Error).message || "error");
-    } finally {
-      setLoading(false);
-    }
   }
 
   async function copyCode() {
