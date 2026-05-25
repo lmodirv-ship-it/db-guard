@@ -4,19 +4,11 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
   Activity, Users, CreditCard, Settings, LogOut, Shield, Menu, Globe,
-  Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock, User,
+  Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PulseDot } from "@/components/dashboard/CyberCard";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type NavItem = {
   to: string;
@@ -189,15 +181,6 @@ export function DashboardShell({ title, children }: { title: string; children: R
               </div>
               <LanguageSwitcher />
               <ThemeToggle />
-              <Link
-                to="/dashboard/settings"
-                className="inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-card/60 px-2.5 py-1.5 text-xs font-medium hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition"
-                aria-label="User"
-                title={me?.email ?? "User"}
-              >
-                <User className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline max-w-[120px] truncate">{me?.email?.split("@")[0] ?? "User"}</span>
-              </Link>
             </div>
           </div>
         </header>

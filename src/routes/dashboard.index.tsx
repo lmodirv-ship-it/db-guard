@@ -6,7 +6,7 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Terminal } from "@/components/dashboard/Terminal";
 import {
   Database, Table2, FileText, KeyRound, ArrowRight, Cpu, HardDrive,
-  Zap, TrendingUp, Activity, Globe2, Shield, Server,
+  Zap, TrendingUp, Activity, Globe2, Shield, Server, User, LogOut, Settings as SettingsIcon,
 } from "lucide-react";
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, BarChart, Bar,
