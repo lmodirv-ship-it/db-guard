@@ -302,7 +302,7 @@ function Landing() {
           <Shield className="mx-auto h-12 w-12" style={{ color: "oklch(0.88 0.18 85)" }} />
           <h2 className="mt-4 font-brand text-3xl font-black tracking-tight">Cyberpunk-grade security</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            OTP email verification, hashed passwords, isolated tenants, API keys shown once, and audit logs on every action.
+            Direct password login, hashed passwords, isolated tenants, API keys shown once, and audit logs on every action.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/register"
