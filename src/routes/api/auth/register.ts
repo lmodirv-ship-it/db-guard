@@ -25,7 +25,7 @@ function buildCookie(token: string): string {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=None",
+    "SameSite=Lax",
     `Max-Age=${SESSION_TTL_SECONDS}`,
   ].join("; ");
 }
