@@ -14,6 +14,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AccountCreatedRouteImport } from './routes/account-created'
 import { Route as IndexRouteImport } from './routes/index'
@@ -106,6 +107,11 @@ const MyDashboardRoute = MyDashboardRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -454,6 +460,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -528,6 +535,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/register': typeof RegisterRoute
@@ -603,6 +611,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -680,6 +689,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-created'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/owner'
@@ -754,6 +764,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account-created'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/register'
@@ -828,6 +839,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-created'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/owner'
@@ -904,6 +916,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountCreatedRoute: typeof AccountCreatedRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MyDashboardRoute: typeof MyDashboardRoute
   OwnerRoute: typeof OwnerRouteWithChildren
@@ -977,6 +990,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -1578,6 +1598,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountCreatedRoute: AccountCreatedRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MyDashboardRoute: MyDashboardRoute,
   OwnerRoute: OwnerRouteWithChildren,
