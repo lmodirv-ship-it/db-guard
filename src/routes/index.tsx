@@ -86,7 +86,7 @@ function Landing() {
             <a href="#security" className="hover:text-foreground transition">Security</a>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition">Login</Link>
+            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition">Login</Link>
             <Link to="/register"
               className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition"
               style={{
@@ -128,7 +128,7 @@ function Landing() {
                 }}>
                 Create Account <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/auth/login"
+              <Link to="/login"
                 className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-sm font-bold transition hover:bg-foreground/5"
                 style={{ borderColor: "oklch(0.85 0.18 85 / 0.45)", color: "oklch(0.88 0.18 85)" }}>
                 Login
@@ -314,7 +314,7 @@ function Landing() {
               }}>
               Create Account <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/auth/login"
+            <Link to="/login"
               className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-sm font-bold transition hover:bg-foreground/5"
               style={{ borderColor: "oklch(0.85 0.18 85 / 0.45)", color: "oklch(0.88 0.18 85)" }}>
               Login
