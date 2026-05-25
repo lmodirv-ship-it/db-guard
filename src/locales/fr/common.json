@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "DB-GUARD",
+    "tagline": "Plateforme de bases de données multi-tenant"
+  },
+  "nav": {
+    "overview": "Aperçu",
+    "databases": "Bases de données",
+    "tables": "Tables",
+    "records": "Enregistrements",
+    "apiKeys": "Clés API",
+    "backups": "Sauvegardes",
+    "logs": "Journaux",
+    "team": "Équipe",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "files": "Fichiers"
+  },
+  "actions": {
+    "create": "Créer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "continue": "Continuer",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "refresh": "Actualiser",
+    "copy": "Copier",
+    "copied": "Copié",
+    "signOut": "Déconnexion",
+    "signIn": "Connexion",
+    "signUp": "S'inscrire"
+  },
+  "auth": {
+    "loginTitle": "Connectez-vous à votre compte",
+    "loginSubtitle": "Entrez votre email pour recevoir un code de vérification",
+    "emailLabel": "Adresse email",
+    "emailPlaceholder": "vous@exemple.com",
+    "sendCode": "Envoyer le code",
+    "verifyTitle": "Entrez le code de vérification",
+    "verifySubtitle": "Nous avons envoyé un code à 6 chiffres à {{email}}",
+    "codeLabel": "Code de vérification",
+    "verify": "Vérifier",
+    "resendIn": "Renvoyer dans {{seconds}}s",
+    "resend": "Renvoyer le code",
+    "changeEmail": "Changer d'email",
+    "errors": {
+      "invalidEmail": "Veuillez entrer une adresse email valide",
+      "invalidCode": "Code invalide ou expiré",
+      "tooManyAttempts": "Trop de tentatives. Réessayez plus tard.",
+      "rateLimited": "Veuillez patienter avant de demander un autre code"
+    }
+  },
+  "common": {
+    "language": "Langue",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "yes": "Oui",
+    "no": "Non",
+    "empty": "Aucune donnée",
+    "error": "Une erreur est survenue",
+    "success": "Succès"
+  },
+  "plans": {
+    "free": "Gratuit",
+    "pro": "Pro",
+    "enterprise": "Entreprise",
+    "currentPlan": "Plan actuel",
+    "upgrade": "Mettre à niveau"
+  }
+}

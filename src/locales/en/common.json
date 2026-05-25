@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "DB-GUARD",
+    "tagline": "Multi-tenant database platform"
+  },
+  "nav": {
+    "overview": "Overview",
+    "databases": "Databases",
+    "tables": "Tables",
+    "records": "Records",
+    "apiKeys": "API Keys",
+    "backups": "Backups",
+    "logs": "Logs",
+    "team": "Team",
+    "billing": "Billing",
+    "settings": "Settings",
+    "files": "Files"
+  },
+  "actions": {
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "loading": "Loading…",
+    "search": "Search",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "copied": "Copied",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
+  },
+  "auth": {
+    "loginTitle": "Sign in to your account",
+    "loginSubtitle": "Enter your email to receive a verification code",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code",
+    "verifyTitle": "Enter verification code",
+    "verifySubtitle": "We sent a 6-digit code to {{email}}",
+    "codeLabel": "Verification code",
+    "verify": "Verify",
+    "resendIn": "Resend in {{seconds}}s",
+    "resend": "Resend code",
+    "changeEmail": "Change email",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "invalidCode": "Invalid or expired code",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "rateLimited": "Please wait before requesting another code"
+    }
+  },
+  "common": {
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "yes": "Yes",
+    "no": "No",
+    "empty": "No data yet",
+    "error": "Something went wrong",
+    "success": "Success"
+  },
+  "plans": {
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "currentPlan": "Current plan",
+    "upgrade": "Upgrade"
+  }
+}

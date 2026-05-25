@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "DB-GUARD",
+    "tagline": "Plataforma de bases de datos multi-tenant"
+  },
+  "nav": {
+    "overview": "Resumen",
+    "databases": "Bases de datos",
+    "tables": "Tablas",
+    "records": "Registros",
+    "apiKeys": "Claves API",
+    "backups": "Copias de seguridad",
+    "logs": "Registros",
+    "team": "Equipo",
+    "billing": "Facturación",
+    "settings": "Configuración",
+    "files": "Archivos"
+  },
+  "actions": {
+    "create": "Crear",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "continue": "Continuar",
+    "loading": "Cargando…",
+    "search": "Buscar",
+    "refresh": "Actualizar",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "signOut": "Cerrar sesión",
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse"
+  },
+  "auth": {
+    "loginTitle": "Inicia sesión en tu cuenta",
+    "loginSubtitle": "Introduce tu email para recibir un código de verificación",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "sendCode": "Enviar código",
+    "verifyTitle": "Introduce el código de verificación",
+    "verifySubtitle": "Enviamos un código de 6 dígitos a {{email}}",
+    "codeLabel": "Código de verificación",
+    "verify": "Verificar",
+    "resendIn": "Reenviar en {{seconds}}s",
+    "resend": "Reenviar código",
+    "changeEmail": "Cambiar email",
+    "errors": {
+      "invalidEmail": "Introduce un email válido",
+      "invalidCode": "Código inválido o expirado",
+      "tooManyAttempts": "Demasiados intentos. Inténtalo más tarde.",
+      "rateLimited": "Espera antes de solicitar otro código"
+    }
+  },
+  "common": {
+    "language": "Idioma",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "yes": "Sí",
+    "no": "No",
+    "empty": "Sin datos",
+    "error": "Algo salió mal",
+    "success": "Éxito"
+  },
+  "plans": {
+    "free": "Gratis",
+    "pro": "Pro",
+    "enterprise": "Empresa",
+    "currentPlan": "Plan actual",
+    "upgrade": "Mejorar"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "DB-GUARD",
+    "tagline": "منصة قواعد بيانات متعددة المستأجرين"
+  },
+  "nav": {
+    "overview": "نظرة عامة",
+    "databases": "قواعد البيانات",
+    "tables": "الجداول",
+    "records": "السجلات",
+    "apiKeys": "مفاتيح API",
+    "backups": "النسخ الاحتياطية",
+    "logs": "السجلات",
+    "team": "الفريق",
+    "billing": "الفوترة",
+    "settings": "الإعدادات",
+    "files": "الملفات"
+  },
+  "actions": {
+    "create": "إنشاء",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "continue": "متابعة",
+    "loading": "جارٍ التحميل…",
+    "search": "بحث",
+    "refresh": "تحديث",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "signOut": "تسجيل الخروج",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب"
+  },
+  "auth": {
+    "loginTitle": "تسجيل الدخول إلى حسابك",
+    "loginSubtitle": "أدخل بريدك الإلكتروني لاستلام رمز التحقق",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "إرسال الرمز",
+    "verifyTitle": "أدخل رمز التحقق",
+    "verifySubtitle": "أرسلنا رمزًا من 6 أرقام إلى {{email}}",
+    "codeLabel": "رمز التحقق",
+    "verify": "تحقق",
+    "resendIn": "إعادة الإرسال خلال {{seconds}} ثانية",
+    "resend": "إعادة إرسال الرمز",
+    "changeEmail": "تغيير البريد",
+    "errors": {
+      "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+      "invalidCode": "الرمز غير صحيح أو منتهي الصلاحية",
+      "tooManyAttempts": "محاولات كثيرة جدًا. حاول لاحقًا.",
+      "rateLimited": "يرجى الانتظار قبل طلب رمز آخر"
+    }
+  },
+  "common": {
+    "language": "اللغة",
+    "theme": "السمة",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام",
+    "yes": "نعم",
+    "no": "لا",
+    "empty": "لا توجد بيانات بعد",
+    "error": "حدث خطأ ما",
+    "success": "تم بنجاح"
+  },
+  "plans": {
+    "free": "مجاني",
+    "pro": "احترافي",
+    "enterprise": "مؤسسي",
+    "currentPlan": "الخطة الحالية",
+    "upgrade": "ترقية"
+  }
+}
