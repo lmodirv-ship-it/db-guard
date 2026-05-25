@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -62,6 +62,7 @@ function RegisterPage() {
   const { t } = useTranslation();
   const register = useServerFn(registerHnAccount);
   const verify = useServerFn(verifyHnAccount);
+  const navigate = useNavigate();
 
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
@@ -121,17 +122,30 @@ function RegisterPage() {
       if (!res.ok) {
         setError(res.error === "too_many_attempts" ? t("hn.errors.tooMany") : t("hn.errors.invalidCode"));
       } else {
-        setFinalCode(res.hn_user_code);
-        setStep("done");
+        // Stash provisioning details in sessionStorage (avoid leaking API key in URL)
+        try {
+          sessionStorage.setItem("hn_account_created", JSON.stringify({
+            hn_user_code: res.hn_user_code,
+            user_id: res.user_id,
+            workspace_id: res.workspace_id,
+            database_id: res.database_id,
+            api_key: res.api_key ?? undefined,
+            full_name: res.full_name,
+            email: res.email,
+          }));
+        } catch { /* ignore */ }
+
         if (res.redirect_url && res.session_token) {
           const target = new URL(res.redirect_url);
           target.searchParams.set("hn_token", res.session_token);
           target.searchParams.set("hn_user_code", res.hn_user_code);
-          setTimeout(() => {
-            window.location.href = target.toString();
-          }, 4000);
+          window.location.href = target.toString();
+          return;
         }
+        await navigate({ to: "/account-created" });
+        return;
       }
+
     } catch (err) {
       setError((err as Error).message || "error");
     } finally {

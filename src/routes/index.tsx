@@ -1,280 +1,340 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Logo } from "@/components/Logo";
-import logoImg from "@/assets/db-guard-logo.jpg";
 import {
-  Shield, Database, Brain, Cloud, Lock, Activity,
-  Zap, BarChart3, Bell, KeyRound, Users, CheckCircle2, ArrowRight,
+  Shield, Database, Lock, Zap, ArrowRight, ShieldCheck,
+  MessageCircle, Car, ShoppingCart, Camera, PlayCircle, Activity, Server, Globe, KeyRound, Cpu,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DB·GUARD — AI-Powered Database Security Platform" },
-      { name: "description", content: "Secure · Isolate · Scale. Multi-tenant database security with AI-powered threat detection, real-time analytics, and enterprise-grade compliance." },
-      { property: "og:title", content: "DB·GUARD — AI-Powered Database Security" },
-      { property: "og:description", content: "Enterprise database security with AI threat detection and multi-tenant isolation." },
+      { title: "HN Account — Unified identity for HN Chat, Driver, Souk, Studio, Video AI & DB·GUARD" },
+      { name: "description", content: "One HN Account unlocks every HN service. Cyberpunk-grade security, isolated workspaces, and the DB·GUARD database engine." },
+      { property: "og:title", content: "HN Account — One identity for the HN universe" },
+      { property: "og:description", content: "Unified login across HN Chat, Driver, Souk, Studio, Video AI and DB·GUARD." },
     ],
   }),
   component: Landing,
 });
 
+const APPS = [
+  { name: "HN Chat", icon: MessageCircle, color: "oklch(0.72 0.2 50)", desc: "Realtime conversations" },
+  { name: "HN Driver", icon: Car, color: "oklch(0.7 0.2 240)", desc: "Mobility platform" },
+  { name: "HN Souk", icon: ShoppingCart, color: "oklch(0.7 0.25 0)", desc: "Marketplace" },
+  { name: "HN Studio", icon: Camera, color: "oklch(0.65 0.27 310)", desc: "Creator studio" },
+  { name: "HN Video AI", icon: PlayCircle, color: "oklch(0.65 0.25 25)", desc: "Generative video" },
+  { name: "DB·GUARD", icon: Database, color: "oklch(0.7 0.18 195)", desc: "Database engine" },
+];
+
 function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Glow background */}
-      <div className="pointer-events-none fixed inset-0 -z-10" style={{ background: "var(--gradient-glow)" }} />
-      <div className="pointer-events-none fixed inset-0 -z-10 cyber-grid" />
+    <div
+      className="relative min-h-screen overflow-x-hidden text-foreground"
+      style={{
+        background:
+          "radial-gradient(ellipse at 20% 0%, oklch(0.22 0.06 80 / 0.3), transparent 55%), radial-gradient(ellipse at 80% 100%, oklch(0.18 0.08 280 / 0.5), transparent 60%), oklch(0.07 0.02 270)",
+      }}
+    >
+      {/* Animated grid */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 opacity-25"
+        style={{
+          backgroundImage:
+            "linear-gradient(oklch(0.85 0.18 90 / 0.06) 1px, transparent 1px), linear-gradient(90deg, oklch(0.85 0.18 90 / 0.06) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+          maskImage: "radial-gradient(ellipse at center, black 35%, transparent 80%)",
+        }} />
+      {/* Floating orbs */}
+      <div aria-hidden className="pointer-events-none fixed -top-40 -left-40 h-[28rem] w-[28rem] rounded-full -z-10"
+        style={{ background: "radial-gradient(circle, oklch(0.85 0.18 85 / 0.18), transparent 70%)", animation: "hn-pulse 8s ease-in-out infinite" }} />
+      <div aria-hidden className="pointer-events-none fixed -bottom-40 -right-40 h-[32rem] w-[32rem] rounded-full -z-10"
+        style={{ background: "radial-gradient(circle, oklch(0.6 0.27 295 / 0.2), transparent 70%)", animation: "hn-pulse 10s ease-in-out infinite reverse" }} />
+
+      {/* Particles */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+        {Array.from({ length: 24 }).map((_, i) => (
+          <span key={i}
+            className="absolute h-1 w-1 rounded-full"
+            style={{
+              left: `${(i * 53) % 100}%`,
+              top: `${(i * 31) % 100}%`,
+              background: i % 3 === 0 ? "oklch(0.85 0.18 85 / 0.7)" : "oklch(0.7 0.22 280 / 0.6)",
+              boxShadow: "0 0 8px currentColor",
+              animation: `hn-particle ${8 + (i % 5)}s linear infinite`,
+              animationDelay: `${i * 0.4}s`,
+            }} />
+        ))}
+      </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border/50 backdrop-blur-xl bg-background/60">
+      <header className="sticky top-0 z-40 border-b backdrop-blur-xl"
+        style={{ borderColor: "oklch(0.85 0.18 85 / 0.15)", background: "oklch(0.07 0.02 270 / 0.65)" }}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Logo />
-          <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition">Features</a>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl font-brand text-sm font-black"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.92 0.18 90), oklch(0.7 0.22 55))",
+                color: "oklch(0.13 0.02 270)",
+                boxShadow: "0 0 28px oklch(0.85 0.18 85 / 0.55)",
+              }}>HN</div>
+            <div className="font-brand text-sm font-bold tracking-[0.25em]" style={{ color: "oklch(0.88 0.18 85)" }}>
+              HN ACCOUNT
+            </div>
+          </div>
+          <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
+            <a href="#services" className="hover:text-foreground transition">Services</a>
+            <a href="#dbguard" className="hover:text-foreground transition">DB·GUARD</a>
+            <a href="#unified" className="hover:text-foreground transition">Unified</a>
             <a href="#security" className="hover:text-foreground transition">Security</a>
-            <a href="#pricing" className="hover:text-foreground transition">Pricing</a>
-            <Link to="/dashboard" className="hover:text-foreground transition">Dashboard</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground">Sign In</Link>
-            <Link
-              to="/signup"
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-elegant)] hover:opacity-90 transition"
-              style={{ background: "var(--gradient-primary)" }}
-            >
-              Get Started <ArrowRight className="h-4 w-4" />
+            <Link to="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition">Login</Link>
+            <Link to="/register"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.92 0.18 90), oklch(0.7 0.22 55))",
+                color: "oklch(0.13 0.02 270)",
+                boxShadow: "0 10px 30px -10px oklch(0.85 0.18 85 / 0.6)",
+              }}>
+              Create Account <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="relative mx-auto max-w-7xl px-6 pt-20 pb-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-mono tracking-wider text-primary mb-6">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              AI-POWERED · MULTI-TENANT · ENTERPRISE
+            <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs uppercase tracking-widest"
+              style={{ borderColor: "oklch(0.85 0.18 85 / 0.4)", color: "oklch(0.88 0.18 85)" }}>
+              <ShieldCheck className="h-3.5 w-3.5" /> One key for the HN universe
             </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight">
-              AI-Powered<br />
-              <span className="text-gradient">Database Security</span><br />
-              Platform
+            <h1 className="mt-5 font-brand text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.95 0.05 90), oklch(0.85 0.18 85), oklch(0.7 0.22 55))",
+                WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+              }}>
+              The unified identity<br />for HN.
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-              Protect, isolate and scale your data with enterprise-grade multi-tenant architecture,
-              real-time threat detection, and an AI assistant that understands your stack.
+            <p className="mt-5 max-w-lg text-lg text-muted-foreground">
+              Sign up once with HN Account and unlock HN Chat, Driver, Souk, Studio, Video AI, and the DB·GUARD database engine — each with its own isolated workspace and admin dashboard.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold text-primary-foreground shadow-[var(--shadow-glow)] hover:scale-[1.02] transition"
-                style={{ background: "var(--gradient-primary)" }}
-              >
-                Get Started <ArrowRight className="h-4 w-4" />
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link to="/register"
+                className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-bold transition"
+                style={{
+                  background: "linear-gradient(135deg, oklch(0.92 0.18 90), oklch(0.7 0.22 55))",
+                  color: "oklch(0.13 0.02 270)",
+                  boxShadow: "0 18px 40px -10px oklch(0.85 0.18 85 / 0.7), 0 0 50px -10px oklch(0.85 0.18 85 / 0.5)",
+                }}>
+                Create Account <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link
-                to="/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl border border-border glass px-6 py-3.5 font-semibold hover:border-primary/50 transition"
-              >
-                View Dashboard
+              <Link to="/auth/login"
+                className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-sm font-bold transition hover:bg-foreground/5"
+                style={{ borderColor: "oklch(0.85 0.18 85 / 0.45)", color: "oklch(0.88 0.18 85)" }}>
+                Login
               </Link>
             </div>
-
-            <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
+            <div className="mt-8 grid grid-cols-3 gap-3 max-w-md">
               {[
-                { v: "1,234", l: "Threats Blocked" },
-                { v: "99.99%", l: "Uptime" },
-                { v: "100%", l: "Compliant" },
+                { v: "AES-256", l: "Encrypted at rest" },
+                { v: "Isolated", l: "Per-tenant DB" },
+                { v: "24/7", l: "Edge support" },
               ].map((s) => (
-                <div key={s.l}>
-                  <div className="text-3xl font-bold text-gradient">{s.v}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
+                <div key={s.v} className="rounded-xl border p-3 text-center backdrop-blur"
+                  style={{ borderColor: "oklch(0.85 0.18 85 / 0.18)", background: "oklch(0.12 0.03 270 / 0.5)" }}>
+                  <div className="font-mono text-base font-bold" style={{ color: "oklch(0.88 0.18 85)" }}>{s.v}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.l}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 3D Logo */}
-          <div className="relative flex items-center justify-center">
-            <div className="absolute h-[420px] w-[420px] rounded-full blur-3xl opacity-60" style={{ background: "var(--gradient-primary)" }} />
-            <img
-              src={logoImg}
-              alt="DB Guard 3D logo"
-              className="relative w-[380px] h-[380px] rounded-3xl object-cover animate-float shadow-[var(--shadow-glow)]"
-            />
+          {/* Hero visual */}
+          <div className="relative h-[500px]">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="relative flex h-44 w-44 items-center justify-center rounded-3xl"
+                style={{
+                  background: "linear-gradient(135deg, oklch(0.88 0.18 85), oklch(0.68 0.2 55))",
+                  boxShadow: "0 0 100px oklch(0.85 0.18 85 / 0.6), 0 0 0 1px oklch(0.85 0.18 85 / 0.5) inset",
+                  animation: "hn-pulse 4s ease-in-out infinite",
+                }}>
+                <ShieldCheck className="h-24 w-24" style={{ color: "oklch(0.13 0.02 270)" }} />
+              </div>
+            </div>
+            {APPS.map((app, i) => {
+              const angle = (i / APPS.length) * Math.PI * 2 - Math.PI / 2;
+              const r = 200;
+              const x = Math.cos(angle) * r;
+              const y = Math.sin(angle) * r;
+              const Icon = app.icon;
+              return (
+                <div key={app.name}
+                  className="absolute left-1/2 top-1/2"
+                  style={{
+                    transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+                    animation: `hn-float 5s ease-in-out infinite ${i * 0.4}s`,
+                  }}>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border backdrop-blur"
+                      style={{
+                        background: `linear-gradient(135deg, ${app.color}, oklch(0.18 0.04 270))`,
+                        borderColor: app.color,
+                        boxShadow: `0 0 30px ${app.color}88`,
+                      }}>
+                      <Icon className="h-8 w-8" style={{ color: "oklch(0.98 0 0)" }} />
+                    </div>
+                    <span className="text-[11px] font-semibold">{app.name}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="font-mono text-xs tracking-[0.3em] text-primary mb-3">CORE CAPABILITIES</p>
-          <h2 className="text-4xl md:text-5xl font-bold">Everything you need to <span className="text-gradient">protect your data</span></h2>
+      {/* Services */}
+      <section id="services" className="relative mx-auto max-w-7xl px-6 py-20">
+        <div className="text-center">
+          <div className="text-xs uppercase tracking-[0.3em]" style={{ color: "oklch(0.85 0.18 85)" }}>The HN ecosystem</div>
+          <h2 className="mt-3 font-brand text-4xl font-black tracking-tight">Six services. One account.</h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
+            Every HN product is built on the same identity layer. Sign in once with your HN Account and access them all.
+          </p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { i: Shield, t: "Multi-Tenant Isolation", d: "Application-level WHERE clauses + Postgres RLS. Zero cross-tenant leaks." },
-            { i: Brain, t: "AI Threat Detection", d: "Anomaly detection, SQL injection prevention, behavioral analysis." },
-            { i: Activity, t: "Real-Time Analytics", d: "Live dashboards for queries, performance and security posture." },
-            { i: Lock, t: "Audit Logs", d: "Tamper-proof audit trail of every privileged action." },
-            { i: KeyRound, t: "API Key Management", d: "Scoped tokens, rotation policies, instant revocation." },
-            { i: Cloud, t: "Cloud Storage Metrics", d: "Per-tenant storage, bandwidth and quota tracking." },
-            { i: Users, t: "Role-Based Access", d: "Owner / Admin / Member roles with granular permissions." },
-            { i: CheckCircle2, t: "Compliance Monitoring", d: "SOC 2 + GDPR ready with continuous compliance scoring." },
-            { i: Bell, t: "Automated Alerts", d: "Smart alerts for threats, failures and unusual activity." },
-          ].map(({ i: Icon, t, d }) => (
-            <div key={t} className="group relative rounded-2xl glass p-6 hover:border-primary/40 transition">
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition" style={{ background: "var(--gradient-glow)" }} />
-              <div className="relative">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary mb-4 ring-1 ring-primary/30">
-                  <Icon className="h-5 w-5" />
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {APPS.map((app) => {
+            const Icon = app.icon;
+            return (
+              <div key={app.name}
+                className="group relative overflow-hidden rounded-2xl border p-6 backdrop-blur transition hover:-translate-y-1"
+                style={{ borderColor: "oklch(0.85 0.18 85 / 0.18)", background: "oklch(0.12 0.03 270 / 0.6)" }}>
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
+                  style={{ background: `linear-gradient(135deg, ${app.color}, oklch(0.18 0.04 270))`, boxShadow: `0 0 30px ${app.color}66` }}>
+                  <Icon className="h-7 w-7" style={{ color: "oklch(0.98 0 0)" }} />
                 </div>
-                <h3 className="font-semibold text-lg">{t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{d}</p>
+                <h3 className="font-brand text-xl font-bold">{app.name}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{app.desc}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* Dashboard preview */}
-      <section id="security" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <p className="font-mono text-xs tracking-[0.3em] text-accent mb-3">LIVE DASHBOARD</p>
-          <h2 className="text-4xl md:text-5xl font-bold">Mission control for your <span className="text-gradient">entire data stack</span></h2>
-        </div>
-        <div className="rounded-2xl glass p-2 shadow-[var(--shadow-glow)]">
-          <div className="rounded-xl bg-card/80 p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* DB·GUARD */}
+      <section id="dbguard" className="relative mx-auto max-w-7xl px-6 py-20">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="rounded-3xl border p-8 backdrop-blur"
+            style={{
+              borderColor: "oklch(0.7 0.18 195 / 0.4)",
+              background: "linear-gradient(180deg, oklch(0.18 0.06 200 / 0.5), oklch(0.1 0.02 270 / 0.7))",
+              boxShadow: "0 0 80px -10px oklch(0.7 0.18 195 / 0.35)",
+            }}>
+            <div className="flex items-center gap-3">
+              <Database className="h-8 w-8" style={{ color: "oklch(0.78 0.18 195)" }} />
+              <span className="font-brand text-xs tracking-[0.3em]" style={{ color: "oklch(0.78 0.18 195)" }}>DB·GUARD</span>
+            </div>
+            <h3 className="mt-4 font-brand text-3xl font-black">The HN Database Engine.</h3>
+            <p className="mt-3 text-muted-foreground">
+              Every HN account ships with an isolated, private database — provisioned automatically the moment you verify your email. Tables, records, API keys, monitoring and security audits, all in one cyberpunk-grade control plane.
+            </p>
+            <ul className="mt-6 space-y-2.5 text-sm">
               {[
-                { i: Database, l: "Total Databases", v: "356", c: "+8.7%" },
-                { i: Users, l: "Active Users", v: "842", c: "+15.3%" },
-                { i: Shield, l: "Threats Blocked", v: "1,234", c: "−4.2%" },
-                { i: BarChart3, l: "Compliance", v: "98%", c: "+2.4%" },
-              ].map(({ i: Icon, l, v, c }) => (
-                <div key={l} className="rounded-xl border border-border/60 bg-background/40 p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-muted-foreground">{l}</span>
-                    <Icon className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="text-2xl font-bold">{v}</div>
-                  <div className="text-xs text-success mt-1">{c} from last month</div>
-                </div>
+                "Per-tenant database with hard isolation",
+                "Real-time monitoring and audit logs",
+                "REST API & SQL playground out of the box",
+                "Automated backups and point-in-time restore",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-2.5">
+                  <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0" style={{ color: "oklch(0.78 0.18 195)" }} />
+                  <span className="text-muted-foreground">{f}</span>
+                </li>
               ))}
-            </div>
-            <div className="mt-6 grid md:grid-cols-3 gap-4">
-              <div className="md:col-span-2 rounded-xl border border-border/60 bg-background/40 p-6 h-64 flex items-center justify-center">
-                <div className="w-full">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-medium">Platform Activity</span>
-                    <span className="text-xs text-muted-foreground font-mono">Last 7 days</span>
-                  </div>
-                  <svg viewBox="0 0 400 140" className="w-full h-32">
-                    <defs>
-                      <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="oklch(0.62 0.27 295)" stopOpacity="0.5" />
-                        <stop offset="100%" stopColor="oklch(0.62 0.27 295)" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M0,100 L40,80 L80,90 L120,60 L160,70 L200,40 L240,55 L280,30 L320,45 L360,20 L400,25 L400,140 L0,140 Z" fill="url(#g1)" />
-                    <path d="M0,100 L40,80 L80,90 L120,60 L160,70 L200,40 L240,55 L280,30 L320,45 L360,20 L400,25" fill="none" stroke="oklch(0.7 0.2 295)" strokeWidth="2" />
-                    <path d="M0,120 L40,110 L80,115 L120,100 L160,105 L200,90 L240,95 L280,80 L320,85 L360,70 L400,75" fill="none" stroke="oklch(0.7 0.2 230)" strokeWidth="2" />
-                  </svg>
-                </div>
+            </ul>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { i: Server, l: "Edge runtime", v: "12 regions" },
+              { i: Lock, l: "Encryption", v: "AES-256" },
+              { i: Activity, l: "Uptime", v: "99.99%" },
+              { i: Cpu, l: "Engine", v: "HN DB v3" },
+            ].map((s) => (
+              <div key={s.l} className="rounded-2xl border p-5 backdrop-blur"
+                style={{ borderColor: "oklch(0.85 0.18 85 / 0.18)", background: "oklch(0.12 0.03 270 / 0.5)" }}>
+                <s.i className="h-6 w-6" style={{ color: "oklch(0.85 0.18 85)" }} />
+                <div className="mt-3 font-mono text-2xl font-bold" style={{ color: "oklch(0.88 0.18 85)" }}>{s.v}</div>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{s.l}</div>
               </div>
-              <div className="rounded-xl border border-border/60 bg-background/40 p-6 flex flex-col items-center justify-center">
-                <div className="relative h-32 w-32">
-                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="oklch(0.3 0.04 280)" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="oklch(0.72 0.2 155)" strokeWidth="8" strokeDasharray="263" strokeDashoffset="5" strokeLinecap="round" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-bold">98%</span>
-                    <span className="text-[10px] text-success">Excellent</span>
-                  </div>
-                </div>
-                <p className="mt-3 text-xs text-muted-foreground">Security Posture</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="font-mono text-xs tracking-[0.3em] text-primary mb-3">SIMPLE · TRANSPARENT</p>
-          <h2 className="text-4xl md:text-5xl font-bold">Choose your <span className="text-gradient">plan</span></h2>
-          <p className="mt-4 text-muted-foreground">All plans include enterprise security, multi-tenancy and 24/7 monitoring.</p>
+      {/* Unified system */}
+      <section id="unified" className="relative mx-auto max-w-7xl px-6 py-20">
+        <div className="text-center">
+          <div className="text-xs uppercase tracking-[0.3em]" style={{ color: "oklch(0.85 0.18 85)" }}>How it works</div>
+          <h2 className="mt-3 font-brand text-4xl font-black tracking-tight">A single identity, everywhere.</h2>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
           {[
-            { n: "Free", p: "$0", d: "Get started", f: ["1 Tenant", "1 User", "1 Project", "1 GB Storage"], cta: "Get Started" },
-            { n: "Starter", p: "$29", d: "Small teams", f: ["1 Tenant", "5 Users", "10 Projects", "50 GB Storage"], cta: "Start Trial" },
-            { n: "Pro", p: "$99", d: "Growing business", f: ["Unlimited Tenants", "20 Users", "200 GB Storage", "AI Assistant"], cta: "Start Trial", featured: true },
-            { n: "Enterprise", p: "Custom", d: "Mission-critical", f: ["Unlimited Everything", "SSO / SAML", "Dedicated Support", "SLA"], cta: "Contact Sales" },
-          ].map((t) => (
-            <div key={t.n} className={`relative rounded-2xl p-6 ${t.featured ? "neon-border bg-card" : "glass"}`}>
-              {t.featured && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-bold tracking-wider text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
-                  MOST POPULAR
-                </div>
-              )}
-              <h3 className="font-semibold text-lg">{t.n}</h3>
-              <p className="text-xs text-muted-foreground">{t.d}</p>
-              <div className="mt-4 mb-6">
-                <span className="text-4xl font-bold">{t.p}</span>
-                {t.p !== "Custom" && <span className="text-muted-foreground text-sm">/mo</span>}
-              </div>
-              <ul className="space-y-2 mb-6">
-                {t.f.map((feat) => (
-                  <li key={feat} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/signup"
-                className={`block text-center rounded-lg py-2.5 text-sm font-medium transition ${t.featured ? "text-primary-foreground hover:opacity-90" : "border border-border hover:border-primary/50"}`}
-                style={t.featured ? { background: "var(--gradient-primary)" } : {}}
-              >
-                {t.cta}
-              </Link>
+            { i: KeyRound, t: "Create your HN Code", d: "Format HN-XXXXXX. The master key for every HN service." },
+            { i: Globe, t: "Auto-provisioned tenant", d: "Workspace, primary database, and API key created instantly." },
+            { i: Zap, t: "One-click sign-in", d: "Move between HN apps without re-authenticating, ever." },
+          ].map((s) => (
+            <div key={s.t} className="rounded-2xl border p-6 backdrop-blur"
+              style={{ borderColor: "oklch(0.85 0.18 85 / 0.2)", background: "oklch(0.12 0.03 270 / 0.55)" }}>
+              <s.i className="h-7 w-7" style={{ color: "oklch(0.85 0.18 85)" }} />
+              <h3 className="mt-4 font-brand text-lg font-bold">{s.t}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="relative rounded-3xl glass p-12 md:p-16 text-center overflow-hidden">
-          <div className="absolute inset-0 opacity-40" style={{ background: "var(--gradient-glow)" }} />
-          <div className="relative">
-            <Zap className="h-12 w-12 mx-auto mb-6 text-primary" />
-            <h2 className="text-4xl md:text-5xl font-bold">Protect your data. <span className="text-gradient">Empower your future.</span></h2>
-            <p className="mt-4 text-muted-foreground max-w-xl mx-auto">The next generation of database security is here. Join the teams already running on DB·GUARD.</p>
-            <div className="mt-8 flex flex-wrap gap-4 justify-center">
-              <Link to="/signup" className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold text-primary-foreground shadow-[var(--shadow-glow)]" style={{ background: "var(--gradient-primary)" }}>
-                Get Started <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/login" className="inline-flex items-center gap-2 rounded-xl border border-border glass px-6 py-3.5 font-semibold">
-                Talk to Sales
-              </Link>
-            </div>
+      {/* Security */}
+      <section id="security" className="relative mx-auto max-w-7xl px-6 py-20">
+        <div className="rounded-3xl border p-10 text-center backdrop-blur"
+          style={{
+            borderColor: "oklch(0.85 0.18 85 / 0.3)",
+            background: "linear-gradient(180deg, oklch(0.16 0.04 270 / 0.7), oklch(0.08 0.02 270 / 0.85))",
+            boxShadow: "0 0 100px -20px oklch(0.85 0.18 85 / 0.3)",
+          }}>
+          <Shield className="mx-auto h-12 w-12" style={{ color: "oklch(0.88 0.18 85)" }} />
+          <h2 className="mt-4 font-brand text-3xl font-black tracking-tight">Cyberpunk-grade security</h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
+            OTP email verification, hashed passwords, isolated tenants, API keys shown once, and audit logs on every action.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Link to="/register"
+              className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-bold transition"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.92 0.18 90), oklch(0.7 0.22 55))",
+                color: "oklch(0.13 0.02 270)",
+                boxShadow: "0 18px 40px -10px oklch(0.85 0.18 85 / 0.7)",
+              }}>
+              Create Account <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link to="/auth/login"
+              className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-sm font-bold transition hover:bg-foreground/5"
+              style={{ borderColor: "oklch(0.85 0.18 85 / 0.45)", color: "oklch(0.88 0.18 85)" }}>
+              Login
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 mt-12">
-        <div className="mx-auto max-w-7xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <Logo size={32} />
-          <p className="text-xs text-muted-foreground font-mono">© 2026 DB·GUARD — SECURE · ISOLATE · SCALE</p>
+      <footer className="border-t py-10 text-center text-xs text-muted-foreground"
+        style={{ borderColor: "oklch(0.85 0.18 85 / 0.12)" }}>
+        <div className="mx-auto max-w-7xl px-6">
+          HN Account · One identity for HN Chat, HN Driver, HN Souk, HN Studio, HN Video AI and DB·GUARD.
         </div>
       </footer>
+
+      <style>{`
+        @keyframes hn-float { 0%,100%{transform:translate(calc(-50% + var(--x,0)*1px), calc(-50% + var(--y,0)*1px));} 50%{transform:translate(calc(-50% + var(--x,0)*1px), calc(-50% + var(--y,0)*1px - 8px));} }
+        @keyframes hn-pulse { 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(1.05);opacity:1} }
+        @keyframes hn-particle { 0%{transform:translateY(0) translateX(0);opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{transform:translateY(-100vh) translateX(40px);opacity:0} }
+      `}</style>
     </div>
   );
 }
