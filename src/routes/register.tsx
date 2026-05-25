@@ -1,6 +1,6 @@
 import { createFileRoute, useSearch, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import {
@@ -83,6 +83,11 @@ function RegisterPage() {
   const [finalCode, setFinalCode] = useState<string | null>(null);
 
   const sourceLabel = source_app ?? "hn-account";
+
+  // Avoid SSR/client i18n hydration mismatch: render after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return <div className="min-h-screen bg-background" />;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -8,7 +8,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
   }));
 
+  // Hydration-safe i18n: first client render matches SSR (DEFAULT_LANGUAGE).
+  // After hydration, switch to the stored language.
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
+    setHydrated(true);
     const stored = getStoredLanguage();
     if (stored !== i18n.language) {
       i18n.changeLanguage(stored);
@@ -18,6 +23,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   void DEFAULT_LANGUAGE;
+  void hydrated;
 
   return (
     <QueryClientProvider client={queryClient}>
