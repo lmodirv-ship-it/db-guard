@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
   Activity, Users, CreditCard, Settings, LogOut, Shield, Menu, Globe,
-  Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock,
+  Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock, User,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
