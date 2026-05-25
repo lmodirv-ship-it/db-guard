@@ -72,6 +72,11 @@ export const Route = createFileRoute("/api/auth/register")({
                 { sub: existing.id, tid: existing.id, email: existing.email },
                 SESSION_TTL_SECONDS,
               );
+              supabaseAdmin
+                .from("hn_users")
+                .update({ last_login_at: new Date().toISOString() })
+                .eq("id", existing.id)
+                .then(({ error: e }) => { if (e) console.error("[register] existing_last_login_update_failed", e); });
               console.log("[register] existing_user_signed_in", { id: existing.id, hn_user_code: existing.hn_user_code });
               return jsonOk(
                 {
@@ -101,6 +106,7 @@ export const Route = createFileRoute("/api/auth/register")({
               password_hash,
               hn_user_code,
               source_app: source_app || "db-guard",
+              registration_source: "direct_password",
               email_verified: true, // direct registration, no OTP
               status: "active",
             })
@@ -132,6 +138,14 @@ export const Route = createFileRoute("/api/auth/register")({
           } catch (e) {
             console.error("[register] provisioning_failed", e);
           }
+
+          sendRegistrationEmail({
+            full_name: user.full_name,
+            email: user.email,
+            phone: phone || null,
+            login_id: user.hn_user_code,
+            created_at: new Date().toISOString(),
+          }).catch((e) => console.error("[register] admin_notification_failed", e));
 
           // Issue session immediately — no email needed
           const token = await signSession(
