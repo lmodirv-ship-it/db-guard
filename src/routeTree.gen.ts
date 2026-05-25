@@ -75,6 +75,7 @@ import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
 import { Route as ApiBillingUsageRouteImport } from './routes/api/billing/usage'
 import { Route as ApiBillingPlansRouteImport } from './routes/api/billing/plans'
 import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
+import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
@@ -424,6 +425,11 @@ const ApiAuthSignupRoute = ApiAuthSignupRouteImport.update({
   path: '/api/auth/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
+  id: '/api/auth/register',
+  path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
   id: '/api/auth/me',
   path: '/api/auth/me',
@@ -578,6 +584,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
@@ -662,6 +669,7 @@ export interface FileRoutesByTo {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
@@ -749,6 +757,7 @@ export interface FileRoutesById {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
@@ -837,6 +846,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
+    | '/api/auth/register'
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
@@ -921,6 +931,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
+    | '/api/auth/register'
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
@@ -1007,6 +1018,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
+    | '/api/auth/register'
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
@@ -1062,6 +1074,7 @@ export interface RootRouteChildren {
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
+  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
   ApiAuthSignupRoute: typeof ApiAuthSignupRoute
   ApiBillingPlansRoute: typeof ApiBillingPlansRoute
   ApiBillingUsageRoute: typeof ApiBillingUsageRoute
@@ -1547,6 +1560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/register': {
+      id: '/api/auth/register'
+      path: '/api/auth/register'
+      fullPath: '/api/auth/register'
+      preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/me': {
       id: '/api/auth/me'
       path: '/api/auth/me'
@@ -1826,6 +1846,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
+  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
   ApiAuthSignupRoute: ApiAuthSignupRoute,
   ApiBillingPlansRoute: ApiBillingPlansRoute,
   ApiBillingUsageRoute: ApiBillingUsageRoute,
