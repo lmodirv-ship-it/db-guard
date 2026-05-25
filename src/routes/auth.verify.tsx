@@ -116,7 +116,7 @@ function OtpVerifyPage() {
         <div className="mt-6 flex items-center justify-between text-sm">
           <button
             type="button"
-            onClick={() => navigate({ to: "/auth/login" })}
+            onClick={() => navigate({ to: "/login" })}
             className="text-muted-foreground hover:text-foreground"
           >
             {t("auth.changeEmail")}

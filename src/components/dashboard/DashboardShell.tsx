@@ -67,7 +67,7 @@ export function DashboardShell({ title, children }: { title: string; children: R
   useEffect(() => {
     (async () => {
       const r = await fetch("/api/auth/me");
-      if (r.status === 401) { await navigate({ to: "/auth/login" }); return; }
+      if (r.status === 401) { await navigate({ to: "/login" }); return; }
       const j = (await r.json()) as { ok: boolean; user?: { email: string; tenantId: string } };
       if (j.ok && j.user) setMe(j.user);
     })();
@@ -77,7 +77,7 @@ export function DashboardShell({ title, children }: { title: string; children: R
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    await navigate({ to: "/auth/login" });
+    await navigate({ to: "/login" });
   }
 
   const sidebar = (

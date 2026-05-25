@@ -51,7 +51,7 @@ function MyDashboardPage() {
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       if (!data.session) {
-        navigate({ to: "/auth/login" });
+        navigate({ to: "/login" });
       } else {
         setUserEmail(data.session.user.email ?? null);
         setAuthChecked(true);

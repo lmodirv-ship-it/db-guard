@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { randomInt, randomBytes, createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { hashPassword } from "@/lib/auth/password.server";
+import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { signSession, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth/jwt.server";
 import { jsonError, jsonOk } from "@/lib/auth/session.server";
 
@@ -61,8 +61,30 @@ export const Route = createFileRoute("/api/auth/register")({
 
         try {
           const { data: existing } = await supabaseAdmin
-            .from("hn_users").select("id").eq("email", email).maybeSingle();
+            .from("hn_users")
+            .select("id, email, full_name, hn_user_code, password_hash, status")
+            .eq("email", email)
+            .maybeSingle();
           if (existing) {
+            const passwordMatches = await verifyPassword(password, existing.password_hash);
+            if ((!existing.status || existing.status === "active") && passwordMatches) {
+              const token = await signSession(
+                { sub: existing.id, tid: existing.id, email: existing.email },
+                SESSION_TTL_SECONDS,
+              );
+              console.log("[register] existing_user_signed_in", { id: existing.id, hn_user_code: existing.hn_user_code });
+              return jsonOk(
+                {
+                  user: {
+                    id: existing.id,
+                    email: existing.email,
+                    full_name: existing.full_name,
+                    hn_user_code: existing.hn_user_code,
+                  },
+                },
+                { headers: { "Set-Cookie": buildCookie(token) } },
+              );
+            }
             console.warn("[register] email_taken", { email });
             return jsonError(409, "email_taken");
           }

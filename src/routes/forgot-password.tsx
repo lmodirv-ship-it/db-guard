@@ -60,7 +60,7 @@ function ForgotPasswordPage() {
             {loading ? "Sending…" : "Send reset code"}
           </button>
           <div className="text-center text-sm">
-            <Link to="/auth/login" className="text-muted-foreground hover:text-foreground">Back to sign in</Link>
+            <Link to="/login" className="text-muted-foreground hover:text-foreground">Back to sign in</Link>
           </div>
         </form>
       </div>
