@@ -39,6 +39,8 @@ import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.datab
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardBackupsRouteImport } from './routes/dashboard.backups'
 import { Route as DashboardApiKeysRouteImport } from './routes/dashboard.api-keys'
+import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiTeamIndexRouteImport } from './routes/api/team/index'
 import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
@@ -221,6 +223,16 @@ const DashboardApiKeysRoute = DashboardApiKeysRouteImport.update({
   path: '/api-keys',
   getParentRoute: () => DashboardRoute,
 } as any)
+const AuthVerifyRoute = AuthVerifyRouteImport.update({
+  id: '/auth/verify',
+  path: '/auth/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
@@ -385,6 +397,8 @@ export interface FileRoutesByFullPath {
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
@@ -446,6 +460,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
@@ -510,6 +526,8 @@ export interface FileRoutesById {
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
@@ -575,6 +593,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/auth/login'
+    | '/auth/verify'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
@@ -636,6 +656,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/health'
+    | '/auth/login'
+    | '/auth/verify'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
@@ -699,6 +721,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/auth/login'
+    | '/auth/verify'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
@@ -763,6 +787,8 @@ export interface RootRouteChildren {
   OwnerRoute: typeof OwnerRouteWithChildren
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthVerifyRoute: typeof AuthVerifyRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
   ApiAdminAuditLogsRoute: typeof ApiAdminAuditLogsRoute
   ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
@@ -1003,6 +1029,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/api-keys'
       preLoaderRoute: typeof DashboardApiKeysRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/auth/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/health': {
       id: '/api/health'
@@ -1335,6 +1375,8 @@ const rootRouteChildren: RootRouteChildren = {
   OwnerRoute: OwnerRouteWithChildren,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthVerifyRoute: AuthVerifyRoute,
   ProjectsIdRoute: ProjectsIdRoute,
   ApiAdminAuditLogsRoute: ApiAdminAuditLogsRoute,
   ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
