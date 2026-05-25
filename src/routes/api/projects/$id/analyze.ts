@@ -56,12 +56,13 @@ export const Route = createFileRoute("/api/projects/$id/analyze")({
             return jsonOk({ analysis, schema });
           } catch (err) {
             const msg = err instanceof Error ? err.message : "analyze_failed";
+            console.error("project_analyze_failed", { id, err });
             await withTenant(session.tid, (sql) => sql`
               UPDATE projects
               SET status = 'failed', error_message = ${msg}
               WHERE tenant_id = ${session.tid} AND id = ${id}
             `);
-            return jsonError(502, "analyze_failed", { detail: msg });
+            return jsonError(502, "analyze_failed");
           }
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
