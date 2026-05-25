@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as OwnerUsersRouteImport } from './routes/owner.users'
 import { Route as OwnerTenantsRouteImport } from './routes/owner.tenants'
@@ -29,20 +30,42 @@ import { Route as OwnerFilesRouteImport } from './routes/owner.files'
 import { Route as OwnerAuditLogsRouteImport } from './routes/owner.audit-logs'
 import { Route as OwnerApiKeysRouteImport } from './routes/owner.api-keys'
 import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
+import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
+import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
+import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
+import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.databases'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardBackupsRouteImport } from './routes/dashboard.backups'
+import { Route as DashboardApiKeysRouteImport } from './routes/dashboard.api-keys'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiTeamIndexRouteImport } from './routes/api/team/index'
+import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
+import { Route as ApiLogsIndexRouteImport } from './routes/api/logs/index'
+import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
+import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
+import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
+import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
+import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
 import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
+import { Route as ApiBillingUsageRouteImport } from './routes/api/billing/usage'
+import { Route as ApiBillingPlansRouteImport } from './routes/api/billing/plans'
 import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthChangePasswordRouteImport } from './routes/api/auth/change-password'
+import { Route as ApiApiKeysIdRouteImport } from './routes/api/api-keys/$id'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-status'
 import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
+import { Route as ApiTablesIdColumnsRouteImport } from './routes/api/tables/$id/columns'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
@@ -77,6 +100,11 @@ const OwnerIndexRoute = OwnerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OwnerRoute,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ProjectsIdRoute = ProjectsIdRouteImport.update({
   id: '/projects/$id',
@@ -148,14 +176,99 @@ const OwnerAlertsRoute = OwnerAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => OwnerRoute,
 } as any)
+const DashboardTeamRoute = DashboardTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTablesRoute = DashboardTablesRouteImport.update({
+  id: '/tables',
+  path: '/tables',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLogsRoute = DashboardLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDatabasesRoute = DashboardDatabasesRouteImport.update({
+  id: '/databases',
+  path: '/databases',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBackupsRoute = DashboardBackupsRouteImport.update({
+  id: '/backups',
+  path: '/backups',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardApiKeysRoute = DashboardApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTeamIndexRoute = ApiTeamIndexRouteImport.update({
+  id: '/api/team/',
+  path: '/api/team/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTablesIndexRoute = ApiTablesIndexRouteImport.update({
+  id: '/api/tables/',
+  path: '/api/tables/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIndexRoute = ApiProjectsIndexRouteImport.update({
   id: '/api/projects/',
   path: '/api/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLogsIndexRoute = ApiLogsIndexRouteImport.update({
+  id: '/api/logs/',
+  path: '/api/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBackupsIndexRoute = ApiBackupsIndexRouteImport.update({
+  id: '/api/backups/',
+  path: '/api/backups/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiApiKeysIndexRoute = ApiApiKeysIndexRouteImport.update({
+  id: '/api/api-keys/',
+  path: '/api/api-keys/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardTablesIdRoute = DashboardTablesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DashboardTablesRoute,
+} as any)
+const ApiTablesIdRoute = ApiTablesIdRouteImport.update({
+  id: '/api/tables/$id',
+  path: '/api/tables/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRecordsIdRoute = ApiRecordsIdRouteImport.update({
+  id: '/api/records/$id',
+  path: '/api/records/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiJobsEnqueueRoute = ApiJobsEnqueueRouteImport.update({
@@ -166,6 +279,16 @@ const ApiJobsEnqueueRoute = ApiJobsEnqueueRouteImport.update({
 const ApiJobsDrainRoute = ApiJobsDrainRouteImport.update({
   id: '/api/jobs/drain',
   path: '/api/jobs/drain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBillingUsageRoute = ApiBillingUsageRouteImport.update({
+  id: '/api/billing/usage',
+  path: '/api/billing/usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBillingPlansRoute = ApiBillingPlansRouteImport.update({
+  id: '/api/billing/plans',
+  path: '/api/billing/plans',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSignupRoute = ApiAuthSignupRouteImport.update({
@@ -191,6 +314,11 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
 const ApiAuthChangePasswordRoute = ApiAuthChangePasswordRouteImport.update({
   id: '/api/auth/change-password',
   path: '/api/auth/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiApiKeysIdRoute = ApiApiKeysIdRouteImport.update({
+  id: '/api/api-keys/$id',
+  path: '/api/api-keys/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
@@ -219,6 +347,16 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiTablesIdRecordsRoute = ApiTablesIdRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => ApiTablesIdRoute,
+} as any)
+const ApiTablesIdColumnsRoute = ApiTablesIdColumnsRouteImport.update({
+  id: '/columns',
+  path: '/columns',
+  getParentRoute: () => ApiTablesIdRoute,
+} as any)
 const ApiProjectsIdVerifyRoute = ApiProjectsIdVerifyRouteImport.update({
   id: '/api/projects/$id/verify',
   path: '/api/projects/$id/verify',
@@ -242,11 +380,20 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -261,31 +408,53 @@ export interface FileRoutesByFullPath {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/billing/plans': typeof ApiBillingPlansRoute
+  '/api/billing/usage': typeof ApiBillingUsageRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/api/api-keys/': typeof ApiApiKeysIndexRoute
+  '/api/backups/': typeof ApiBackupsIndexRoute
+  '/api/logs/': typeof ApiLogsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/tables/': typeof ApiTablesIndexRoute
+  '/api/team/': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
+  '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -300,33 +469,56 @@ export interface FileRoutesByTo {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/billing/plans': typeof ApiBillingPlansRoute
+  '/api/billing/usage': typeof ApiBillingUsageRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/api/api-keys': typeof ApiApiKeysIndexRoute
+  '/api/backups': typeof ApiBackupsIndexRoute
+  '/api/logs': typeof ApiLogsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
+  '/api/tables': typeof ApiTablesIndexRoute
+  '/api/team': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
+  '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -341,22 +533,36 @@ export interface FileRoutesById {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/signup': typeof ApiAuthSignupRoute
+  '/api/billing/plans': typeof ApiBillingPlansRoute
+  '/api/billing/usage': typeof ApiBillingUsageRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/api/api-keys/': typeof ApiApiKeysIndexRoute
+  '/api/backups/': typeof ApiBackupsIndexRoute
+  '/api/logs/': typeof ApiLogsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
+  '/api/tables/': typeof ApiTablesIndexRoute
+  '/api/team/': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
+  '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
@@ -369,6 +575,15 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -383,31 +598,53 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/billing/plans'
+    | '/api/billing/usage'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/records/$id'
+    | '/api/tables/$id'
+    | '/dashboard/tables/$id'
+    | '/api/api-keys/'
+    | '/api/backups/'
+    | '/api/logs/'
     | '/api/projects/'
+    | '/api/tables/'
+    | '/api/team/'
     | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/tables/$id/columns'
+    | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/login'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -422,22 +659,36 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard'
     | '/owner'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/billing/plans'
+    | '/api/billing/usage'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/records/$id'
+    | '/api/tables/$id'
+    | '/dashboard/tables/$id'
+    | '/api/api-keys'
+    | '/api/backups'
+    | '/api/logs'
     | '/api/projects'
+    | '/api/tables'
+    | '/api/team'
     | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/tables/$id/columns'
+    | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id'
   id:
@@ -448,6 +699,15 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -462,29 +722,43 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/me'
     | '/api/auth/signup'
+    | '/api/billing/plans'
+    | '/api/billing/usage'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/records/$id'
+    | '/api/tables/$id'
+    | '/dashboard/tables/$id'
+    | '/api/api-keys/'
+    | '/api/backups/'
+    | '/api/logs/'
     | '/api/projects/'
+    | '/api/tables/'
+    | '/api/team/'
     | '/api/admin/users/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/tables/$id/columns'
+    | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   SignupRoute: typeof SignupRoute
@@ -493,14 +767,24 @@ export interface RootRouteChildren {
   ApiAdminAuditLogsRoute: typeof ApiAdminAuditLogsRoute
   ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
+  ApiApiKeysIdRoute: typeof ApiApiKeysIdRoute
   ApiAuthChangePasswordRoute: typeof ApiAuthChangePasswordRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiAuthSignupRoute: typeof ApiAuthSignupRoute
+  ApiBillingPlansRoute: typeof ApiBillingPlansRoute
+  ApiBillingUsageRoute: typeof ApiBillingUsageRoute
   ApiJobsDrainRoute: typeof ApiJobsDrainRoute
   ApiJobsEnqueueRoute: typeof ApiJobsEnqueueRoute
+  ApiRecordsIdRoute: typeof ApiRecordsIdRoute
+  ApiTablesIdRoute: typeof ApiTablesIdRouteWithChildren
+  ApiApiKeysIndexRoute: typeof ApiApiKeysIndexRoute
+  ApiBackupsIndexRoute: typeof ApiBackupsIndexRoute
+  ApiLogsIndexRoute: typeof ApiLogsIndexRoute
   ApiProjectsIndexRoute: typeof ApiProjectsIndexRoute
+  ApiTablesIndexRoute: typeof ApiTablesIndexRoute
+  ApiTeamIndexRoute: typeof ApiTeamIndexRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
@@ -551,6 +835,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/owner/'
       preLoaderRoute: typeof OwnerIndexRouteImport
       parentRoute: typeof OwnerRoute
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/projects/$id': {
       id: '/projects/$id'
@@ -650,6 +941,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerAlertsRouteImport
       parentRoute: typeof OwnerRoute
     }
+    '/dashboard/team': {
+      id: '/dashboard/team'
+      path: '/team'
+      fullPath: '/dashboard/team'
+      preLoaderRoute: typeof DashboardTeamRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/tables': {
+      id: '/dashboard/tables'
+      path: '/tables'
+      fullPath: '/dashboard/tables'
+      preLoaderRoute: typeof DashboardTablesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/records': {
+      id: '/dashboard/records'
+      path: '/records'
+      fullPath: '/dashboard/records'
+      preLoaderRoute: typeof DashboardRecordsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/logs': {
+      id: '/dashboard/logs'
+      path: '/logs'
+      fullPath: '/dashboard/logs'
+      preLoaderRoute: typeof DashboardLogsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/databases': {
+      id: '/dashboard/databases'
+      path: '/databases'
+      fullPath: '/dashboard/databases'
+      preLoaderRoute: typeof DashboardDatabasesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/backups': {
+      id: '/dashboard/backups'
+      path: '/backups'
+      fullPath: '/dashboard/backups'
+      preLoaderRoute: typeof DashboardBackupsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/api-keys': {
+      id: '/dashboard/api-keys'
+      path: '/api-keys'
+      fullPath: '/dashboard/api-keys'
+      preLoaderRoute: typeof DashboardApiKeysRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/health': {
       id: '/api/health'
       path: '/api/health'
@@ -657,11 +1011,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/team/': {
+      id: '/api/team/'
+      path: '/api/team'
+      fullPath: '/api/team/'
+      preLoaderRoute: typeof ApiTeamIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tables/': {
+      id: '/api/tables/'
+      path: '/api/tables'
+      fullPath: '/api/tables/'
+      preLoaderRoute: typeof ApiTablesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/': {
       id: '/api/projects/'
       path: '/api/projects'
       fullPath: '/api/projects/'
       preLoaderRoute: typeof ApiProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/logs/': {
+      id: '/api/logs/'
+      path: '/api/logs'
+      fullPath: '/api/logs/'
+      preLoaderRoute: typeof ApiLogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/backups/': {
+      id: '/api/backups/'
+      path: '/api/backups'
+      fullPath: '/api/backups/'
+      preLoaderRoute: typeof ApiBackupsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/api-keys/': {
+      id: '/api/api-keys/'
+      path: '/api/api-keys'
+      fullPath: '/api/api-keys/'
+      preLoaderRoute: typeof ApiApiKeysIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/tables/$id': {
+      id: '/dashboard/tables/$id'
+      path: '/$id'
+      fullPath: '/dashboard/tables/$id'
+      preLoaderRoute: typeof DashboardTablesIdRouteImport
+      parentRoute: typeof DashboardTablesRoute
+    }
+    '/api/tables/$id': {
+      id: '/api/tables/$id'
+      path: '/api/tables/$id'
+      fullPath: '/api/tables/$id'
+      preLoaderRoute: typeof ApiTablesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/records/$id': {
+      id: '/api/records/$id'
+      path: '/api/records/$id'
+      fullPath: '/api/records/$id'
+      preLoaderRoute: typeof ApiRecordsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/jobs/enqueue': {
@@ -676,6 +1086,20 @@ declare module '@tanstack/react-router' {
       path: '/api/jobs/drain'
       fullPath: '/api/jobs/drain'
       preLoaderRoute: typeof ApiJobsDrainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/billing/usage': {
+      id: '/api/billing/usage'
+      path: '/api/billing/usage'
+      fullPath: '/api/billing/usage'
+      preLoaderRoute: typeof ApiBillingUsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/billing/plans': {
+      id: '/api/billing/plans'
+      path: '/api/billing/plans'
+      fullPath: '/api/billing/plans'
+      preLoaderRoute: typeof ApiBillingPlansRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/signup': {
@@ -713,6 +1137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthChangePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/api-keys/$id': {
+      id: '/api/api-keys/$id'
+      path: '/api/api-keys/$id'
+      fullPath: '/api/api-keys/$id'
+      preLoaderRoute: typeof ApiApiKeysIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/users': {
       id: '/api/admin/users'
       path: '/api/admin/users'
@@ -748,6 +1179,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/tables/$id/records': {
+      id: '/api/tables/$id/records'
+      path: '/records'
+      fullPath: '/api/tables/$id/records'
+      preLoaderRoute: typeof ApiTablesIdRecordsRouteImport
+      parentRoute: typeof ApiTablesIdRoute
+    }
+    '/api/tables/$id/columns': {
+      id: '/api/tables/$id/columns'
+      path: '/columns'
+      fullPath: '/api/tables/$id/columns'
+      preLoaderRoute: typeof ApiTablesIdColumnsRouteImport
+      parentRoute: typeof ApiTablesIdRoute
+    }
     '/api/projects/$id/verify': {
       id: '/api/projects/$id/verify'
       path: '/api/projects/$id/verify'
@@ -778,6 +1223,48 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface DashboardTablesRouteChildren {
+  DashboardTablesIdRoute: typeof DashboardTablesIdRoute
+}
+
+const DashboardTablesRouteChildren: DashboardTablesRouteChildren = {
+  DashboardTablesIdRoute: DashboardTablesIdRoute,
+}
+
+const DashboardTablesRouteWithChildren = DashboardTablesRoute._addFileChildren(
+  DashboardTablesRouteChildren,
+)
+
+interface DashboardRouteChildren {
+  DashboardApiKeysRoute: typeof DashboardApiKeysRoute
+  DashboardBackupsRoute: typeof DashboardBackupsRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
+  DashboardDatabasesRoute: typeof DashboardDatabasesRoute
+  DashboardLogsRoute: typeof DashboardLogsRoute
+  DashboardRecordsRoute: typeof DashboardRecordsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
+  DashboardTeamRoute: typeof DashboardTeamRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardApiKeysRoute: DashboardApiKeysRoute,
+  DashboardBackupsRoute: DashboardBackupsRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
+  DashboardDatabasesRoute: DashboardDatabasesRoute,
+  DashboardLogsRoute: DashboardLogsRoute,
+  DashboardRecordsRoute: DashboardRecordsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTablesRoute: DashboardTablesRouteWithChildren,
+  DashboardTeamRoute: DashboardTeamRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 interface OwnerRouteChildren {
   OwnerAlertsRoute: typeof OwnerAlertsRoute
@@ -827,9 +1314,23 @@ const ApiAdminUsersRouteWithChildren = ApiAdminUsersRoute._addFileChildren(
   ApiAdminUsersRouteChildren,
 )
 
+interface ApiTablesIdRouteChildren {
+  ApiTablesIdColumnsRoute: typeof ApiTablesIdColumnsRoute
+  ApiTablesIdRecordsRoute: typeof ApiTablesIdRecordsRoute
+}
+
+const ApiTablesIdRouteChildren: ApiTablesIdRouteChildren = {
+  ApiTablesIdColumnsRoute: ApiTablesIdColumnsRoute,
+  ApiTablesIdRecordsRoute: ApiTablesIdRecordsRoute,
+}
+
+const ApiTablesIdRouteWithChildren = ApiTablesIdRoute._addFileChildren(
+  ApiTablesIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   OwnerRoute: OwnerRouteWithChildren,
   SignupRoute: SignupRoute,
@@ -838,14 +1339,24 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminAuditLogsRoute: ApiAdminAuditLogsRoute,
   ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
   ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
+  ApiApiKeysIdRoute: ApiApiKeysIdRoute,
   ApiAuthChangePasswordRoute: ApiAuthChangePasswordRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiAuthSignupRoute: ApiAuthSignupRoute,
+  ApiBillingPlansRoute: ApiBillingPlansRoute,
+  ApiBillingUsageRoute: ApiBillingUsageRoute,
   ApiJobsDrainRoute: ApiJobsDrainRoute,
   ApiJobsEnqueueRoute: ApiJobsEnqueueRoute,
+  ApiRecordsIdRoute: ApiRecordsIdRoute,
+  ApiTablesIdRoute: ApiTablesIdRouteWithChildren,
+  ApiApiKeysIndexRoute: ApiApiKeysIndexRoute,
+  ApiBackupsIndexRoute: ApiBackupsIndexRoute,
+  ApiLogsIndexRoute: ApiLogsIndexRoute,
   ApiProjectsIndexRoute: ApiProjectsIndexRoute,
+  ApiTablesIndexRoute: ApiTablesIndexRoute,
+  ApiTeamIndexRoute: ApiTeamIndexRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
@@ -855,12 +1366,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

@@ -1,155 +1,107 @@
-# الخطة الكاملة لمشروع HNBase — Build-Only
+# خطة تطوير DB-GUARD كمنصة قواعد بيانات متعددة المستأجرين
 
-## القرارات النهائية المعتمدة (مغلقة، لا تعديل)
-| البند | القرار |
-|---|---|
-| Runtime | Cloudflare Workers (داخل Lovable) |
-| DB Provider | Neon (`@neondatabase/serverless` HTTP) |
-| Email | Resend HTTP API |
-| Password Hashing | PBKDF2 / SHA-256 / 600k iters عبر `crypto.subtle` |
-| JWT | `jose` HS256، يُحفظ في **httpOnly cookie** |
-| Tenant Isolation | **دفاع بطبقتين**: Application WHERE + Postgres RLS مع `SET LOCAL app.tenant_id` داخل transaction |
-| Supabase | ❌ ممنوع نهائياً (لا SDK، لا Auth، لا أي import) |
-| طريقة العمل | مرحلة بمرحلة، توقف وتقرير بعد كل مرحلة |
-| الأسرار | لن تُضاف الآن. Build-Only. أنت تضعها على سيرفرك. |
+## نظرة عامة
+بناء نظام multi-tenant فوق قاعدة البيانات الحالية مع الحفاظ على التصميم والكود الموجود، وإضافة طبقة عزل كاملة بين العملاء.
 
-## الأسرار الخمسة المعتمدة (في `.env.example` فقط)
-```
-HN_DB_URL              # Neon HTTP connection string (لـ runtime)
-HN_DB_DIRECT_URL       # Neon direct connection (لـ migrations فقط)
-HN_JWT_SECRET          # ≥ 32 حرف عشوائي
-RESEND_API_KEY         # مفتاح Resend
-HN_MAIL_FROM           # عنوان المُرسل المُتحقق منه
-```
+## المرحلة 1 — البنية التحتية للقاعدة (Migration)
 
----
+### جداول النظام (system tables) في schema `public`:
+- `tenants` — كل عميل = tenant واحد (id, name, slug, plan, owner_user_id, created_at)
+- `workspaces` — مساحة عمل لكل tenant (قد تكون متعددة)
+- `projects` — مشاريع داخل workspace
+- `tenant_members` — أعضاء الفريق + الأدوار (owner/admin/editor/viewer)
+- `app_role` enum — owner, admin, editor, viewer
+- `user_tenant_roles` — جدول الأدوار (security definer pattern)
+- `tenant_tables` — تعريف الجداول الديناميكية لكل tenant
+- `tenant_columns` — أعمدة الجداول الديناميكية
+- `tenant_records` — السجلات (JSONB data) مع tenant_id + table_id
+- `api_keys` — مفاتيح API مشفرة (hash) لكل tenant
+- `audit_logs` — سجل كامل لكل العمليات
+- `backups` — نسخ احتياطية metadata
+- `plans` — تعريف الخطط (free / pro / enterprise) مع الحدود
+- `tenant_usage` — استهلاك حالي (عدد الجداول، السجلات، التخزين)
+- `tenant_files` — ملفات مرفوعة
 
-## خريطة المراحل العشر
+### الأمان (RLS):
+- تفعيل RLS على كل الجداول
+- دالة `get_current_tenant_id()` — security definer تقرأ من JWT أو session
+- دالة `has_tenant_role(tenant_id, role)` — security definer لتجنب recursion
+- كل سياسة RLS تتحقق من tenant_id + الدور
+- API keys تُخزّن كـ hash فقط، لا يُسترجع المفتاح بعد إنشائه
 
-| # | المرحلة | الحالة |
-|---|---|---|
-| 0–1 | البنية + الاتصال + `/api/health` | **التالي ← أنفذ الآن وأتوقف** |
-| 2 | SQL Migrations (users, tenants, roles, projects, records, jobs, storage_events, RLS, indexes) | بعد موافقتك على تقرير 0–1 |
-| 3 | Auth: signup/login/logout/forgot/reset + JWT cookie + بريد Resend | لاحقاً |
-| 4 | Tenant Middleware + `withTenantTx` helper + Zod guards (تجاهل tenant_id من body) | لاحقاً |
-| 5 | UI الكامل (RTL، Cairo، نظام التصميم من الصورة): Landing + Auth + Dashboard + Records | لاحقاً |
-| 6 | Site Verification (meta/DNS TXT/file) + Smart Project Generator | لاحقاً |
-| 7 | Pipeline + Job Queue (queued/running/success/failed) + 10 مواقع متوازية + Object Storage | لاحقاً |
-| 8 | لوحة تحكم كاملة (CRUD، فلاتر، تقارير، سجل نشاط) | لاحقاً |
-| 9 | Tests (وحدة + E2E + اختبار عزل: User A ≠ User B) + DEPLOY.md + CHECKLIST.md + SECURITY.md | لاحقاً |
+### Trigger التسجيل:
+- `handle_new_user_tenant()` trigger على `auth.users` → ينشئ تلقائياً:
+  - tenant
+  - workspace افتراضي
+  - project افتراضي
+  - 8 جداول افتراضية (customers, users, orders, products, services, files, logs, settings) مع أعمدة نموذجية
+  - عضوية owner للمستخدم
+  - تعيين خطة free
 
----
+## المرحلة 2 — Server Functions (TanStack)
 
-# 🎯 المرحلة 0–1 (التنفيذ الفوري)
+`src/lib/`:
+- `tenants.functions.ts` — getMyTenant, switchTenant
+- `tables.functions.ts` — list/create/rename/delete + addColumn/dropColumn (مع منع حذف الجداول الأساسية)
+- `records.functions.ts` — list/create/update/delete + بحث وفلترة + import/export CSV
+- `api-keys.functions.ts` — create (يعرض المفتاح مرة واحدة)، list، revoke
+- `logs.functions.ts` — قراءة audit logs
+- `billing.functions.ts` — getPlans, getCurrentUsage, requestUpgrade
+- `team.functions.ts` — invite/remove/changeRole
+- `backups.functions.ts` — create/list/restore (snapshot لـ tenant_records)
 
-## الهدف
-تأسيس البنية + التحقق من الأسرار + اتصال Neon + endpoint `/api/health` يعمل.
+كلها محمية بـ `requireSupabaseAuth` + التحقق من دور العضو في الـ tenant.
 
-## ما سيُنشأ — 5 ملفات
+## المرحلة 3 — Server Routes (REST API للعملاء الخارجيين)
 
-### 1. `src/lib/env.server.ts`
-- `REQUIRED_ENV_KEYS` = الخمسة فقط.
-- `checkEnv()` → `{ ok, missing[], present[] }` بدون كشف القيم.
-- `requireEnv(key)` → يرمي خطأ واضح عند الغياب.
-- `getDbHost()` → يستخرج hostname فقط (آمن للعرض).
+تحت `src/routes/api/v1/` — تستخدم API key بدل JWT:
+- `POST /api/v1/tables`, `GET /api/v1/tables`
+- `POST /api/v1/records`, `GET /api/v1/records`, `PATCH /api/v1/records/$id`, `DELETE /api/v1/records/$id`
+- `GET /api/v1/logs`
+- middleware يتحقق من API key hash، يستخرج tenant_id، ويفرض حدود الخطة
 
-### 2. `src/lib/db/client.server.ts`
-- `getSql()` — singleton Neon HTTP client (lazy init).
-- `withTransaction(fn)` — wrapper لـ Neon transactions (سيُستخدم في مرحلة 4 لـ `SET LOCAL app.tenant_id`).
-- `pingDb()` — `select 1`، يُرجع `{ ok, latency_ms, error? }` مع تعقيم رسائل الخطأ (يحجب أي connection string).
+## المرحلة 4 — صفحات لوحة التحكم
 
-### 3. `src/lib/auth/password.server.ts`
-- `hashPassword(pw)` و `verifyPassword(pw, stored)`.
-- صيغة: `pbkdf2$sha256$600000$<salt_b64>$<hash_b64>`.
-- مقارنة constant-time.
-- **يُجهَّز فقط، لن يُستخدم في 0–1.**
+تحت `src/routes/_authenticated/dashboard/`:
+- `dashboard/index.tsx` — Overview (إحصائيات + استخدام الخطة)
+- `dashboard/databases.tsx`
+- `dashboard/tables/index.tsx` — قائمة الجداول
+- `dashboard/tables/$tableId.tsx` — عارض/محرر السجلات (Records) داخل الجدول
+- `dashboard/records.tsx` — بحث عام
+- `dashboard/files.tsx`
+- `dashboard/api-keys.tsx`
+- `dashboard/backups.tsx`
+- `dashboard/logs.tsx`
+- `dashboard/team.tsx`
+- `dashboard/billing.tsx` — صفحة Plans
+- `dashboard/settings.tsx`
 
-### 4. `src/lib/auth/jwt.server.ts`
-- `signJwt(payload, ttl)` و `verifyJwt(token)` عبر `jose` HS256.
-- payload: `{ sub, email, tenant_id, role }`.
-- يفحص `HN_JWT_SECRET` ≥ 32 حرف.
-- **يُجهَّز فقط، لن يُستخدم في 0–1.**
+تخطيط مشترك (`dashboard.tsx`) فيه sidebar احترافي بلون DB-GUARD الحالي.
 
-### 5. `src/routes/api/health.ts`
-- `GET /api/health`
-- يفحص ENV → يفحص DB (إن أمكن) → JSON منظم.
-- HTTP 200 عند النجاح الكامل، 503 عند أي فشل.
-- `Cache-Control: no-store`.
+## المرحلة 5 — صفحة Plans العامة
+`/plans` — عرض الخطط (Free / Pro / Enterprise) مع زر ترقية (يسجّل طلب فقط، الدفع مرحلة لاحقة).
 
-## شكل الاستجابة المتوقعة
+## التصميم
+- الحفاظ على نظام الألوان والـ design tokens الحالية في `src/styles.css`
+- استخدام مكونات shadcn الموجودة
+- Sidebar + Topbar احترافيين بطابع منصة قواعد بيانات (مونوسبيس للجداول، badges للأنواع)
 
-**حالياً (لا أسرار) — HTTP 503:**
-```json
-{
-  "status": "fail",
-  "checks": {
-    "env": { "status": "fail", "missing": ["HN_DB_URL", "HN_DB_DIRECT_URL", "HN_JWT_SECRET", "RESEND_API_KEY", "HN_MAIL_FROM"] },
-    "db": { "status": "skipped", "reason": "env_missing" }
-  },
-  "db_host": null,
-  "stack": "tanstack-start + cloudflare-workers",
-  "provider": { "db": "neon", "email": "resend" },
-  "supabase": false,
-  "timestamp": "..."
-}
-```
+## ما هو خارج النطاق الآن (سيُذكر في التقرير)
+- الدفع الفعلي (Stripe/Paddle) — فقط طلبات ترقية
+- Backups فعلي على مستوى Postgres — فقط snapshot منطقي للسجلات
+- AI features — مؤجل بطلب المستخدم
+- File storage فعلي — metadata فقط في البداية (يمكن إضافة Lovable Cloud Storage لاحقاً)
 
-**عندما تضع الأسرار على سيرفرك — HTTP 200:**
-```json
-{
-  "status": "ok",
-  "checks": {
-    "env": { "status": "ok", "missing": [] },
-    "db": { "status": "ok", "latency_ms": 42 }
-  },
-  "db_host": "ep-xxx.neon.tech",
-  ...
-}
-```
+## الملاحظات التقنية
+- **لا** نحذف أي كود حالي
+- **لا** نلمس `src/integrations/supabase/*` (auto-generated)
+- كل tenant معزول عبر `tenant_id` + RLS — لا يوجد schema منفصل لكل عميل (نموذج shared schema)
+- الجداول الديناميكية للعملاء تُخزَّن كـ JSONB في `tenant_records` لتجنب DDL في وقت التشغيل (آمن وقابل للتوسع)
+- `tenant_columns` يحدد الـ schema للتحقق من أنواع البيانات قبل الكتابة
 
-## ضمانات الأمان والقيود
-- ✅ كل الملفات `.server.ts` → محظورة من client bundle بقواعد TanStack.
-- ✅ لا قيمة سر تُسرَّب أبداً (فقط أسماء + hostname).
-- ✅ رسائل خطأ DB مُعقّمة (regex يحجب أي `postgres://...`).
-- ❌ صفر imports من `@supabase/*`.
-- ❌ صفر اتصال داخلي.
-- ❌ لا تعديل على `index.tsx` أو `__root.tsx` (تأتي في المرحلة 5).
-- ❌ لا migrations، لا UI، لا endpoints أخرى.
-
-## التقرير بعد التنفيذ
-1. **الملفات المُنشأة** (5 + `package.json` معدّل بـ Neon و jose).
-2. **نتيجة `/api/health` فعلية** (سأستدعيها عبر `invoke-server-function` وأعرض الـ JSON الكامل + HTTP status).
-3. **تأكيد بأرقام:**
-   - `grep -r "@supabase" src/` → 0 نتائج.
-   - imports من `@neondatabase/serverless` → 1.
-   - imports من `jose` → 1.
-4. ✋ **توقف كامل** بانتظار موافقتك على المرحلة 2.
+## التقرير النهائي
+بعد التنفيذ سأقدم تقريراً عربياً يتضمن: الجداول المنشأة، الصفحات، الـ APIs، وما تبقى ناقصاً.
 
 ---
 
-## بعد المرحلة 0–1، المرحلة 2 ستكون: SQL Migrations
-
-سأبني `migrations/` بهذا الشكل (ليس الآن، فقط للسياق):
-```
-migrations/
-├── 0001_extensions.sql       # pgcrypto, citext
-├── 0002_roles.sql            # CREATE ROLE app_tenant
-├── 0003_users.sql            # users + email unique
-├── 0004_tenants.sql          # tenants + storage_root + status
-├── 0005_user_roles.sql       # super_admin/admin/user
-├── 0006_projects.sql         # smart project generator
-├── 0007_site_verifications.sql  # meta/DNS/file methods
-├── 0008_records.sql          # tenant-scoped data (مثال الصورة)
-├── 0009_jobs.sql             # queued/running/success/failed
-├── 0010_storage_events.sql   # provisioning logs
-├── 0011_indexes.sql          # tenant_id, project_id, created_at
-├── 0012_rls_enable.sql       # ENABLE RLS على كل tenant-scoped table
-├── 0013_rls_policies.sql     # USING (tenant_id = current_setting('app.tenant_id')::uuid)
-└── 0014_grants.sql           # GRANT للـ app_tenant فقط، REVOKE من PUBLIC
-```
-
----
-
-## هل توافق على البدء بالمرحلة 0–1 الآن؟
-
-أجب بـ **"ابدأ"** وسأنفذ فوراً، أو قل ما تريد تعديله في الخطة.
+**هل أبدأ التنفيذ بهذه الخطة؟** المشروع كبير جداً وسأنفذه على دفعات (Migration أولاً → server functions → الصفحات).
