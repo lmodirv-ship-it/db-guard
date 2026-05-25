@@ -19,6 +19,7 @@ import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AccountRecoveryRouteImport } from './routes/account-recovery'
 import { Route as AccountCreatedRouteImport } from './routes/account-created'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
@@ -141,6 +142,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRecoveryRoute = AccountRecoveryRouteImport.update({
+  id: '/account-recovery',
+  path: '/account-recovery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountCreatedRoute = AccountCreatedRouteImport.update({
@@ -513,6 +519,7 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
+  '/account-recovery': typeof AccountRecoveryRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -598,6 +605,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
+  '/account-recovery': typeof AccountRecoveryRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
@@ -682,6 +690,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
+  '/account-recovery': typeof AccountRecoveryRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -769,6 +778,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account-created'
+    | '/account-recovery'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -854,6 +864,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account-created'
+    | '/account-recovery'
     | '/forgot-password'
     | '/login'
     | '/my-dashboard'
@@ -937,6 +948,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/account-created'
+    | '/account-recovery'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -1023,6 +1035,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountCreatedRoute: typeof AccountCreatedRoute
+  AccountRecoveryRoute: typeof AccountRecoveryRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -1140,6 +1153,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account-recovery': {
+      id: '/account-recovery'
+      path: '/account-recovery'
+      fullPath: '/account-recovery'
+      preLoaderRoute: typeof AccountRecoveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account-created': {
@@ -1779,6 +1799,7 @@ const ApiTablesIdRouteWithChildren = ApiTablesIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountCreatedRoute: AccountCreatedRoute,
+  AccountRecoveryRoute: AccountRecoveryRoute,
   DashboardRoute: DashboardRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
