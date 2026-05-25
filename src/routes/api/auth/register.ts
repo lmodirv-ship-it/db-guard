@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { randomInt, randomBytes, createHash } from "node:crypto";
+import { randomBytes, createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { signSession, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth/jwt.server";
 import { jsonError, jsonOk } from "@/lib/auth/session.server";
+import { sendRegistrationEmail } from "@/lib/email/send-registration.server";
 
 const RegisterSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -30,13 +31,12 @@ function buildCookie(token: string): string {
 }
 
 async function generateUniqueUserCode(): Promise<string> {
-  for (let i = 0; i < 25; i++) {
-    const code = `HN-${String(randomInt(0, 1_000_000)).padStart(6, "0")}`;
-    const { data } = await supabaseAdmin
-      .from("hn_users").select("id").eq("hn_user_code", code).maybeSingle();
-    if (!data) return code;
+  const { data, error } = await supabaseAdmin.rpc("generate_hn_user_code");
+  if (error || typeof data !== "string") {
+    console.error("[register] code_generation_failed", error);
+    throw new Error("code_generation_failed");
   }
-  throw new Error("code_generation_failed");
+  return data;
 }
 
 function slugify(input: string): string {
