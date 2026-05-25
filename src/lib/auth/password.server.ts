@@ -3,7 +3,8 @@
  * Format: pbkdf2$<iterations>$<saltB64>$<hashB64>
  */
 
-const ITERATIONS = 600_000;
+// Cloudflare Workers caps PBKDF2 iterations at 100_000.
+const ITERATIONS = 100_000;
 const KEY_LEN = 32; // bytes
 const SALT_LEN = 16;
 
@@ -75,6 +76,7 @@ export async function verifyPassword(
     if (parts.length !== 4 || parts[0] !== "pbkdf2") return false;
     const iterations = parseInt(parts[1], 10);
     if (!Number.isFinite(iterations) || iterations < 10_000) return false;
+    if (iterations > 100_000) return false; // Workers cap
     const salt = b64decode(parts[2]);
     const expected = b64decode(parts[3]);
     const actual = await pbkdf2(password, salt, iterations, expected.length);
