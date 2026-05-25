@@ -202,7 +202,7 @@ function RegisterPage() {
             <div className="font-brand text-sm font-bold tracking-[0.25em]" style={{ color: "oklch(0.85 0.18 85)" }}>
               HN ACCOUNT
             </div>
-            <div className="text-[11px] text-muted-foreground">{t("hn.unifiedFor")}</div>
+            <div className="text-[11px] text-muted-foreground" suppressHydrationWarning>{t("hn.unifiedFor")}</div>
           </div>
         </div>
         <LanguageSwitcher />

@@ -30,6 +30,7 @@ const NAV: NavSection[] = [
   { title: "Access & Security", items: [
     { label: "Tenants",  icon: Building2,    to: "/owner/tenants" },
     { label: "Users",    icon: Users,        to: "/owner/users" },
+    { label: "Registered Users", icon: Users, to: "/owner/registered-users" },
     { label: "Roles",    icon: ShieldCheck,  to: "/owner/roles" },
     { label: "API Keys", icon: KeyRound,     to: "/owner/api-keys" },
   ]},
