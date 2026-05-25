@@ -21,11 +21,14 @@ import { Route as AccountCreatedRouteImport } from './routes/account-created'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as SsoCallbackRouteImport } from './routes/sso.callback'
+import { Route as SsoAuthorizeRouteImport } from './routes/sso.authorize'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as OwnerUsersRouteImport } from './routes/owner.users'
 import { Route as OwnerTenantsRouteImport } from './routes/owner.tenants'
 import { Route as OwnerSettingsRouteImport } from './routes/owner.settings'
 import { Route as OwnerRolesRouteImport } from './routes/owner.roles'
+import { Route as OwnerRegisteredUsersRouteImport } from './routes/owner.registered-users'
 import { Route as OwnerRecordsRouteImport } from './routes/owner.records'
 import { Route as OwnerProjectsRouteImport } from './routes/owner.projects'
 import { Route as OwnerJobsRouteImport } from './routes/owner.jobs'
@@ -53,6 +56,7 @@ import { Route as DashboardApiExplorerRouteImport } from './routes/dashboard.api
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as AccountSessionsRouteImport } from './routes/account.sessions'
 import { Route as ApiTeamIndexRouteImport } from './routes/api/team/index'
 import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
@@ -145,6 +149,16 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const SsoCallbackRoute = SsoCallbackRouteImport.update({
+  id: '/sso/callback',
+  path: '/sso/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SsoAuthorizeRoute = SsoAuthorizeRouteImport.update({
+  id: '/sso/authorize',
+  path: '/sso/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIdRoute = ProjectsIdRouteImport.update({
   id: '/projects/$id',
   path: '/projects/$id',
@@ -168,6 +182,11 @@ const OwnerSettingsRoute = OwnerSettingsRouteImport.update({
 const OwnerRolesRoute = OwnerRolesRouteImport.update({
   id: '/roles',
   path: '/roles',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerRegisteredUsersRoute = OwnerRegisteredUsersRouteImport.update({
+  id: '/registered-users',
+  path: '/registered-users',
   getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerRecordsRoute = OwnerRecordsRouteImport.update({
@@ -303,6 +322,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountSessionsRoute = AccountSessionsRouteImport.update({
+  id: '/account/sessions',
+  path: '/account/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTeamIndexRoute = ApiTeamIndexRouteImport.update({
@@ -473,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/account/sessions': typeof AccountSessionsRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
@@ -500,11 +525,14 @@ export interface FileRoutesByFullPath {
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
+  '/owner/registered-users': typeof OwnerRegisteredUsersRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/sso/authorize': typeof SsoAuthorizeRoute
+  '/sso/callback': typeof SsoCallbackRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
@@ -548,6 +576,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/account/sessions': typeof AccountSessionsRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
@@ -575,11 +604,14 @@ export interface FileRoutesByTo {
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
+  '/owner/registered-users': typeof OwnerRegisteredUsersRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/sso/authorize': typeof SsoAuthorizeRoute
+  '/sso/callback': typeof SsoCallbackRoute
   '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
@@ -626,6 +658,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/account/sessions': typeof AccountSessionsRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
@@ -653,11 +686,14 @@ export interface FileRoutesById {
   '/owner/jobs': typeof OwnerJobsRoute
   '/owner/projects': typeof OwnerProjectsRoute
   '/owner/records': typeof OwnerRecordsRoute
+  '/owner/registered-users': typeof OwnerRegisteredUsersRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/sso/authorize': typeof SsoAuthorizeRoute
+  '/sso/callback': typeof SsoCallbackRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
@@ -705,6 +741,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/signup'
+    | '/account/sessions'
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
@@ -732,11 +769,14 @@ export interface FileRouteTypes {
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
+    | '/owner/registered-users'
     | '/owner/roles'
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/sso/authorize'
+    | '/sso/callback'
     | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
@@ -780,6 +820,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/signup'
+    | '/account/sessions'
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
@@ -807,11 +848,14 @@ export interface FileRouteTypes {
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
+    | '/owner/registered-users'
     | '/owner/roles'
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/sso/authorize'
+    | '/sso/callback'
     | '/dashboard'
     | '/owner'
     | '/api/admin/audit-logs'
@@ -857,6 +901,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/signup'
+    | '/account/sessions'
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
@@ -884,11 +929,14 @@ export interface FileRouteTypes {
     | '/owner/jobs'
     | '/owner/projects'
     | '/owner/records'
+    | '/owner/registered-users'
     | '/owner/roles'
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/sso/authorize'
+    | '/sso/callback'
     | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
@@ -935,10 +983,13 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  AccountSessionsRoute: typeof AccountSessionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthVerifyRoute: typeof AuthVerifyRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  SsoAuthorizeRoute: typeof SsoAuthorizeRoute
+  SsoCallbackRoute: typeof SsoCallbackRoute
   ApiAdminAuditLogsRoute: typeof ApiAdminAuditLogsRoute
   ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
@@ -1054,6 +1105,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/sso/callback': {
+      id: '/sso/callback'
+      path: '/sso/callback'
+      fullPath: '/sso/callback'
+      preLoaderRoute: typeof SsoCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sso/authorize': {
+      id: '/sso/authorize'
+      path: '/sso/authorize'
+      fullPath: '/sso/authorize'
+      preLoaderRoute: typeof SsoAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$id': {
       id: '/projects/$id'
       path: '/projects/$id'
@@ -1087,6 +1152,13 @@ declare module '@tanstack/react-router' {
       path: '/roles'
       fullPath: '/owner/roles'
       preLoaderRoute: typeof OwnerRolesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/registered-users': {
+      id: '/owner/registered-users'
+      path: '/registered-users'
+      fullPath: '/owner/registered-users'
+      preLoaderRoute: typeof OwnerRegisteredUsersRouteImport
       parentRoute: typeof OwnerRoute
     }
     '/owner/records': {
@@ -1276,6 +1348,13 @@ declare module '@tanstack/react-router' {
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/sessions': {
+      id: '/account/sessions'
+      path: '/account/sessions'
+      fullPath: '/account/sessions'
+      preLoaderRoute: typeof AccountSessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/team/': {
@@ -1562,6 +1641,7 @@ interface OwnerRouteChildren {
   OwnerJobsRoute: typeof OwnerJobsRoute
   OwnerProjectsRoute: typeof OwnerProjectsRoute
   OwnerRecordsRoute: typeof OwnerRecordsRoute
+  OwnerRegisteredUsersRoute: typeof OwnerRegisteredUsersRoute
   OwnerRolesRoute: typeof OwnerRolesRoute
   OwnerSettingsRoute: typeof OwnerSettingsRoute
   OwnerTenantsRoute: typeof OwnerTenantsRoute
@@ -1579,6 +1659,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerJobsRoute: OwnerJobsRoute,
   OwnerProjectsRoute: OwnerProjectsRoute,
   OwnerRecordsRoute: OwnerRecordsRoute,
+  OwnerRegisteredUsersRoute: OwnerRegisteredUsersRoute,
   OwnerRolesRoute: OwnerRolesRoute,
   OwnerSettingsRoute: OwnerSettingsRoute,
   OwnerTenantsRoute: OwnerTenantsRoute,
@@ -1625,10 +1706,13 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  AccountSessionsRoute: AccountSessionsRoute,
   ApiHealthRoute: ApiHealthRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthVerifyRoute: AuthVerifyRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  SsoAuthorizeRoute: SsoAuthorizeRoute,
+  SsoCallbackRoute: SsoCallbackRoute,
   ApiAdminAuditLogsRoute: ApiAdminAuditLogsRoute,
   ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
   ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
