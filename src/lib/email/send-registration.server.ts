@@ -65,14 +65,8 @@ export async function sendRegistrationEmail(user: RegistrationUser): Promise<voi
       <li><b>Registered at:</b> ${escapeHtml(user.created_at)}</li>
     </ul>`;
 
-  // If SMTP not configured, log skipped — registration must still succeed.
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    await logEmail(to, subject, "skipped", "SMTP not configured");
-    return;
-  }
-
   try {
-    await smtpProvider.send({ to, subject, html, text });
+    await sendEmail({ to, subject, html, text });
     await logEmail(to, subject, "sent");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -80,3 +74,4 @@ export async function sendRegistrationEmail(user: RegistrationUser): Promise<voi
     await logEmail(to, subject, "failed", msg);
   }
 }
+
