@@ -79,10 +79,17 @@
     "subtitle": "One identity across all HN platforms.",
     "unifiedFor": "Unified sign-in for HN apps",
     "fullName": "Full name",
-    "email": "Email",
-    "phone": "Phone (optional)",
+    "email": "Email address",
+    "phone": "Phone number",
     "password": "Password",
+    "confirmPassword": "Confirm password",
     "createAccount": "Create account",
+    "agreeTerms": "I agree to the Terms and Privacy Policy",
+    "or": "or",
+    "alreadyHave": "Already have an account?",
+    "login": "Sign in",
+    "useInAll": "Use this account across all HN services",
+    "protected": "Your account is protected by HN's best-in-class security",
     "yourCode": "Your access code",
     "saveCode": "Save this code — it is your key to your account.",
     "verifyTitle": "Verify your email",
@@ -95,11 +102,25 @@
     "redirecting": "Redirecting you back to {{app}}…",
     "allSet": "You can close this tab.",
     "footer": "Protected by HN Account · One key for every HN service",
+    "brand": {
+      "welcome": "Welcome to",
+      "group": "the HN universe",
+      "oneAccountAll": "One account for every HN service",
+      "startJourney": "Start your journey with HN"
+    },
+    "features": {
+      "secure": "Secure account",
+      "instant": "Instant access",
+      "notifs": "Smart alerts",
+      "support": "24/7 support"
+    },
     "errors": {
       "emailTaken": "An account with this email already exists.",
       "invalidCode": "Invalid or expired code.",
       "tooMany": "Too many attempts. Please try again later.",
-      "internal": "Something went wrong. Please try again."
+      "internal": "Something went wrong. Please try again.",
+      "passwordMismatch": "Passwords do not match.",
+      "mustAgree": "You must accept the terms to continue."
     }
   },
   "myDashboard": {
