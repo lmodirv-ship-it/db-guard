@@ -84,6 +84,11 @@ function RegisterPage() {
 
   const sourceLabel = source_app ?? "hn-account";
 
+  // Avoid SSR/client i18n hydration mismatch: render after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return <div className="min-h-screen bg-background" />;
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
