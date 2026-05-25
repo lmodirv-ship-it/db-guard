@@ -62,6 +62,7 @@ function RegisterPage() {
   const { t } = useTranslation();
   const register = useServerFn(registerHnAccount);
   const verify = useServerFn(verifyHnAccount);
+  const navigate = useNavigate();
 
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
