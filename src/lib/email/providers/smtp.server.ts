@@ -35,6 +35,6 @@ export const smtpProvider: EmailProvider = {
       html: params.html,
       text: params.text,
     });
-    return { id: info.messageId };
+    return { id: info.messageId, provider: "smtp" };
   },
 };

@@ -1,7 +1,8 @@
 import type { EmailProvider, SendEmailParams, SendEmailResult } from "./types";
 import { lovableProvider } from "./providers/lovable";
 import { resendProvider } from "./providers/resend";
-import { smtpProvider, mailgunProvider, sesProvider } from "./providers/stubs";
+import { smtpProvider } from "./providers/smtp.server";
+import { mailgunProvider, sesProvider } from "./providers/stubs";
 
 const providers: Record<string, EmailProvider> = {
   lovable: lovableProvider,
