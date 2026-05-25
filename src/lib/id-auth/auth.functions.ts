@@ -3,7 +3,7 @@ import { getRequest, getResponseHeader, setResponseHeader } from "@tanstack/reac
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { signSession, verifySession } from "@/lib/auth/jwt.server";
-import { sendEmail } from "@/lib/email";
+import { sendRegistrationEmail } from "@/lib/email/send-registration.server";
 
 const ID_COOKIE = "hn_id_session";
 const COOKIE_TTL = 60 * 60 * 24 * 30; // 30 days
