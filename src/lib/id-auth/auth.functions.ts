@@ -84,26 +84,14 @@ export const registerSimpleUser = createServerFn({ method: "POST" })
       return { ok: false as const, error: "internal" as const };
     }
 
-    // Notification email — failure must not break signup
-    try {
-      const html = `
-        <h2>تسجيل جديد — HN ID</h2>
-        <ul>
-          <li><b>الاسم:</b> ${escapeHtml(user.full_name)}</li>
-          <li><b>الإيميل:</b> ${escapeHtml(user.email)}</li>
-          <li><b>الهاتف:</b> ${escapeHtml(user.phone ?? "—")}</li>
-          <li><b>Login ID:</b> <code>${user.login_id}</code></li>
-          <li><b>وقت التسجيل:</b> ${new Date(user.created_at).toISOString()}</li>
-        </ul>`;
-      await sendEmail({
-        to: NOTIFY_TO,
-        subject: `New HN ID signup — ${user.login_id}`,
-        html,
-        text: `New signup\nName: ${user.full_name}\nEmail: ${user.email}\nPhone: ${user.phone ?? "-"}\nLogin ID: ${user.login_id}\nAt: ${user.created_at}`,
-      });
-    } catch (err) {
-      console.error("notify_email_failed", err);
-    }
+    // Notification email — failure must not break signup. Logged to email_logs.
+    await sendRegistrationEmail({
+      full_name: user.full_name,
+      email: user.email,
+      phone: user.phone,
+      login_id: user.login_id,
+      created_at: user.created_at,
+    });
 
     // Set session cookie
     const token = await signSession({ sub: user.id, tid: user.id, email: user.email }, COOKIE_TTL);
