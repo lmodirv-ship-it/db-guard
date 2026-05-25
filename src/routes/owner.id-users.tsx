@@ -49,7 +49,7 @@ function IdUsersPage() {
 
       <Panel
         title="القائمة"
-        action={
+        right={
           <span className="text-xs text-muted-foreground">
             {users ? `${users.length} مستخدم` : ""}
           </span>
