@@ -1,5 +1,4 @@
 import { createFileRoute, useSearch, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -26,7 +25,6 @@ import {
   Headphones,
   UserPlus,
 } from "lucide-react";
-import { registerHnAccount, verifyHnAccount } from "@/lib/hn-account/register.functions";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const searchSchema = z.object({
@@ -60,8 +58,6 @@ const HN_APPS = [
 function RegisterPage() {
   const { source_app, redirect_url } = useSearch({ from: "/register" });
   const { t } = useTranslation();
-  const register = useServerFn(registerHnAccount);
-  const verify = useServerFn(verifyHnAccount);
   const navigate = useNavigate();
 
   const [step, setStep] = useState<Step>("form");
@@ -426,7 +422,7 @@ function RegisterPage() {
                   </div>
 
                   <Link
-                    to="/auth/login"
+                    to="/login"
                     className="flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-foreground/5"
                     style={{ borderColor: "oklch(0.85 0.18 85 / 0.35)" }}
                   >
