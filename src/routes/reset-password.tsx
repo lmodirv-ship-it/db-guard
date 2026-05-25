@@ -31,7 +31,7 @@ function ResetPasswordPage() {
     try {
       const r = await completeFn({ data: { token, code, new_password: password } });
       if (!r.ok) {
-        setErr(r.error === "invalid_code" ? "Invalid or expired code" : r.error === "too_many_attempts" ? "Too many attempts" : "Reset failed");
+        setErr(r.error === "invalid_code" ? "Invalid or expired code" : r.error === "invalid_token" ? "Reset link expired — request a new one" : "Reset failed");
         return;
       }
       navigate({ to: "/login" });
