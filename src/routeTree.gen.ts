@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
@@ -87,6 +88,11 @@ import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$i
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -465,6 +471,7 @@ export interface FileRoutesByFullPath {
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
@@ -539,6 +546,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
@@ -616,6 +624,7 @@ export interface FileRoutesById {
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
@@ -694,6 +703,7 @@ export interface FileRouteTypes {
     | '/my-dashboard'
     | '/owner'
     | '/register'
+    | '/reset-password'
     | '/signup'
     | '/api/health'
     | '/auth/login'
@@ -768,6 +778,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-dashboard'
     | '/register'
+    | '/reset-password'
     | '/signup'
     | '/api/health'
     | '/auth/login'
@@ -844,6 +855,7 @@ export interface FileRouteTypes {
     | '/my-dashboard'
     | '/owner'
     | '/register'
+    | '/reset-password'
     | '/signup'
     | '/api/health'
     | '/auth/login'
@@ -921,6 +933,7 @@ export interface RootRouteChildren {
   MyDashboardRoute: typeof MyDashboardRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   AuthLoginRoute: typeof AuthLoginRoute
@@ -962,6 +975,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -1603,6 +1623,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyDashboardRoute: MyDashboardRoute,
   OwnerRoute: OwnerRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   AuthLoginRoute: AuthLoginRoute,
