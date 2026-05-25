@@ -176,6 +176,89 @@ export type Database = {
         }
         Relationships: []
       }
+      hn_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          hn_user_code: string
+          id: string
+          source_app: string | null
+          token_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          hn_user_code: string
+          id?: string
+          source_app?: string | null
+          token_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          hn_user_code?: string
+          id?: string
+          source_app?: string | null
+          token_hash?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "hn_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hn_users: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string
+          email: string
+          email_verified: boolean
+          full_name: string
+          hn_user_code: string
+          id: string
+          password_hash: string
+          phone: string | null
+          redirect_url: string | null
+          source_app: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string
+          email: string
+          email_verified?: boolean
+          full_name: string
+          hn_user_code: string
+          id?: string
+          password_hash: string
+          phone?: string | null
+          redirect_url?: string | null
+          source_app?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string
+          email?: string
+          email_verified?: boolean
+          full_name?: string
+          hn_user_code?: string
+          id?: string
+          password_hash?: string
+          phone?: string | null
+          redirect_url?: string | null
+          source_app?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -234,6 +317,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_hn_user_code: { Args: never; Returns: string }
       move_to_dlq: {
         Args: {
           dlq_name: string
