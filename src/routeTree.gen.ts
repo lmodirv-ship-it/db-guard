@@ -15,6 +15,7 @@ import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AccountCreatedRouteImport } from './routes/account-created'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
@@ -109,6 +110,11 @@ const LoginRoute = LoginRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountCreatedRoute = AccountCreatedRouteImport.update({
+  id: '/account-created',
+  path: '/account-created',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -440,6 +446,7 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
@@ -513,6 +520,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account-created': typeof AccountCreatedRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/register': typeof RegisterRoute
@@ -585,6 +593,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
@@ -660,6 +669,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account-created'
     | '/dashboard'
     | '/login'
     | '/my-dashboard'
@@ -733,6 +743,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account-created'
     | '/login'
     | '/my-dashboard'
     | '/register'
@@ -804,6 +815,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account-created'
     | '/dashboard'
     | '/login'
     | '/my-dashboard'
@@ -878,6 +890,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountCreatedRoute: typeof AccountCreatedRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   MyDashboardRoute: typeof MyDashboardRoute
@@ -958,6 +971,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account-created': {
+      id: '/account-created'
+      path: '/account-created'
+      fullPath: '/account-created'
+      preLoaderRoute: typeof AccountCreatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -1536,6 +1556,7 @@ const ApiTablesIdRouteWithChildren = ApiTablesIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountCreatedRoute: AccountCreatedRoute,
   DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   MyDashboardRoute: MyDashboardRoute,
