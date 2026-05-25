@@ -99,7 +99,8 @@ export const verifyOtp = createServerFn({ method: "POST" })
     const { email, code } = data;
     const code_hash = hashCode(code);
 
-    // Find latest non-used non-expired code for email
+    // Find any non-used non-expired code for email (handles rapid resends — user
+    // may enter a code from an earlier email rather than the most recent one).
     const { data: rows } = await supabaseAdmin
       .from("email_verification_codes")
       .select("*")
@@ -107,24 +108,26 @@ export const verifyOtp = createServerFn({ method: "POST" })
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false })
-      .limit(1);
+      .limit(10);
 
-    const record = rows?.[0];
-    if (!record) {
+    if (!rows || rows.length === 0) {
       await logAudit({ email, event: "otp_verify", success: false, metadata: { reason: "no_code" } });
       return { ok: false as const, error: "invalid_code" as const };
     }
 
-    if ((record.attempts ?? 0) >= MAX_VERIFY_ATTEMPTS) {
+    const record = rows.find((r) => r.code_hash === code_hash);
+    const latest = rows[0];
+
+    if ((latest.attempts ?? 0) >= MAX_VERIFY_ATTEMPTS) {
       await logAudit({ email, event: "otp_verify", success: false, metadata: { reason: "too_many_attempts" } });
       return { ok: false as const, error: "too_many_attempts" as const };
     }
 
-    if (record.code_hash !== code_hash) {
+    if (!record) {
       await supabaseAdmin
         .from("email_verification_codes")
-        .update({ attempts: (record.attempts ?? 0) + 1 })
-        .eq("id", record.id);
+        .update({ attempts: (latest.attempts ?? 0) + 1 })
+        .eq("id", latest.id);
       await logAudit({ email, event: "otp_verify", success: false, metadata: { reason: "wrong_code" } });
       return { ok: false as const, error: "invalid_code" as const };
     }
