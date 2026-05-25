@@ -45,7 +45,7 @@ export const createMyRecord = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: row, error } = await supabase
       .from("user_records")
-      .insert({ user_id: userId, type: data.type, title: data.title, data: data.data })
+      .insert({ user_id: userId, type: data.type, title: data.title, data: data.data as never })
       .select()
       .single();
     if (error) throw new Error(error.message);
