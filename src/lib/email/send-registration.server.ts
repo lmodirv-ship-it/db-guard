@@ -43,8 +43,8 @@ async function logEmail(
  * Logs every attempt to public.email_logs.
  */
 export async function sendRegistrationEmail(user: RegistrationUser): Promise<void> {
-  const subject = "New user registered";
-  const to = ADMIN_NOTIFY_EMAIL;
+  const subject = `New user registered — ${user.login_id}`;
+  const to = "info@hnchat.net";
 
   const text = [
     "New user registered",

@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { randomInt, randomBytes, createHash } from "node:crypto";
+import { randomBytes, createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { signSession, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth/jwt.server";
 import { jsonError, jsonOk } from "@/lib/auth/session.server";
+import { sendRegistrationEmail } from "@/lib/email/send-registration.server";
 
 const RegisterSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -30,13 +31,12 @@ function buildCookie(token: string): string {
 }
 
 async function generateUniqueUserCode(): Promise<string> {
-  for (let i = 0; i < 25; i++) {
-    const code = `HN-${String(randomInt(0, 1_000_000)).padStart(6, "0")}`;
-    const { data } = await supabaseAdmin
-      .from("hn_users").select("id").eq("hn_user_code", code).maybeSingle();
-    if (!data) return code;
+  const { data, error } = await supabaseAdmin.rpc("generate_hn_user_code");
+  if (error || typeof data !== "string") {
+    console.error("[register] code_generation_failed", error);
+    throw new Error("code_generation_failed");
   }
-  throw new Error("code_generation_failed");
+  return data;
 }
 
 function slugify(input: string): string {
@@ -72,6 +72,11 @@ export const Route = createFileRoute("/api/auth/register")({
                 { sub: existing.id, tid: existing.id, email: existing.email },
                 SESSION_TTL_SECONDS,
               );
+              supabaseAdmin
+                .from("hn_users")
+                .update({ last_login_at: new Date().toISOString() })
+                .eq("id", existing.id)
+                .then(({ error: e }) => { if (e) console.error("[register] existing_last_login_update_failed", e); });
               console.log("[register] existing_user_signed_in", { id: existing.id, hn_user_code: existing.hn_user_code });
               return jsonOk(
                 {
@@ -101,6 +106,7 @@ export const Route = createFileRoute("/api/auth/register")({
               password_hash,
               hn_user_code,
               source_app: source_app || "db-guard",
+              registration_source: "direct_password",
               email_verified: true, // direct registration, no OTP
               status: "active",
             })
@@ -132,6 +138,14 @@ export const Route = createFileRoute("/api/auth/register")({
           } catch (e) {
             console.error("[register] provisioning_failed", e);
           }
+
+          sendRegistrationEmail({
+            full_name: user.full_name,
+            email: user.email,
+            phone: phone || null,
+            login_id: user.hn_user_code,
+            created_at: new Date().toISOString(),
+          }).catch((e) => console.error("[register] admin_notification_failed", e));
 
           // Issue session immediately — no email needed
           const token = await signSession(
