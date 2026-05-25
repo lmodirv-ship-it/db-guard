@@ -550,14 +550,13 @@ function RegisterPage() {
           background: oklch(0.1 0.02 270 / 0.7);
           border: 1px solid oklch(0.85 0.18 85 / 0.18);
           border-radius: 0.85rem;
-          padding: 0.85rem 2.5rem 0.85rem 1rem;
+          padding-block: 0.85rem;
+          padding-inline-start: 1rem;
+          padding-inline-end: 2.5rem;
           color: oklch(0.97 0.01 90);
           font-size: 0.9rem;
           outline: none;
           transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-        }
-        [dir="rtl"] .hn-input {
-          padding: 0.85rem 1rem 0.85rem 2.5rem;
         }
         .hn-input::placeholder { color: oklch(0.65 0.02 270); }
         .hn-input:focus {
@@ -565,13 +564,13 @@ function RegisterPage() {
           box-shadow: 0 0 0 3px oklch(0.85 0.18 85 / 0.12);
           background: oklch(0.1 0.02 270 / 0.9);
         }
-        .hn-input-trail { padding-right: 2.75rem; }
-        [dir="rtl"] .hn-input-trail { padding-left: 2.75rem; padding-right: 2.5rem; }
+        .hn-input-trail { padding-inline-start: 2.75rem; }
         .hn-input-flat {
           border: none;
           background: transparent;
           border-radius: 0;
-          padding: 0.85rem 2.5rem 0.85rem 0.5rem;
+          padding-inline-start: 0.5rem;
+          padding-inline-end: 2.5rem;
           flex: 1;
         }
         .hn-input-flat:focus { box-shadow: none; background: transparent; }
@@ -591,29 +590,27 @@ function RegisterPage() {
         }
         .hn-country {
           display: flex; align-items: center; gap: 0.4rem;
-          padding: 0 0.85rem; height: 100%;
+          padding-inline: 0.85rem; height: 100%;
           color: oklch(0.92 0.05 90);
         }
         .hn-row-divider {
           width: 1px; align-self: stretch;
           background: oklch(0.85 0.18 85 / 0.2);
-          margin: 0.5rem 0;
+          margin-block: 0.5rem;
         }
         .hn-row-icon {
-          position: absolute; right: 0.85rem; top: 50%;
+          position: absolute; inset-inline-end: 0.85rem; top: 50%;
           transform: translateY(-50%);
           color: oklch(0.85 0.18 85 / 0.7);
           pointer-events: none;
         }
-        [dir="rtl"] .hn-row-icon { right: auto; left: 0.85rem; }
         .hn-trailing-btn {
-          position: absolute; right: 0.6rem; top: 50%;
+          position: absolute; inset-inline-start: 0.6rem; top: 50%;
           transform: translateY(-50%);
           color: oklch(0.75 0.05 90);
           padding: 0.3rem; border-radius: 0.4rem;
           transition: color 0.15s, background 0.15s;
         }
-        [dir="rtl"] .hn-trailing-btn { right: auto; left: 0.6rem; }
         .hn-trailing-btn:hover { color: oklch(0.88 0.18 85); background: oklch(0.85 0.18 85 / 0.08); }
         .hn-btn-gold {
           width: 100%;
