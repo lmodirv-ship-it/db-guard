@@ -173,16 +173,19 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false })
-      .limit(1);
+      .limit(10);
 
-    const rec = rows?.[0];
-    if (!rec) return { ok: false as const, error: "invalid_code" as const };
-    if ((rec.attempts ?? 0) >= 5) return { ok: false as const, error: "too_many_attempts" as const };
-    if (rec.code_hash !== code_hash) {
+    if (!rows || rows.length === 0) return { ok: false as const, error: "invalid_code" as const };
+
+    const rec = rows.find((r) => r.code_hash === code_hash);
+    const latest = rows[0];
+
+    if ((latest.attempts ?? 0) >= 5) return { ok: false as const, error: "too_many_attempts" as const };
+    if (!rec) {
       await supabaseAdmin
         .from("email_verification_codes")
-        .update({ attempts: (rec.attempts ?? 0) + 1 })
-        .eq("id", rec.id);
+        .update({ attempts: (latest.attempts ?? 0) + 1 })
+        .eq("id", latest.id);
       return { ok: false as const, error: "invalid_code" as const };
     }
 
