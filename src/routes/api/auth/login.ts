@@ -20,7 +20,7 @@ function buildCookie(token: string, maxAgeSeconds: number): string {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=None",
+    "SameSite=Lax",
     `Max-Age=${maxAgeSeconds}`,
   ].join("; ");
 }
