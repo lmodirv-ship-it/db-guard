@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { smtpProvider } from "./providers/smtp.server";
+import { sendEmail } from "./index";
+
 
 const ADMIN_NOTIFY_EMAIL = process.env.ADMIN_NOTIFY_EMAIL ?? "info@hnchat.net";
 
