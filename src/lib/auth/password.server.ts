@@ -3,7 +3,8 @@
  * Format: pbkdf2$<iterations>$<saltB64>$<hashB64>
  */
 
-const ITERATIONS = 600_000;
+// Cloudflare Workers caps PBKDF2 iterations at 100_000.
+const ITERATIONS = 100_000;
 const KEY_LEN = 32; // bytes
 const SALT_LEN = 16;
 
