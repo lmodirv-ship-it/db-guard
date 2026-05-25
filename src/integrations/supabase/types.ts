@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_audit_log: {
+        Row: {
+          created_at: string
+          email: string | null
+          event: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          success: boolean
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -101,6 +137,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_verification_codes: {
+        Row: {
+          attempts: number
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          ip_address: string | null
+          purpose: string
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          purpose?: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          purpose?: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -122,6 +197,27 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          language: string
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          language?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          language?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
