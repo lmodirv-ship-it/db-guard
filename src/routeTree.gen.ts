@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as QuickDashboardRouteImport } from './routes/quick-dashboard'
+import { Route as QuickRouteImport } from './routes/quick'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
@@ -102,6 +104,16 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuickDashboardRoute = QuickDashboardRouteImport.update({
+  id: '/quick-dashboard',
+  path: '/quick-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuickRoute = QuickRouteImport.update({
+  id: '/quick',
+  path: '/quick',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OwnerRoute = OwnerRouteImport.update({
@@ -494,6 +506,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
+  '/quick': typeof QuickRoute
+  '/quick-dashboard': typeof QuickDashboardRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -573,6 +587,8 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
+  '/quick': typeof QuickRoute
+  '/quick-dashboard': typeof QuickDashboardRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -655,6 +671,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
+  '/quick': typeof QuickRoute
+  '/quick-dashboard': typeof QuickDashboardRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
@@ -738,6 +756,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-dashboard'
     | '/owner'
+    | '/quick'
+    | '/quick-dashboard'
     | '/register'
     | '/reset-password'
     | '/signup'
@@ -817,6 +837,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/my-dashboard'
+    | '/quick'
+    | '/quick-dashboard'
     | '/register'
     | '/reset-password'
     | '/signup'
@@ -898,6 +920,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-dashboard'
     | '/owner'
+    | '/quick'
+    | '/quick-dashboard'
     | '/register'
     | '/reset-password'
     | '/signup'
@@ -980,6 +1004,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MyDashboardRoute: typeof MyDashboardRoute
   OwnerRoute: typeof OwnerRouteWithChildren
+  QuickRoute: typeof QuickRoute
+  QuickDashboardRoute: typeof QuickDashboardRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
@@ -1040,6 +1066,20 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quick-dashboard': {
+      id: '/quick-dashboard'
+      path: '/quick-dashboard'
+      fullPath: '/quick-dashboard'
+      preLoaderRoute: typeof QuickDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quick': {
+      id: '/quick'
+      path: '/quick'
+      fullPath: '/quick'
+      preLoaderRoute: typeof QuickRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/owner': {
@@ -1703,6 +1743,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MyDashboardRoute: MyDashboardRoute,
   OwnerRoute: OwnerRouteWithChildren,
+  QuickRoute: QuickRoute,
+  QuickDashboardRoute: QuickDashboardRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
