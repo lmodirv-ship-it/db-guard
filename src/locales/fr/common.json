@@ -73,5 +73,66 @@
     "enterprise": "Entreprise",
     "currentPlan": "Plan actuel",
     "upgrade": "Mettre à niveau"
+  },
+  "myDashboard": {
+    "title": "Mon espace",
+    "subtitle": "Tableau de bord personnel",
+    "tabs": {
+      "overview": "Aperçu",
+      "profile": "Profil",
+      "records": "Enregistrements",
+      "files": "Fichiers",
+      "logs": "Activité",
+      "settings": "Paramètres",
+      "export": "Export"
+    },
+    "stats": {
+      "records": "Enregistrements",
+      "files": "Fichiers",
+      "logs": "Événements",
+      "exports": "Exports"
+    },
+    "records": {
+      "title": "Mes enregistrements",
+      "addTitle": "Ajouter",
+      "type": "Type",
+      "name": "Titre",
+      "data": "Données (JSON)",
+      "add": "Ajouter",
+      "empty": "Aucun enregistrement"
+    },
+    "files": {
+      "title": "Mes fichiers",
+      "empty": "Aucun fichier"
+    },
+    "logs": {
+      "title": "Journal",
+      "empty": "Aucune activité"
+    },
+    "settings": {
+      "title": "Connexion DB·GUARD",
+      "projectId": "ID projet",
+      "endpoint": "URL Endpoint",
+      "apiKey": "Clé API",
+      "save": "Enregistrer",
+      "disconnect": "Déconnecter",
+      "connected": "Connecté",
+      "disconnected": "Déconnecté",
+      "failed": "Échec",
+      "keyHidden": "Clé chiffrée, jamais affichée à nouveau",
+      "lastSync": "Dernière sync"
+    },
+    "export": {
+      "title": "Exporter vers DB·GUARD",
+      "description": "Envoyez vos données personnelles complètes vers votre projet DB·GUARD.",
+      "includes": "Inclus : profil, enregistrements, fichiers, journaux, paramètres.",
+      "confirm": "Je confirme que seules mes données seront exportées",
+      "run": "Exporter vers DB·GUARD",
+      "running": "Export en cours…",
+      "success": "Export terminé",
+      "failed": "Échec",
+      "history": "Historique",
+      "download": "Télécharger JSON"
+    }
   }
 }
