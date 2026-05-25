@@ -50,6 +50,75 @@ export type Database = {
         }
         Relationships: []
       }
+      dbguard_connections: {
+        Row: {
+          api_key_hash: string | null
+          api_key_hint: string | null
+          created_at: string
+          endpoint_url: string | null
+          id: string
+          last_synced_at: string | null
+          project_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key_hash?: string | null
+          api_key_hint?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_synced_at?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key_hash?: string | null
+          api_key_hint?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_synced_at?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dbguard_export_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          items_count: number
+          payload_size: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          items_count?: number
+          payload_size?: number
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          items_count?: number
+          payload_size?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -283,6 +352,63 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_files: {
+        Row: {
+          created_at: string
+          id: string
+          mime_type: string | null
+          name: string
+          size_bytes: number
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          name: string
+          size_bytes?: number
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          name?: string
+          size_bytes?: number
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           language: string
@@ -299,6 +425,36 @@ export type Database = {
         Update: {
           language?: string
           theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_records: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          title?: string
+          type?: string
           updated_at?: string
           user_id?: string
         }
