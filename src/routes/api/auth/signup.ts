@@ -54,6 +54,14 @@ export const Route = createFileRoute("/api/auth/signup")({
           `) as Array<{ id: string }>;
           const userId = userRows[0].id;
 
+          // Provision default workspace + 8 default tables for the new tenant.
+          try {
+            await sql`SELECT provision_tenant_defaults(${tenantId}::uuid)`;
+          } catch (err) {
+            console.error("provision_defaults_failed", err);
+          }
+
+
           const token = await signSession({ sub: userId, tid: tenantId, email });
           return jsonOk(
             { user: { id: userId, email, tenantId } },
