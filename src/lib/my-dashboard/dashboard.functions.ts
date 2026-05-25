@@ -64,10 +64,11 @@ export const deleteMyRecord = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// Internal sync — this platform IS DB·GUARD. No external endpoint.
+// project_id = sync channel label, endpoint_url = optional target HN workspace code (HN-XXXXXX).
 const connectionSchema = z.object({
   project_id: z.string().min(1).max(128),
-  endpoint_url: z.string().url().max(512),
-  api_key: z.string().min(8).max(512),
+  target_hn_code: z.string().regex(/^HN-\d{6}$/).optional().or(z.literal("")),
 });
 
 export const saveDbguardConnection = createServerFn({ method: "POST" })
@@ -78,9 +79,9 @@ export const saveDbguardConnection = createServerFn({ method: "POST" })
     const payload = {
       user_id: userId,
       project_id: data.project_id,
-      endpoint_url: data.endpoint_url,
-      api_key_hash: hashKey(data.api_key),
-      api_key_hint: keyHint(data.api_key),
+      endpoint_url: data.target_hn_code || null,
+      api_key_hash: null as string | null,
+      api_key_hint: null as string | null,
       status: "connected",
       updated_at: new Date().toISOString(),
     };
@@ -90,7 +91,7 @@ export const saveDbguardConnection = createServerFn({ method: "POST" })
       .select("project_id, endpoint_url, api_key_hint, status, last_synced_at, updated_at")
       .single();
     if (error) throw new Error(error.message);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "dbguard.connect", metadata: { project_id: data.project_id } });
+    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.configure", metadata: { project_id: data.project_id, target: data.target_hn_code || null } });
     return row;
   });
 
@@ -99,10 +100,11 @@ export const disconnectDbguard = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     await supabase.from("dbguard_connections").update({ status: "disconnected", updated_at: new Date().toISOString() }).eq("user_id", userId);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "dbguard.disconnect", metadata: {} });
+    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.disable", metadata: {} });
     return { ok: true };
   });
 
+// Internal snapshot — no external network call.
 export const runDbguardExport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ confirm: z.literal(true) }).parse(d))
@@ -112,7 +114,7 @@ export const runDbguardExport = createServerFn({ method: "POST" })
       supabase.from("user_records").select("id, type, title, data, created_at, updated_at"),
       supabase.from("user_files").select("id, name, mime_type, size_bytes, url, created_at"),
       supabase.from("user_activity_logs").select("id, action, metadata, created_at").order("created_at", { ascending: false }).limit(500),
-      supabase.from("dbguard_connections").select("project_id, endpoint_url, api_key_hint, status").maybeSingle(),
+      supabase.from("dbguard_connections").select("project_id, endpoint_url, status").maybeSingle(),
     ]);
 
     const profile = {
@@ -122,62 +124,29 @@ export const runDbguardExport = createServerFn({ method: "POST" })
     };
     const payload = {
       export_id: randomUUID(),
-      source_app: "dbguard",
+      source_app: "hn-dbguard",
+      kind: "internal_snapshot",
       user_id: userId,
       hn_user_code: profile.hn_user_code,
-      export_type: "full_export",
+      target_hn_code: conn?.endpoint_url ?? null,
+      channel: conn?.project_id ?? null,
       exported_at: new Date().toISOString(),
-      data: {
-        profile,
-        records: records ?? [],
-        files: files ?? [],
-        logs: logs ?? [],
-        settings: {},
-      },
+      data: { profile, records: records ?? [], files: files ?? [], logs: logs ?? [] },
     };
     const json = JSON.stringify(payload);
     const itemsCount = (records?.length ?? 0) + (files?.length ?? 0) + (logs?.length ?? 0);
+    const status: "completed" = "completed";
 
-    let status: "completed" | "failed" = "completed";
-    let errorMsg: string | null = null;
-
-    if (conn?.endpoint_url && conn.status === "connected") {
-      try {
-        const res = await fetch(conn.endpoint_url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "X-Source-App": "dbguard" },
-          body: json,
-        });
-        if (!res.ok) {
-          status = "failed";
-          errorMsg = `Endpoint responded ${res.status}`;
-        } else {
-          await supabase
-            .from("dbguard_connections")
-            .update({ last_synced_at: new Date().toISOString() })
-            .eq("user_id", userId);
-        }
-      } catch (e) {
-        status = "failed";
-        errorMsg = e instanceof Error ? e.message : "Network error";
-      }
-    } else {
-      // No live endpoint — treat as a local prepared export
-      status = "completed";
+    if (conn?.status === "connected") {
+      await supabase.from("dbguard_connections").update({ last_synced_at: new Date().toISOString() }).eq("user_id", userId);
     }
-
     await supabase.from("dbguard_export_logs").insert({
-      user_id: userId,
-      status,
-      items_count: itemsCount,
-      payload_size: json.length,
-      error: errorMsg,
+      user_id: userId, status, items_count: itemsCount, payload_size: json.length, error: null,
     });
     await supabase.from("user_activity_logs").insert({
-      user_id: userId,
-      action: "dbguard.export",
-      metadata: { status, items_count: itemsCount, payload_size: json.length },
+      user_id: userId, action: "hn.snapshot", metadata: { status, items_count: itemsCount, payload_size: json.length },
     });
 
-    return { status, items_count: itemsCount, payload_size: json.length, payload, error: errorMsg };
+    return { status, items_count: itemsCount, payload_size: json.length, payload, error: null as string | null };
   });
+
