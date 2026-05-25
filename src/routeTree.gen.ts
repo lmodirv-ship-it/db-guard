@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as OwnerUsersRouteImport } from './routes/owner.users'
 import { Route as OwnerTenantsRouteImport } from './routes/owner.tenants'
@@ -29,6 +30,15 @@ import { Route as OwnerFilesRouteImport } from './routes/owner.files'
 import { Route as OwnerAuditLogsRouteImport } from './routes/owner.audit-logs'
 import { Route as OwnerApiKeysRouteImport } from './routes/owner.api-keys'
 import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
+import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
+import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
+import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
+import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.databases'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardBackupsRouteImport } from './routes/dashboard.backups'
+import { Route as DashboardApiKeysRouteImport } from './routes/dashboard.api-keys'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiTeamIndexRouteImport } from './routes/api/team/index'
 import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
@@ -36,6 +46,7 @@ import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/inde
 import { Route as ApiLogsIndexRouteImport } from './routes/api/logs/index'
 import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
+import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
 import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
 import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
@@ -89,6 +100,11 @@ const OwnerIndexRoute = OwnerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OwnerRoute,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ProjectsIdRoute = ProjectsIdRouteImport.update({
   id: '/projects/$id',
@@ -160,6 +176,51 @@ const OwnerAlertsRoute = OwnerAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => OwnerRoute,
 } as any)
+const DashboardTeamRoute = DashboardTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTablesRoute = DashboardTablesRouteImport.update({
+  id: '/tables',
+  path: '/tables',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLogsRoute = DashboardLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDatabasesRoute = DashboardDatabasesRouteImport.update({
+  id: '/databases',
+  path: '/databases',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBackupsRoute = DashboardBackupsRouteImport.update({
+  id: '/backups',
+  path: '/backups',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardApiKeysRoute = DashboardApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
@@ -194,6 +255,11 @@ const ApiApiKeysIndexRoute = ApiApiKeysIndexRouteImport.update({
   id: '/api/api-keys/',
   path: '/api/api-keys/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardTablesIdRoute = DashboardTablesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DashboardTablesRoute,
 } as any)
 const ApiTablesIdRoute = ApiTablesIdRouteImport.update({
   id: '/api/tables/$id',
@@ -314,11 +380,20 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -333,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -349,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/logs/': typeof ApiLogsIndexRoute
@@ -366,10 +443,18 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -384,6 +469,7 @@ export interface FileRoutesByTo {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -400,6 +486,7 @@ export interface FileRoutesByTo {
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
   '/api/backups': typeof ApiBackupsIndexRoute
   '/api/logs': typeof ApiLogsIndexRoute
@@ -418,11 +505,20 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
+  '/dashboard/api-keys': typeof DashboardApiKeysRoute
+  '/dashboard/backups': typeof DashboardBackupsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/tables': typeof DashboardTablesRouteWithChildren
+  '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
   '/owner/api-keys': typeof OwnerApiKeysRoute
   '/owner/audit-logs': typeof OwnerAuditLogsRoute
@@ -437,6 +533,7 @@ export interface FileRoutesById {
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -453,6 +550,7 @@ export interface FileRoutesById {
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
+  '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/logs/': typeof ApiLogsIndexRoute
@@ -477,6 +575,15 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -491,6 +598,7 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -507,6 +615,7 @@ export interface FileRouteTypes {
     | '/api/jobs/enqueue'
     | '/api/records/$id'
     | '/api/tables/$id'
+    | '/dashboard/tables/$id'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/logs/'
@@ -524,10 +633,18 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/login'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -542,6 +659,7 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard'
     | '/owner'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -558,6 +676,7 @@ export interface FileRouteTypes {
     | '/api/jobs/enqueue'
     | '/api/records/$id'
     | '/api/tables/$id'
+    | '/dashboard/tables/$id'
     | '/api/api-keys'
     | '/api/backups'
     | '/api/logs'
@@ -580,6 +699,15 @@ export interface FileRouteTypes {
     | '/owner'
     | '/signup'
     | '/api/health'
+    | '/dashboard/api-keys'
+    | '/dashboard/backups'
+    | '/dashboard/billing'
+    | '/dashboard/databases'
+    | '/dashboard/logs'
+    | '/dashboard/records'
+    | '/dashboard/settings'
+    | '/dashboard/tables'
+    | '/dashboard/team'
     | '/owner/alerts'
     | '/owner/api-keys'
     | '/owner/audit-logs'
@@ -594,6 +722,7 @@ export interface FileRouteTypes {
     | '/owner/tenants'
     | '/owner/users'
     | '/projects/$id'
+    | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -610,6 +739,7 @@ export interface FileRouteTypes {
     | '/api/jobs/enqueue'
     | '/api/records/$id'
     | '/api/tables/$id'
+    | '/dashboard/tables/$id'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/logs/'
@@ -628,7 +758,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   SignupRoute: typeof SignupRoute
@@ -705,6 +835,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/owner/'
       preLoaderRoute: typeof OwnerIndexRouteImport
       parentRoute: typeof OwnerRoute
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/projects/$id': {
       id: '/projects/$id'
@@ -804,6 +941,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerAlertsRouteImport
       parentRoute: typeof OwnerRoute
     }
+    '/dashboard/team': {
+      id: '/dashboard/team'
+      path: '/team'
+      fullPath: '/dashboard/team'
+      preLoaderRoute: typeof DashboardTeamRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/tables': {
+      id: '/dashboard/tables'
+      path: '/tables'
+      fullPath: '/dashboard/tables'
+      preLoaderRoute: typeof DashboardTablesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/records': {
+      id: '/dashboard/records'
+      path: '/records'
+      fullPath: '/dashboard/records'
+      preLoaderRoute: typeof DashboardRecordsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/logs': {
+      id: '/dashboard/logs'
+      path: '/logs'
+      fullPath: '/dashboard/logs'
+      preLoaderRoute: typeof DashboardLogsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/databases': {
+      id: '/dashboard/databases'
+      path: '/databases'
+      fullPath: '/dashboard/databases'
+      preLoaderRoute: typeof DashboardDatabasesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/backups': {
+      id: '/dashboard/backups'
+      path: '/backups'
+      fullPath: '/dashboard/backups'
+      preLoaderRoute: typeof DashboardBackupsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/api-keys': {
+      id: '/dashboard/api-keys'
+      path: '/api-keys'
+      fullPath: '/dashboard/api-keys'
+      preLoaderRoute: typeof DashboardApiKeysRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/health': {
       id: '/api/health'
       path: '/api/health'
@@ -852,6 +1052,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/api-keys/'
       preLoaderRoute: typeof ApiApiKeysIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/tables/$id': {
+      id: '/dashboard/tables/$id'
+      path: '/$id'
+      fullPath: '/dashboard/tables/$id'
+      preLoaderRoute: typeof DashboardTablesIdRouteImport
+      parentRoute: typeof DashboardTablesRoute
     }
     '/api/tables/$id': {
       id: '/api/tables/$id'
@@ -1017,6 +1224,48 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardTablesRouteChildren {
+  DashboardTablesIdRoute: typeof DashboardTablesIdRoute
+}
+
+const DashboardTablesRouteChildren: DashboardTablesRouteChildren = {
+  DashboardTablesIdRoute: DashboardTablesIdRoute,
+}
+
+const DashboardTablesRouteWithChildren = DashboardTablesRoute._addFileChildren(
+  DashboardTablesRouteChildren,
+)
+
+interface DashboardRouteChildren {
+  DashboardApiKeysRoute: typeof DashboardApiKeysRoute
+  DashboardBackupsRoute: typeof DashboardBackupsRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
+  DashboardDatabasesRoute: typeof DashboardDatabasesRoute
+  DashboardLogsRoute: typeof DashboardLogsRoute
+  DashboardRecordsRoute: typeof DashboardRecordsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
+  DashboardTeamRoute: typeof DashboardTeamRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardApiKeysRoute: DashboardApiKeysRoute,
+  DashboardBackupsRoute: DashboardBackupsRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
+  DashboardDatabasesRoute: DashboardDatabasesRoute,
+  DashboardLogsRoute: DashboardLogsRoute,
+  DashboardRecordsRoute: DashboardRecordsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTablesRoute: DashboardTablesRouteWithChildren,
+  DashboardTeamRoute: DashboardTeamRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 interface OwnerRouteChildren {
   OwnerAlertsRoute: typeof OwnerAlertsRoute
   OwnerApiKeysRoute: typeof OwnerApiKeysRoute
@@ -1081,7 +1330,7 @@ const ApiTablesIdRouteWithChildren = ApiTablesIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   OwnerRoute: OwnerRouteWithChildren,
   SignupRoute: SignupRoute,

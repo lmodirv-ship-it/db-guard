@@ -5,7 +5,7 @@ import {
   Activity, Users, CreditCard, Settings, LogOut, Shield,
 } from "lucide-react";
 
-const NAV = [
+const NAV: Array<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/dashboard/databases", label: "Databases", icon: Database },
   { to: "/dashboard/tables", label: "Tables", icon: Table2 },
@@ -16,7 +16,7 @@ const NAV = [
   { to: "/dashboard/team", label: "Team", icon: Users },
   { to: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { to: "/dashboard/settings", label: "Settings", icon: Settings },
-] as const;
+];
 
 export function DashboardShell({ title, children }: { title: string; children: ReactNode }) {
   const navigate = useNavigate();
