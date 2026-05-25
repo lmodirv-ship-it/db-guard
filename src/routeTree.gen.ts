@@ -42,6 +42,7 @@ import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-status'
 import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
@@ -212,6 +213,12 @@ const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   path: '/api/projects/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiProjectsIdVerifyRoute = ApiProjectsIdVerifyRouteImport.update({
   id: '/api/projects/$id/verify',
   path: '/api/projects/$id/verify',
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -308,6 +316,7 @@ export interface FileRoutesByTo {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRoutesById {
@@ -348,6 +357,7 @@ export interface FileRoutesById {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/lovable/email/queue/process'
     | '/api/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -427,6 +438,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/lovable/email/queue/process'
     | '/api/projects/$id'
   id:
     | '__root__'
@@ -466,6 +478,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/lovable/email/queue/process'
     | '/api/projects/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -491,6 +504,7 @@ export interface RootRouteChildren {
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
 }
 
@@ -727,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/verify': {
       id: '/api/projects/$id/verify'
       path: '/api/projects/$id/verify'
@@ -828,8 +849,18 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
