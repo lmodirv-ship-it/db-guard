@@ -14,6 +14,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AccountCreatedRouteImport } from './routes/account-created'
 import { Route as IndexRouteImport } from './routes/index'
@@ -77,6 +78,7 @@ import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$i
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
 import { Route as ApiTablesIdColumnsRouteImport } from './routes/api/tables/$id/columns'
+import { Route as ApiPublicSsoVerifyRouteImport } from './routes/api/public/sso.verify'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
@@ -105,6 +107,11 @@ const MyDashboardRoute = MyDashboardRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -423,6 +430,11 @@ const ApiTablesIdColumnsRoute = ApiTablesIdColumnsRouteImport.update({
   path: '/columns',
   getParentRoute: () => ApiTablesIdRoute,
 } as any)
+const ApiPublicSsoVerifyRoute = ApiPublicSsoVerifyRouteImport.update({
+  id: '/api/public/sso/verify',
+  path: '/api/public/sso/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdVerifyRoute = ApiProjectsIdVerifyRouteImport.update({
   id: '/api/projects/$id/verify',
   path: '/api/projects/$id/verify',
@@ -448,6 +460,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -513,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -521,6 +535,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/register': typeof RegisterRoute
@@ -585,6 +600,7 @@ export interface FileRoutesByTo {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -595,6 +611,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account-created': typeof AccountCreatedRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -660,6 +677,7 @@ export interface FileRoutesById {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -671,6 +689,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-created'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/owner'
@@ -736,6 +755,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -744,6 +764,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account-created'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/register'
@@ -808,6 +829,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -817,6 +839,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-created'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
     | '/my-dashboard'
     | '/owner'
@@ -882,6 +905,7 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -892,6 +916,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountCreatedRoute: typeof AccountCreatedRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MyDashboardRoute: typeof MyDashboardRoute
   OwnerRoute: typeof OwnerRouteWithChildren
@@ -925,6 +950,7 @@ export interface RootRouteChildren {
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
+  ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
 }
@@ -964,6 +990,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -1407,6 +1440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTablesIdColumnsRouteImport
       parentRoute: typeof ApiTablesIdRoute
     }
+    '/api/public/sso/verify': {
+      id: '/api/public/sso/verify'
+      path: '/api/public/sso/verify'
+      fullPath: '/api/public/sso/verify'
+      preLoaderRoute: typeof ApiPublicSsoVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/$id/verify': {
       id: '/api/projects/$id/verify'
       path: '/api/projects/$id/verify'
@@ -1558,6 +1598,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountCreatedRoute: AccountCreatedRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MyDashboardRoute: MyDashboardRoute,
   OwnerRoute: OwnerRouteWithChildren,
@@ -1591,6 +1632,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
+  ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
 }

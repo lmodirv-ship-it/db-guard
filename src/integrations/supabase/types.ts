@@ -50,6 +50,33 @@ export type Database = {
         }
         Relationships: []
       }
+      connected_apps: {
+        Row: {
+          allowed_redirect_hosts: string[]
+          app_key: string
+          created_at: string
+          id: string
+          name: string
+          status: string
+        }
+        Insert: {
+          allowed_redirect_hosts?: string[]
+          app_key: string
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+        }
+        Update: {
+          allowed_redirect_hosts?: string[]
+          app_key?: string
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       dbguard_connections: {
         Row: {
           api_key_hash: string | null
@@ -333,29 +360,44 @@ export type Database = {
       hn_sessions: {
         Row: {
           created_at: string
+          device: string | null
           expires_at: string
           hn_user_code: string
           id: string
+          ip_address: string | null
+          last_active_at: string
+          revoked_at: string | null
           source_app: string | null
           token_hash: string
+          user_agent: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
+          device?: string | null
           expires_at: string
           hn_user_code: string
           id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          revoked_at?: string | null
           source_app?: string | null
           token_hash: string
+          user_agent?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
+          device?: string | null
           expires_at?: string
           hn_user_code?: string
           id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          revoked_at?: string | null
           source_app?: string | null
           token_hash?: string
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: [
@@ -366,7 +408,53 @@ export type Database = {
             referencedRelation: "hn_users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "hn_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "registered_users"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      hn_sso_tickets: {
+        Row: {
+          created_at: string
+          expires_at: string
+          hn_user_code: string
+          id: string
+          redirect_url: string
+          source_app: string | null
+          target_app: string
+          ticket_hash: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          hn_user_code: string
+          id?: string
+          redirect_url: string
+          source_app?: string | null
+          target_app: string
+          ticket_hash: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          hn_user_code?: string
+          id?: string
+          redirect_url?: string
+          source_app?: string | null
+          target_app?: string
+          ticket_hash?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       hn_users: {
         Row: {
@@ -377,10 +465,14 @@ export type Database = {
           full_name: string
           hn_user_code: string
           id: string
+          last_login_at: string | null
           password_hash: string
           phone: string | null
+          plan: string
           redirect_url: string | null
+          registration_source: string | null
           source_app: string | null
+          status: string
           updated_at: string
         }
         Insert: {
@@ -391,10 +483,14 @@ export type Database = {
           full_name: string
           hn_user_code: string
           id?: string
+          last_login_at?: string | null
           password_hash: string
           phone?: string | null
+          plan?: string
           redirect_url?: string | null
+          registration_source?: string | null
           source_app?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -405,10 +501,14 @@ export type Database = {
           full_name?: string
           hn_user_code?: string
           id?: string
+          last_login_at?: string | null
           password_hash?: string
           phone?: string | null
+          plan?: string
           redirect_url?: string | null
+          registration_source?: string | null
           source_app?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -440,6 +540,81 @@ export type Database = {
           slug?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      password_reset_logs: {
+        Row: {
+          action: string
+          created_at: string
+          email: string | null
+          id: string
+          ip: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      password_reset_tokens: {
+        Row: {
+          attempts: number
+          channel: string
+          code_hash: string
+          created_at: string
+          expires_at: string
+          id: string
+          ip: string | null
+          token_hash: string
+          used_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel?: string
+          code_hash: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip?: string | null
+          token_hash: string
+          used_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: string
+          code_hash?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          token_hash?: string
+          used_at?: string | null
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -575,9 +750,77 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      registered_users: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          email_verified: boolean | null
+          full_name: string | null
+          hn_user_code: string | null
+          id: string | null
+          last_login_at: string | null
+          phone: string | null
+          plan: string | null
+          registration_source: string | null
+          source_app: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: never
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: never
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
@@ -589,6 +832,13 @@ export type Database = {
         Returns: number
       }
       generate_hn_user_code: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -608,7 +858,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -735,6 +985,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "admin", "user"],
+    },
   },
 } as const
