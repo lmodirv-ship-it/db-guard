@@ -1,6 +1,5 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 
 import en from "@/locales/en/common.json";
 import ar from "@/locales/ar/common.json";
@@ -15,32 +14,37 @@ export const SUPPORTED_LANGUAGES = [
 ] as const;
 
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]["code"];
-
+export const DEFAULT_LANGUAGE: LanguageCode = "en";
 export const RTL_LANGUAGES: LanguageCode[] = ["ar"];
+const STORAGE_KEY = "dbguard-lang";
 
 if (!i18n.isInitialized) {
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources: {
-        en: { common: en },
-        ar: { common: ar },
-        fr: { common: fr },
-        es: { common: es },
-      },
-      fallbackLng: "en",
-      supportedLngs: SUPPORTED_LANGUAGES.map((l) => l.code),
-      defaultNS: "common",
-      ns: ["common"],
-      interpolation: { escapeValue: false },
-      detection: {
-        order: ["localStorage", "navigator", "htmlTag"],
-        caches: ["localStorage"],
-        lookupLocalStorage: "dbguard-lang",
-      },
-      react: { useSuspense: false },
-    });
+  i18n.use(initReactI18next).init({
+    resources: {
+      en: { common: en },
+      ar: { common: ar },
+      fr: { common: fr },
+      es: { common: es },
+    },
+    lng: DEFAULT_LANGUAGE,
+    fallbackLng: DEFAULT_LANGUAGE,
+    supportedLngs: SUPPORTED_LANGUAGES.map((l) => l.code),
+    defaultNS: "common",
+    ns: ["common"],
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+  });
+}
+
+export function getStoredLanguage(): LanguageCode {
+  if (typeof window === "undefined") return DEFAULT_LANGUAGE;
+  const stored = window.localStorage.getItem(STORAGE_KEY) as LanguageCode | null;
+  if (stored && SUPPORTED_LANGUAGES.some((l) => l.code === stored)) return stored;
+  return DEFAULT_LANGUAGE;
+}
+
+export function setStoredLanguage(lng: LanguageCode) {
+  if (typeof window !== "undefined") window.localStorage.setItem(STORAGE_KEY, lng);
 }
 
 export function applyDocumentLanguage(lng: string) {
