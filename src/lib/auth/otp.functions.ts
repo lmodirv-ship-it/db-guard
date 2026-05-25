@@ -30,7 +30,7 @@ async function logAudit(params: {
     user_id: params.user_id ?? null,
     event: params.event,
     success: params.success,
-    metadata: params.metadata ?? null,
+    metadata: (params.metadata ?? null) as never,
   });
 }
 
