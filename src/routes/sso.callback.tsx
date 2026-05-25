@@ -25,10 +25,8 @@ function SsoCallbackPage() {
       try {
         const r = await consumeFn({ data: { ticket: hn_ticket, app_key: hn_app } });
         if (!r.ok) { setError("Invalid or expired ticket"); return; }
-        try {
-          localStorage.setItem("hn_jwt", r.jwt);
-          localStorage.setItem("hn_user", JSON.stringify(r.user));
-        } catch {}
+        // Session is established via HttpOnly cookie set server-side.
+        // Do NOT persist JWT/user in localStorage (XSS exfiltration risk).
         navigate({ to: next as never, replace: true });
       } catch { setError("Network error"); }
     })();

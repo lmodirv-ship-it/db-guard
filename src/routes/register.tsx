@@ -132,8 +132,11 @@ function RegisterPage() {
         }));
       } catch { /* ignore */ }
 
-      // Hard navigation so freshly-set session cookie is sent on next request
-      if (redirect_url) {
+      // Hard navigation so freshly-set session cookie is sent on next request.
+      // Only allow same-origin relative paths to prevent open-redirect attacks.
+      const isSafeRedirect = (u: string) =>
+        typeof u === "string" && u.startsWith("/") && !u.startsWith("//");
+      if (redirect_url && isSafeRedirect(redirect_url)) {
         window.location.href = redirect_url;
         return;
       }

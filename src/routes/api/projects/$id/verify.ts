@@ -56,12 +56,14 @@ export const Route = createFileRoute("/api/projects/$id/verify")({
           }
 
           const reason = result.attempts.map((a) => `${a.method}:${a.reason}`).join(" | ");
+          console.error("project_verify_failed", { id, attempts: result.attempts });
           await withTenant(session.tid, (sql) => sql`
             UPDATE projects
             SET status = 'pending', error_message = ${reason}
             WHERE tenant_id = ${session.tid} AND id = ${id}
           `);
-          return jsonError(422, "verification_failed", { attempts: result.attempts });
+          const safeAttempts = result.attempts.map((a) => ({ method: a.method, ok: a.ok }));
+          return jsonError(422, "verification_failed", { attempts: safeAttempts });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
           console.error("project_verify_failed", err);
