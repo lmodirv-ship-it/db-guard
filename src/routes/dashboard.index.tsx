@@ -25,7 +25,9 @@ type Usage = {
 };
 
 function Overview() {
+  const navigate = useNavigate();
   const [data, setData] = useState<Usage | null>(null);
+  const [me, setMe] = useState<{ email: string; tenantId: string; userId?: string; createdAt?: string } | null>(null);
   const [series, setSeries] = useState(timeSeries(30, 920, 380, 17));
   const [feed] = useState(activityFeed());
   const regions = regionalLoad();
@@ -33,7 +35,13 @@ function Overview() {
 
   useEffect(() => {
     fetch("/api/billing/usage").then((r) => r.json()).then((j) => j.ok && setData(j));
+    fetch("/api/auth/me").then((r) => r.json()).then((j) => j.ok && j.user && setMe(j.user));
   }, []);
+
+  async function logout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    await navigate({ to: "/login" });
+  }
 
   // Simulate live metrics
   useEffect(() => {
