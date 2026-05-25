@@ -56,7 +56,7 @@ export function DashboardShell({ title, children }: { title: string; children: R
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV.map((n) => {
-          const active = n.exact ? path === n.to : path.startsWith(n.to);
+          const active = ("exact" in n && n.exact) ? path === n.to : path.startsWith(n.to);
           const Icon = n.icon;
           return (
             <Link
