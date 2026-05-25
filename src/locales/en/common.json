@@ -1,24 +1,53 @@
 {
-  "app": { "name": "DB-GUARD", "tagline": "Multi-tenant database platform" },
+  "app": {
+    "name": "DB-GUARD",
+    "tagline": "Multi-tenant database platform"
+  },
   "nav": {
-    "overview": "Overview", "databases": "Databases", "tables": "Tables", "records": "Records",
-    "apiKeys": "API Keys", "backups": "Backups", "logs": "Logs", "team": "Team",
-    "billing": "Billing", "settings": "Settings", "files": "Files"
+    "overview": "Overview",
+    "databases": "Databases",
+    "tables": "Tables",
+    "records": "Records",
+    "apiKeys": "API Keys",
+    "backups": "Backups",
+    "logs": "Logs",
+    "team": "Team",
+    "billing": "Billing",
+    "settings": "Settings",
+    "files": "Files"
   },
   "actions": {
-    "create": "Create", "save": "Save", "cancel": "Cancel", "delete": "Delete", "edit": "Edit",
-    "confirm": "Confirm", "back": "Back", "next": "Next", "continue": "Continue",
-    "loading": "Loading…", "search": "Search", "refresh": "Refresh",
-    "copy": "Copy", "copied": "Copied", "signOut": "Sign out", "signIn": "Sign in", "signUp": "Sign up"
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "loading": "Loading…",
+    "search": "Search",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "copied": "Copied",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
   },
   "auth": {
     "loginTitle": "Sign in to your account",
     "loginSubtitle": "Enter your email to receive a verification code",
-    "emailLabel": "Email address", "emailPlaceholder": "you@example.com",
-    "sendCode": "Send code", "verifyTitle": "Enter verification code",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code",
+    "verifyTitle": "Enter verification code",
     "verifySubtitle": "We sent a 6-digit code to {{email}}",
-    "codeLabel": "Verification code", "verify": "Verify",
-    "resendIn": "Resend in {{seconds}}s", "resend": "Resend code", "changeEmail": "Change email",
+    "codeLabel": "Verification code",
+    "verify": "Verify",
+    "resendIn": "Resend in {{seconds}}s",
+    "resend": "Resend code",
+    "changeEmail": "Change email",
     "errors": {
       "invalidEmail": "Please enter a valid email address",
       "invalidCode": "Invalid or expired code",
@@ -27,12 +56,23 @@
     }
   },
   "common": {
-    "language": "Language", "theme": "Theme", "light": "Light", "dark": "Dark", "system": "System",
-    "yes": "Yes", "no": "No", "empty": "No data yet", "error": "Something went wrong", "success": "Success"
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "yes": "Yes",
+    "no": "No",
+    "empty": "No data yet",
+    "error": "Something went wrong",
+    "success": "Success"
   },
   "plans": {
-    "free": "Free", "pro": "Pro", "enterprise": "Enterprise",
-    "currentPlan": "Current plan", "upgrade": "Upgrade"
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "currentPlan": "Current plan",
+    "upgrade": "Upgrade"
   },
   "hn": {
     "title": "Create your HN Account",
@@ -60,6 +100,67 @@
       "invalidCode": "Invalid or expired code.",
       "tooMany": "Too many attempts. Please try again later.",
       "internal": "Something went wrong. Please try again."
+    }
+  },
+  "myDashboard": {
+    "title": "My Workspace",
+    "subtitle": "Personal admin for your data",
+    "tabs": {
+      "overview": "Overview",
+      "profile": "Profile",
+      "records": "Records",
+      "files": "Files",
+      "logs": "Activity",
+      "settings": "Settings",
+      "export": "Export"
+    },
+    "stats": {
+      "records": "Records",
+      "files": "Files",
+      "logs": "Activity events",
+      "exports": "Exports"
+    },
+    "records": {
+      "title": "My Records",
+      "addTitle": "Add a record",
+      "type": "Type",
+      "name": "Title",
+      "data": "Data (JSON)",
+      "add": "Add record",
+      "empty": "No records yet"
+    },
+    "files": {
+      "title": "My Files",
+      "empty": "No files yet"
+    },
+    "logs": {
+      "title": "Activity Log",
+      "empty": "No activity yet"
+    },
+    "settings": {
+      "title": "DB·GUARD Connection",
+      "projectId": "Project ID",
+      "endpoint": "Endpoint URL",
+      "apiKey": "API Key",
+      "save": "Save connection",
+      "disconnect": "Disconnect",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "failed": "Failed",
+      "keyHidden": "API key is encrypted and never shown again",
+      "lastSync": "Last sync"
+    },
+    "export": {
+      "title": "Export to DB·GUARD",
+      "description": "Send your full personal dataset to your DB·GUARD project. Only your data is exported.",
+      "includes": "Included: profile, records, files, activity logs, settings.",
+      "confirm": "I understand only my data will be exported",
+      "run": "Export to DB·GUARD",
+      "running": "Exporting…",
+      "success": "Export completed",
+      "failed": "Export failed",
+      "history": "Export history",
+      "download": "Download JSON"
     }
   }
 }

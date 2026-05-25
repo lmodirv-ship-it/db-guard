@@ -73,5 +73,66 @@
     "enterprise": "Empresa",
     "currentPlan": "Plan actual",
     "upgrade": "Mejorar"
+  },
+  "myDashboard": {
+    "title": "Mi espacio",
+    "subtitle": "Panel personal de administración",
+    "tabs": {
+      "overview": "Resumen",
+      "profile": "Perfil",
+      "records": "Registros",
+      "files": "Archivos",
+      "logs": "Actividad",
+      "settings": "Ajustes",
+      "export": "Exportar"
+    },
+    "stats": {
+      "records": "Registros",
+      "files": "Archivos",
+      "logs": "Eventos",
+      "exports": "Exportaciones"
+    },
+    "records": {
+      "title": "Mis registros",
+      "addTitle": "Añadir",
+      "type": "Tipo",
+      "name": "Título",
+      "data": "Datos (JSON)",
+      "add": "Añadir",
+      "empty": "Sin registros"
+    },
+    "files": {
+      "title": "Mis archivos",
+      "empty": "Sin archivos"
+    },
+    "logs": {
+      "title": "Registro",
+      "empty": "Sin actividad"
+    },
+    "settings": {
+      "title": "Conexión DB·GUARD",
+      "projectId": "ID de proyecto",
+      "endpoint": "URL Endpoint",
+      "apiKey": "Clave API",
+      "save": "Guardar",
+      "disconnect": "Desconectar",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "failed": "Fallido",
+      "keyHidden": "Clave cifrada, no se mostrará de nuevo",
+      "lastSync": "Última sinc."
+    },
+    "export": {
+      "title": "Exportar a DB·GUARD",
+      "description": "Envíe su conjunto de datos personal a su proyecto de DB·GUARD.",
+      "includes": "Incluye: perfil, registros, archivos, registros de actividad, ajustes.",
+      "confirm": "Confirmo que solo mis datos se exportarán",
+      "run": "Exportar a DB·GUARD",
+      "running": "Exportando…",
+      "success": "Exportación completa",
+      "failed": "Falló",
+      "history": "Historial",
+      "download": "Descargar JSON"
+    }
   }
 }
