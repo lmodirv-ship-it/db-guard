@@ -245,6 +245,91 @@ export type Database = {
         }
         Relationships: []
       }
+      hn_api_keys: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          key_hash: string
+          key_hint: string
+          key_prefix: string
+          label: string
+          last_used_at: string | null
+          revoked_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          key_hash: string
+          key_hint: string
+          key_prefix: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          key_hash?: string
+          key_hint?: string
+          key_prefix?: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_api_keys_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hn_databases: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          name: string
+          region: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          name?: string
+          region?: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          name?: string
+          region?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_databases_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hn_sessions: {
         Row: {
           created_at: string
@@ -324,6 +409,36 @@ export type Database = {
           phone?: string | null
           redirect_url?: string | null
           source_app?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hn_workspaces: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          name: string
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          name: string
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          name?: string
+          slug?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
