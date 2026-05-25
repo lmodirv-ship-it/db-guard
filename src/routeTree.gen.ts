@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OwnerRouteImport } from './routes/owner'
+import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -93,6 +94,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const OwnerRoute = OwnerRouteImport.update({
   id: '/owner',
   path: '/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyDashboardRoute = MyDashboardRouteImport.update({
+  id: '/my-dashboard',
+  path: '/my-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -436,6 +442,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
   '/register': typeof RegisterRoute
   '/signup': typeof SignupRoute
@@ -507,6 +514,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/register': typeof RegisterRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
@@ -579,6 +587,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/owner': typeof OwnerRouteWithChildren
   '/register': typeof RegisterRoute
   '/signup': typeof SignupRoute
@@ -653,6 +662,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/my-dashboard'
     | '/owner'
     | '/register'
     | '/signup'
@@ -724,6 +734,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/my-dashboard'
     | '/register'
     | '/signup'
     | '/api/health'
@@ -795,6 +806,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/my-dashboard'
     | '/owner'
     | '/register'
     | '/signup'
@@ -868,6 +880,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
+  MyDashboardRoute: typeof MyDashboardRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   SignupRoute: typeof SignupRoute
@@ -924,6 +937,13 @@ declare module '@tanstack/react-router' {
       path: '/owner'
       fullPath: '/owner'
       preLoaderRoute: typeof OwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-dashboard': {
+      id: '/my-dashboard'
+      path: '/my-dashboard'
+      fullPath: '/my-dashboard'
+      preLoaderRoute: typeof MyDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -1518,6 +1538,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
+  MyDashboardRoute: MyDashboardRoute,
   OwnerRoute: OwnerRouteWithChildren,
   RegisterRoute: RegisterRoute,
   SignupRoute: SignupRoute,
