@@ -400,7 +400,7 @@ function ExportPanel({ data }: { data: OverviewData }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `dbguard-export-${result.payload.export_id}.json`;
+    a.download = `hn-snapshot-${result.payload.export_id}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
