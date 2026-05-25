@@ -33,14 +33,19 @@ import { Route as OwnerApiKeysRouteImport } from './routes/owner.api-keys'
 import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
 import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
 import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
+import { Route as DashboardStorageRouteImport } from './routes/dashboard.storage'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardSecurityRouteImport } from './routes/dashboard.security'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
+import { Route as DashboardRealtimeRouteImport } from './routes/dashboard.realtime'
 import { Route as DashboardProjectsRouteImport } from './routes/dashboard.projects'
+import { Route as DashboardMonitoringRouteImport } from './routes/dashboard.monitoring'
 import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
 import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.databases'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardBackupsRouteImport } from './routes/dashboard.backups'
 import { Route as DashboardApiKeysRouteImport } from './routes/dashboard.api-keys'
+import { Route as DashboardApiExplorerRouteImport } from './routes/dashboard.api-explorer'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
@@ -195,9 +200,19 @@ const DashboardTablesRoute = DashboardTablesRouteImport.update({
   path: '/tables',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardStorageRoute = DashboardStorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSecurityRoute = DashboardSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
@@ -205,9 +220,19 @@ const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
   path: '/records',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardRealtimeRoute = DashboardRealtimeRouteImport.update({
+  id: '/realtime',
+  path: '/realtime',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardProjectsRoute = DashboardProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMonitoringRoute = DashboardMonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardLogsRoute = DashboardLogsRouteImport.update({
@@ -233,6 +258,11 @@ const DashboardBackupsRoute = DashboardBackupsRouteImport.update({
 const DashboardApiKeysRoute = DashboardApiKeysRouteImport.update({
   id: '/api-keys',
   path: '/api-keys',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardApiExplorerRoute = DashboardApiExplorerRouteImport.update({
+  id: '/api-explorer',
+  path: '/api-explorer',
   getParentRoute: () => DashboardRoute,
 } as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
@@ -412,14 +442,19 @@ export interface FileRoutesByFullPath {
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/dashboard/api-explorer': typeof DashboardApiExplorerRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/monitoring': typeof DashboardMonitoringRoute
   '/dashboard/projects': typeof DashboardProjectsRoute
+  '/dashboard/realtime': typeof DashboardRealtimeRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/security': typeof DashboardSecurityRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/storage': typeof DashboardStorageRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -477,14 +512,19 @@ export interface FileRoutesByTo {
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/dashboard/api-explorer': typeof DashboardApiExplorerRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/monitoring': typeof DashboardMonitoringRoute
   '/dashboard/projects': typeof DashboardProjectsRoute
+  '/dashboard/realtime': typeof DashboardRealtimeRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/security': typeof DashboardSecurityRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/storage': typeof DashboardStorageRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -545,14 +585,19 @@ export interface FileRoutesById {
   '/api/health': typeof ApiHealthRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/dashboard/api-explorer': typeof DashboardApiExplorerRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/logs': typeof DashboardLogsRoute
+  '/dashboard/monitoring': typeof DashboardMonitoringRoute
   '/dashboard/projects': typeof DashboardProjectsRoute
+  '/dashboard/realtime': typeof DashboardRealtimeRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/security': typeof DashboardSecurityRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/storage': typeof DashboardStorageRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -614,14 +659,19 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
+    | '/dashboard/api-explorer'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/logs'
+    | '/dashboard/monitoring'
     | '/dashboard/projects'
+    | '/dashboard/realtime'
     | '/dashboard/records'
+    | '/dashboard/security'
     | '/dashboard/settings'
+    | '/dashboard/storage'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -679,14 +729,19 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
+    | '/dashboard/api-explorer'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/logs'
+    | '/dashboard/monitoring'
     | '/dashboard/projects'
+    | '/dashboard/realtime'
     | '/dashboard/records'
+    | '/dashboard/security'
     | '/dashboard/settings'
+    | '/dashboard/storage'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -746,14 +801,19 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/auth/login'
     | '/auth/verify'
+    | '/dashboard/api-explorer'
     | '/dashboard/api-keys'
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/logs'
+    | '/dashboard/monitoring'
     | '/dashboard/projects'
+    | '/dashboard/realtime'
     | '/dashboard/records'
+    | '/dashboard/security'
     | '/dashboard/settings'
+    | '/dashboard/storage'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -1013,11 +1073,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTablesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/storage': {
+      id: '/dashboard/storage'
+      path: '/storage'
+      fullPath: '/dashboard/storage'
+      preLoaderRoute: typeof DashboardStorageRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/security': {
+      id: '/dashboard/security'
+      path: '/security'
+      fullPath: '/dashboard/security'
+      preLoaderRoute: typeof DashboardSecurityRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/records': {
@@ -1027,11 +1101,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRecordsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/realtime': {
+      id: '/dashboard/realtime'
+      path: '/realtime'
+      fullPath: '/dashboard/realtime'
+      preLoaderRoute: typeof DashboardRealtimeRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/projects': {
       id: '/dashboard/projects'
       path: '/projects'
       fullPath: '/dashboard/projects'
       preLoaderRoute: typeof DashboardProjectsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/monitoring': {
+      id: '/dashboard/monitoring'
+      path: '/monitoring'
+      fullPath: '/dashboard/monitoring'
+      preLoaderRoute: typeof DashboardMonitoringRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/logs': {
@@ -1067,6 +1155,13 @@ declare module '@tanstack/react-router' {
       path: '/api-keys'
       fullPath: '/dashboard/api-keys'
       preLoaderRoute: typeof DashboardApiKeysRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/api-explorer': {
+      id: '/dashboard/api-explorer'
+      path: '/api-explorer'
+      fullPath: '/dashboard/api-explorer'
+      preLoaderRoute: typeof DashboardApiExplorerRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/auth/verify': {
@@ -1316,28 +1411,38 @@ const DashboardTablesRouteWithChildren = DashboardTablesRoute._addFileChildren(
 )
 
 interface DashboardRouteChildren {
+  DashboardApiExplorerRoute: typeof DashboardApiExplorerRoute
   DashboardApiKeysRoute: typeof DashboardApiKeysRoute
   DashboardBackupsRoute: typeof DashboardBackupsRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardDatabasesRoute: typeof DashboardDatabasesRoute
   DashboardLogsRoute: typeof DashboardLogsRoute
+  DashboardMonitoringRoute: typeof DashboardMonitoringRoute
   DashboardProjectsRoute: typeof DashboardProjectsRoute
+  DashboardRealtimeRoute: typeof DashboardRealtimeRoute
   DashboardRecordsRoute: typeof DashboardRecordsRoute
+  DashboardSecurityRoute: typeof DashboardSecurityRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardStorageRoute: typeof DashboardStorageRoute
   DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
   DashboardTeamRoute: typeof DashboardTeamRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardApiExplorerRoute: DashboardApiExplorerRoute,
   DashboardApiKeysRoute: DashboardApiKeysRoute,
   DashboardBackupsRoute: DashboardBackupsRoute,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardDatabasesRoute: DashboardDatabasesRoute,
   DashboardLogsRoute: DashboardLogsRoute,
+  DashboardMonitoringRoute: DashboardMonitoringRoute,
   DashboardProjectsRoute: DashboardProjectsRoute,
+  DashboardRealtimeRoute: DashboardRealtimeRoute,
   DashboardRecordsRoute: DashboardRecordsRoute,
+  DashboardSecurityRoute: DashboardSecurityRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardStorageRoute: DashboardStorageRoute,
   DashboardTablesRoute: DashboardTablesRouteWithChildren,
   DashboardTeamRoute: DashboardTeamRoute,
   DashboardIndexRoute: DashboardIndexRoute,
