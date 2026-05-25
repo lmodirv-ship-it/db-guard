@@ -77,6 +77,7 @@ export async function verifyPassword(
     const iterations = parseInt(parts[1], 10);
     if (!Number.isFinite(iterations) || iterations < 10_000) return false;
     if (iterations > 100_000) return false; // Workers cap
+    const salt = b64decode(parts[2]);
     const expected = b64decode(parts[3]);
     const actual = await pbkdf2(password, salt, iterations, expected.length);
     return timingSafeEqual(actual, expected);
