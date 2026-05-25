@@ -121,7 +121,7 @@ function RegisterPage() {
           "radial-gradient(ellipse at top, oklch(0.18 0.04 80 / 0.4), transparent 60%), radial-gradient(ellipse at bottom, oklch(0.12 0.05 280 / 0.5), transparent 65%), oklch(0.08 0.02 270)",
       }}
     >
-      {/* Neon grid backdrop */}
+      {/* HN neon grid backdrop */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-30"
