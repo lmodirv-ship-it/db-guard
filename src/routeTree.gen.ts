@@ -64,7 +64,6 @@ import { Route as AccountSessionsRouteImport } from './routes/account.sessions'
 import { Route as ApiTeamIndexRouteImport } from './routes/api/team/index'
 import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
-import { Route as ApiLogsIndexRouteImport } from './routes/api/logs/index'
 import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
 import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
@@ -370,11 +369,6 @@ const ApiProjectsIndexRoute = ApiProjectsIndexRouteImport.update({
   path: '/api/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiLogsIndexRoute = ApiLogsIndexRouteImport.update({
-  id: '/api/logs/',
-  path: '/api/logs/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiBackupsIndexRoute = ApiBackupsIndexRouteImport.update({
   id: '/api/backups/',
   path: '/api/backups/',
@@ -595,7 +589,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
-  '/api/logs/': typeof ApiLogsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
   '/api/tables/': typeof ApiTablesIndexRoute
   '/api/team/': typeof ApiTeamIndexRoute
@@ -680,7 +673,6 @@ export interface FileRoutesByTo {
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
   '/api/backups': typeof ApiBackupsIndexRoute
-  '/api/logs': typeof ApiLogsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
   '/api/tables': typeof ApiTablesIndexRoute
   '/api/team': typeof ApiTeamIndexRoute
@@ -768,7 +760,6 @@ export interface FileRoutesById {
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
-  '/api/logs/': typeof ApiLogsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
   '/api/tables/': typeof ApiTablesIndexRoute
   '/api/team/': typeof ApiTeamIndexRoute
@@ -857,7 +848,6 @@ export interface FileRouteTypes {
     | '/dashboard/tables/$id'
     | '/api/api-keys/'
     | '/api/backups/'
-    | '/api/logs/'
     | '/api/projects/'
     | '/api/tables/'
     | '/api/team/'
@@ -942,7 +932,6 @@ export interface FileRouteTypes {
     | '/dashboard/tables/$id'
     | '/api/api-keys'
     | '/api/backups'
-    | '/api/logs'
     | '/api/projects'
     | '/api/tables'
     | '/api/team'
@@ -1029,7 +1018,6 @@ export interface FileRouteTypes {
     | '/dashboard/tables/$id'
     | '/api/api-keys/'
     | '/api/backups/'
-    | '/api/logs/'
     | '/api/projects/'
     | '/api/tables/'
     | '/api/team/'
@@ -1084,7 +1072,6 @@ export interface RootRouteChildren {
   ApiTablesIdRoute: typeof ApiTablesIdRouteWithChildren
   ApiApiKeysIndexRoute: typeof ApiApiKeysIndexRoute
   ApiBackupsIndexRoute: typeof ApiBackupsIndexRoute
-  ApiLogsIndexRoute: typeof ApiLogsIndexRoute
   ApiProjectsIndexRoute: typeof ApiProjectsIndexRoute
   ApiTablesIndexRoute: typeof ApiTablesIndexRoute
   ApiTeamIndexRoute: typeof ApiTeamIndexRoute
@@ -1483,13 +1470,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/logs/': {
-      id: '/api/logs/'
-      path: '/api/logs'
-      fullPath: '/api/logs/'
-      preLoaderRoute: typeof ApiLogsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/backups/': {
       id: '/api/backups/'
       path: '/api/backups'
@@ -1856,7 +1836,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTablesIdRoute: ApiTablesIdRouteWithChildren,
   ApiApiKeysIndexRoute: ApiApiKeysIndexRoute,
   ApiBackupsIndexRoute: ApiBackupsIndexRoute,
-  ApiLogsIndexRoute: ApiLogsIndexRoute,
   ApiProjectsIndexRoute: ApiProjectsIndexRoute,
   ApiTablesIndexRoute: ApiTablesIndexRoute,
   ApiTeamIndexRoute: ApiTeamIndexRoute,
@@ -1870,3 +1849,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
