@@ -1,21 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendEmail } from "@/lib/email";
 import { renderOtpEmail } from "@/lib/email/templates/otp";
+import { sha256Hex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const CODE_TTL_MINUTES = 10;
 const MAX_REQUESTS_PER_HOUR = 3;
 const MAX_VERIFY_ATTEMPTS = 5;
 
 function hashCode(code: string) {
-  return createHash("sha256").update(code).digest("hex");
+  return sha256Hex(code);
 }
 
 function generateCode() {
   // 6 digits, zero-padded
-  return String(randomInt(0, 1_000_000)).padStart(6, "0");
+  return String(randomIntBelow(1_000_000)).padStart(6, "0");
 }
 
 async function logAudit(params: {
