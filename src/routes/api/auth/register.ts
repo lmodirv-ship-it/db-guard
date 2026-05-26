@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { randomBytes, createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { signSession, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth/jwt.server";
 import { jsonError, jsonOk } from "@/lib/auth/session.server";
 import { sendRegistrationEmail } from "@/lib/email/send-registration.server";
+import { sha256Hex, randomBytesHex } from "@/lib/crypto/web-crypto";
 
 const RegisterSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -14,10 +14,6 @@ const RegisterSchema = z.object({
   password: z.string().min(8).max(256),
   source_app: z.string().max(40).optional(),
 });
-
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
 
 function buildCookie(token: string): string {
   return [
@@ -119,7 +115,7 @@ export const Route = createFileRoute("/api/auth/register")({
 
           // Provision workspace + database + api key (best-effort, non-fatal)
           try {
-            const slug = `${slugify(full_name)}-${randomBytes(2).toString("hex")}`;
+            const slug = `${slugify(full_name)}-${randomBytesHex(2)}`;
             const { data: ws } = await supabaseAdmin
               .from("hn_workspaces")
               .insert({ hn_user_id: user.id, name: `${full_name}'s workspace`, slug })
@@ -128,10 +124,10 @@ export const Route = createFileRoute("/api/auth/register")({
               await supabaseAdmin.from("hn_databases").insert({
                 workspace_id: ws.id, hn_user_id: user.id, name: "primary", status: "active",
               });
-              const raw = `hn_live_${randomBytes(24).toString("hex")}`;
+              const raw = `hn_live_${randomBytesHex(24)}`;
               await supabaseAdmin.from("hn_api_keys").insert({
                 workspace_id: ws.id, hn_user_id: user.id, label: "default",
-                key_hash: sha256(raw), key_prefix: raw.slice(0, 8),
+                key_hash: await sha256Hex(raw), key_prefix: raw.slice(0, 8),
                 key_hint: `${raw.slice(0, 12)}…${raw.slice(-4)}`,
               });
             }

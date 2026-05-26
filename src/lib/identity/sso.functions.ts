@@ -1,17 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomBytes } from "node:crypto";
 import { getRequest, getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getSessionFromRequest } from "@/lib/auth/session.server";
 import { signSession } from "@/lib/auth/jwt.server";
+import { sha256Hex, randomBytesHex } from "@/lib/crypto/web-crypto";
 
 const TICKET_TTL_SECONDS = 60;
 const APP_JWT_TTL_SECONDS = 60 * 60 * 24; // 24h
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function hostMatches(allowed: string[], host: string): boolean {
   for (const pattern of allowed) {
@@ -66,10 +64,10 @@ export const issueSsoTicket = createServerFn({ method: "POST" })
       return { ok: false as const, error: "account_disabled" as const };
     }
 
-    const raw = randomBytes(32).toString("hex");
+    const raw = randomBytesHex(32);
     const expires_at = new Date(Date.now() + TICKET_TTL_SECONDS * 1000).toISOString();
     const { error } = await supabaseAdmin.from("hn_sso_tickets").insert({
-      ticket_hash: sha256(raw),
+      ticket_hash: await sha256(raw),
       user_id: user.id,
       hn_user_code: user.hn_user_code,
       source_app: user.source_app ?? "dbguard",
@@ -93,7 +91,7 @@ const consumeSchema = z.object({
 export const consumeSsoTicket = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => consumeSchema.parse(d))
   .handler(async ({ data }) => {
-    const ticket_hash = sha256(data.ticket);
+    const ticket_hash = await sha256(data.ticket);
     const { data: rec } = await supabaseAdmin
       .from("hn_sso_tickets")
       .select("*")
@@ -128,12 +126,12 @@ export const consumeSsoTicket = createServerFn({ method: "POST" })
     // Record session in hn_sessions
     const ip = (() => { try { return getRequestIP({ xForwardedFor: true }) ?? null; } catch { return null; } })();
     const ua = (() => { try { return getRequestHeader("user-agent") ?? null; } catch { return null; } })();
-    const session_token = randomBytes(32).toString("hex");
+    const session_token = randomBytesHex(32);
     await supabaseAdmin.from("hn_sessions").insert({
       user_id: user.id,
       hn_user_code: user.hn_user_code,
       source_app: data.app_key,
-      token_hash: sha256(session_token),
+      token_hash: await sha256(session_token),
       expires_at: new Date(Date.now() + APP_JWT_TTL_SECONDS * 1000).toISOString(),
       ip_address: ip,
       user_agent: ua,

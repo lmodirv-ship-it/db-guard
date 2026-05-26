@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { signSession } from "@/lib/auth/jwt.server";
+import { sha256Hex } from "@/lib/crypto/web-crypto";
 
 const APP_JWT_TTL_SECONDS = 60 * 60 * 24;
-const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/api/public/sso/verify")({
         const { data: rec } = await supabaseAdmin
           .from("hn_sso_tickets")
           .select("*")
-          .eq("ticket_hash", sha256(ticket))
+          .eq("ticket_hash", await sha256Hex(ticket))
           .eq("target_app", app_key)
           .is("used_at", null)
           .gte("expires_at", new Date().toISOString())

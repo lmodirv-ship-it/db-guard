@@ -1,18 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt, randomBytes } from "node:crypto";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { sendEmail } from "@/lib/email";
 import { renderPasswordResetEmail } from "@/lib/email/templates/password-reset";
+import { sha256Hex, randomBytesHex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const RESET_TTL_MIN = 15;
 const MAX_ATTEMPTS = 5;
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function captureMeta() {
   let ip: string | null = null;
@@ -58,14 +56,14 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
       return { ok: true as const, masked_email: maskEmail(isHnCode ? "" : id), token: null as string | null };
     }
 
-    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
-    const token = randomBytes(24).toString("hex");
+    const code = String(randomIntBelow(1_000_000)).padStart(6, "0");
+    const token = randomBytesHex(24);
     const expires_at = new Date(Date.now() + RESET_TTL_MIN * 60_000).toISOString();
 
     await supabaseAdmin.from("password_reset_tokens").insert({
       user_id: user.id,
-      token_hash: sha256(token),
-      code_hash: sha256(code),
+      token_hash: await sha256(token),
+      code_hash: await sha256(code),
       channel: "otp",
       expires_at,
       ip,
@@ -99,7 +97,7 @@ export const verifyResetCode = createServerFn({ method: "POST" })
     const { data: rec } = await supabaseAdmin
       .from("password_reset_tokens")
       .select("*")
-      .eq("token_hash", sha256(data.token))
+      .eq("token_hash", await sha256(data.token))
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .maybeSingle();
@@ -109,7 +107,7 @@ export const verifyResetCode = createServerFn({ method: "POST" })
       return { ok: false as const, error: "too_many_attempts" as const };
     }
 
-    if (rec.code_hash !== sha256(data.code)) {
+    if (rec.code_hash !== (await sha256(data.code))) {
       await supabaseAdmin
         .from("password_reset_tokens")
         .update({ attempts: (rec.attempts ?? 0) + 1 })
@@ -147,12 +145,12 @@ export const completePasswordReset = createServerFn({ method: "POST" })
     const { data: rec } = await supabaseAdmin
       .from("password_reset_tokens")
       .select("*")
-      .eq("token_hash", sha256(data.token))
+      .eq("token_hash", await sha256(data.token))
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .maybeSingle();
     if (!rec) return { ok: false as const, error: "invalid_token" as const };
-    if (rec.code_hash !== sha256(data.code)) {
+    if (rec.code_hash !== (await sha256(data.code))) {
       return { ok: false as const, error: "invalid_code" as const };
     }
 

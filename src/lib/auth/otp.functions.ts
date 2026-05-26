@@ -1,21 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendEmail } from "@/lib/email";
 import { renderOtpEmail } from "@/lib/email/templates/otp";
+import { sha256Hex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const CODE_TTL_MINUTES = 10;
 const MAX_REQUESTS_PER_HOUR = 3;
 const MAX_VERIFY_ATTEMPTS = 5;
 
-function hashCode(code: string) {
-  return createHash("sha256").update(code).digest("hex");
+async function hashCode(code: string) {
+  return sha256Hex(code);
 }
 
 function generateCode() {
   // 6 digits, zero-padded
-  return String(randomInt(0, 1_000_000)).padStart(6, "0");
+  return String(randomIntBelow(1_000_000)).padStart(6, "0");
 }
 
 async function logAudit(params: {
@@ -57,7 +57,7 @@ export const requestOtp = createServerFn({ method: "POST" })
     }
 
     const code = generateCode();
-    const code_hash = hashCode(code);
+    const code_hash = await hashCode(code);
     const expires_at = new Date(Date.now() + CODE_TTL_MINUTES * 60 * 1000).toISOString();
 
     const { error: insertErr } = await supabaseAdmin.from("email_verification_codes").insert({
@@ -97,7 +97,7 @@ export const verifyOtp = createServerFn({ method: "POST" })
   .inputValidator((d: { email: string; code: string }) => verifyOtpSchema.parse(d))
   .handler(async ({ data }) => {
     const { email, code } = data;
-    const code_hash = hashCode(code);
+    const code_hash = await hashCode(code);
 
     // Find any non-used non-expired code for email (handles rapid resends — user
     // may enter a code from an earlier email rather than the most recent one).

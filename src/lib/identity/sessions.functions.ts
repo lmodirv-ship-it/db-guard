@@ -1,13 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash } from "node:crypto";
 import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getSessionFromRequest } from "@/lib/auth/session.server";
+import { sha256Hex } from "@/lib/crypto/web-crypto";
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 async function getCurrentUserId(): Promise<string | null> {
   const session = await getSessionFromRequest(getRequest());
@@ -53,7 +51,7 @@ export const revokeAllOtherSessions = createServerFn({ method: "POST" }).handler
   try {
     const cookieHeader = getRequest().headers.get("cookie") ?? "";
     const m = cookieHeader.match(/(?:^|;\s*)hn_session=([^;]+)/);
-    if (m) currentHash = sha256(m[1]);
+    if (m) currentHash = await sha256(m[1]);
   } catch {}
 
   const q = supabaseAdmin

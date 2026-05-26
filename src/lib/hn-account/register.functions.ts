@@ -1,24 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt, randomBytes } from "node:crypto";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { sendEmail } from "@/lib/email";
 import { renderOtpEmail } from "@/lib/email/templates/otp";
 import { renderAdminSignupEmail, renderWelcomeEmail } from "@/lib/email/templates/admin-signup";
+import { sha256Hex, randomBytesHex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const OTP_TTL_MIN = 10;
 const SESSION_TTL_MIN = 5;
 const ADMIN_NOTIFY_EMAIL = "indo@hnchat.net";
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function generateUserCode(): string {
   // HN-XXXXXX  (6 digits)
-  const digits = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const digits = String(randomIntBelow(1_000_000)).padStart(6, "0");
   return `HN-${digits}`;
 }
 
@@ -50,7 +48,7 @@ function slugify(input: string, fallback: string): string {
 async function uniqueWorkspaceSlug(seed: string): Promise<string> {
   const base = slugify(seed, "ws");
   for (let i = 0; i < 10; i++) {
-    const candidate = i === 0 ? base : `${base}-${randomBytes(2).toString("hex")}`;
+    const candidate = i === 0 ? base : `${base}-${randomBytesHex(2)}`;
     const { data } = await supabaseAdmin
       .from("hn_workspaces")
       .select("id")
@@ -58,7 +56,7 @@ async function uniqueWorkspaceSlug(seed: string): Promise<string> {
       .maybeSingle();
     if (!data) return candidate;
   }
-  return `${base}-${randomBytes(4).toString("hex")}`;
+  return `${base}-${randomBytesHex(4)}`;
 }
 
 const ALLOWED_SOURCE_APPS = ["hn-chat", "hn-driver", "hn-souk", "hn-studio", "hn-video", "db-guard", "hn-account"] as const;
@@ -130,11 +128,11 @@ export const registerHnAccount = createServerFn({ method: "POST" })
       userId = ins.id;
     }
 
-    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+    const code = String(randomIntBelow(1_000_000)).padStart(6, "0");
     const expires_at = new Date(Date.now() + OTP_TTL_MIN * 60_000).toISOString();
     await supabaseAdmin.from("email_verification_codes").insert({
       email: data.email,
-      code_hash: sha256(code),
+      code_hash: await sha256(code),
       purpose: "hn_register",
       expires_at,
     });
@@ -164,7 +162,7 @@ const verifySchema = z.object({
 export const verifyHnAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => verifySchema.parse(d))
   .handler(async ({ data }) => {
-    const code_hash = sha256(data.code);
+    const code_hash = await sha256(data.code);
     const { data: rows } = await supabaseAdmin
       .from("email_verification_codes")
       .select("*")
@@ -253,7 +251,7 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
       database_id = db.id;
 
       // API key — show plaintext ONCE
-      const raw = `hn_live_${randomBytes(24).toString("hex")}`;
+      const raw = `hn_live_${randomBytesHex(24)}`;
       api_key_plaintext = raw;
       const { data: key, error: keyErr } = await supabaseAdmin
         .from("hn_api_keys")
@@ -261,7 +259,7 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
           workspace_id,
           hn_user_id: user.id,
           label: "default",
-          key_hash: sha256(raw),
+          key_hash: await sha256(raw),
           key_prefix: raw.slice(0, 8),
           key_hint: `${raw.slice(0, 12)}…${raw.slice(-4)}`,
         })
@@ -273,8 +271,8 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
     }
 
     // Bridge session
-    const token = randomBytes(32).toString("hex");
-    const token_hash = sha256(token);
+    const token = randomBytesHex(32);
+    const token_hash = await sha256(token);
     const session_expires_at = new Date(Date.now() + SESSION_TTL_MIN * 60_000).toISOString();
 
     await supabaseAdmin.from("hn_sessions").insert({
