@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { withTenant } from "@/lib/db/tenant.server";
 import { requireSession, jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { requireOwner } from "@/lib/auth/owner.server";
 import { getTenantPlan } from "@/lib/platform/plan-limits.server";
 import { audit } from "@/lib/audit/log.server";
 
