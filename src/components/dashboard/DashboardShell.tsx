@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
-  Activity, Users, CreditCard, Settings, LogOut, Shield,
+  Activity, Users, CreditCard, Settings, LogOut, Shield, BookOpen,
 } from "lucide-react";
 
 const NAV: Array<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
@@ -11,6 +11,7 @@ const NAV: Array<{ to: string; label: string; icon: typeof LayoutDashboard; exac
   { to: "/dashboard/tables", label: "Tables", icon: Table2 },
   { to: "/dashboard/records", label: "Records", icon: FileText },
   { to: "/dashboard/api-keys", label: "API Keys", icon: KeyRound },
+  { to: "/dashboard/docs", label: "API Docs", icon: BookOpen },
   { to: "/dashboard/backups", label: "Backups", icon: Archive },
   { to: "/dashboard/logs", label: "Logs", icon: Activity },
   { to: "/dashboard/team", label: "Team", icon: Users },

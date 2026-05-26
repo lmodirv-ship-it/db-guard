@@ -35,6 +35,7 @@ import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
 import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
+import { Route as DashboardDocsRouteImport } from './routes/dashboard.docs'
 import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.databases'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardBackupsRouteImport } from './routes/dashboard.backups'
@@ -198,6 +199,11 @@ const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
 const DashboardLogsRoute = DashboardLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDocsRoute = DashboardDocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardDatabasesRoute = DashboardDatabasesRouteImport.update({
@@ -383,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/docs': typeof DashboardDocsRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -443,6 +450,7 @@ export interface FileRoutesByTo {
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/docs': typeof DashboardDocsRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -506,6 +514,7 @@ export interface FileRoutesById {
   '/dashboard/backups': typeof DashboardBackupsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
+  '/dashboard/docs': typeof DashboardDocsRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -570,6 +579,7 @@ export interface FileRouteTypes {
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
+    | '/dashboard/docs'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -630,6 +640,7 @@ export interface FileRouteTypes {
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
+    | '/dashboard/docs'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -692,6 +703,7 @@ export interface FileRouteTypes {
     | '/dashboard/backups'
     | '/dashboard/billing'
     | '/dashboard/databases'
+    | '/dashboard/docs'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -963,6 +975,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLogsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/docs': {
+      id: '/dashboard/docs'
+      path: '/docs'
+      fullPath: '/dashboard/docs'
+      preLoaderRoute: typeof DashboardDocsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/databases': {
       id: '/dashboard/databases'
       path: '/databases'
@@ -1221,6 +1240,7 @@ interface DashboardRouteChildren {
   DashboardBackupsRoute: typeof DashboardBackupsRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardDatabasesRoute: typeof DashboardDatabasesRoute
+  DashboardDocsRoute: typeof DashboardDocsRoute
   DashboardLogsRoute: typeof DashboardLogsRoute
   DashboardRecordsRoute: typeof DashboardRecordsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -1234,6 +1254,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardBackupsRoute: DashboardBackupsRoute,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardDatabasesRoute: DashboardDatabasesRoute,
+  DashboardDocsRoute: DashboardDocsRoute,
   DashboardLogsRoute: DashboardLogsRoute,
   DashboardRecordsRoute: DashboardRecordsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
