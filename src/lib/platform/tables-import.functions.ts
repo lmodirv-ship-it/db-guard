@@ -38,11 +38,16 @@ export const importPublicTables = createServerFn({ method: "POST" })
       throw new Error("No active API key. Generate one first.");
     }
 
-    const { data: rows, error } = await supabaseAdmin.rpc("list_public_tables");
+    const { data: rows, error } = await supabaseAdmin.rpc("get_public_tables");
     if (error) throw new Error(error.message);
 
+    const tables = (rows ?? []).map((r: { table_name: string; row_count_est: number | string }) => ({
+      table_name: r.table_name,
+      row_count: Number(r.row_count_est ?? 0),
+    }));
+
     return {
-      tables: (rows ?? []) as Array<{ table_name: string; row_count: number }>,
+      tables,
       importedAt: new Date().toISOString(),
     };
   });
