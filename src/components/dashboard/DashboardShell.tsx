@@ -84,16 +84,10 @@ export function DashboardShell({ title, children }: { title: string; children: R
 
   const sidebar = (
     <>
-      <div className="px-5 py-4 border-b border-primary/15 flex items-center gap-2.5 bg-gradient-to-br from-primary/10 to-transparent">
-        <div className="relative">
-          <Shield className="h-6 w-6 text-primary" />
-          <span className="absolute -inset-1 rounded-full bg-primary/30 blur-md -z-10" />
-        </div>
-        <div className="leading-tight">
-          <div className="font-brand text-sm font-bold tracking-[0.2em]">DB·GUARD</div>
-          <div className="font-mono text-[9px] text-muted-foreground tracking-wider">CONTROL CENTER</div>
-        </div>
+      <div className="px-5 py-4 border-b border-primary/15 flex items-center bg-gradient-to-br from-primary/10 to-transparent">
+        <Logo size={36} />
       </div>
+
       <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
         {NAV_GROUPS.map((g) => (
           <div key={g.title}>
