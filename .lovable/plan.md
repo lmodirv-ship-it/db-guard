@@ -1,96 +1,59 @@
-# HN Unified Identity System
 
-تحويل DB-GUARD ليكون **Identity Provider مركزي (IdP)** لجميع تطبيقات HN (Chat, Groupe, Driver, Souk…) مع SSO حقيقي وتسجيل دخول موحّد.
+## المشكلة
 
-## 1. قاعدة البيانات (migration واحدة)
+1. `<html lang="en">` ثابت في `__root.tsx` بدون `dir` → لا يوجد اتجاه على مستوى الـ document في SSR.
+2. `I18nProvider` ينتظر hydration ثم يطبّق اللغة المخزّنة في `localStorage` عبر `applyDocumentLanguage` → اتجاه الصفحة يتبدّل بعد التحميل (layout shift + sidebar يقفز يمين/يسار).
+3. `DashboardShell` يستعمل `start-0` / `border-e` (logical properties) — صحيح، لكن لأن `dir` يتغير بعد hydration الـ sidebar ينتقل من يسار إلى يمين بشكل مرئي.
+4. لا يوجد cookie لحفظ اللغة على السيرفر → SSR لا يعرف لغة المستخدم.
 
-### جداول جديدة
-- `registered_users` (View موحّد فوق `hn_users` يضيف: `source_app`, `registration_source`, `plan`, `last_login`, `status`)  
-  → سنضيف الأعمدة الناقصة لـ `hn_users`: `plan text default 'free'`, `last_login_at timestamptz`, `status text default 'active'`, `registration_source text`.
-- `hn_sso_tickets` — تذاكر SSO قصيرة العمر (60s) لتمرير الجلسة بين المواقع:  
-  `id, ticket_hash, user_id, hn_user_code, source_app, target_app, redirect_url, used_at, expires_at, created_at`.
-- `hn_active_sessions` — توسيع `hn_sessions` بـ: `device, user_agent, ip_address, last_active_at, revoked_at`.
-- `password_reset_tokens` — `id, user_id, token_hash, channel ('email'|'otp'), code_hash, expires_at, used_at, ip, user_agent`.
-- `password_reset_logs` — `id, user_id, email, action ('requested'|'verified'|'completed'|'failed'), ip, user_agent, metadata, created_at`.
-- `connected_apps` — قائمة المواقع المسموح لها (Chat, Groupe, Driver, Souk):  
-  `id, app_key, name, allowed_redirect_hosts text[], status, created_at`. (seed أولي).
+## الحل
 
-كل الجداول RLS: قراءة المستخدم لبياناته فقط + service_role كامل.
+### 1) حفظ اللغة في cookie (مقروء على السيرفر)
+- تعديل `src/lib/i18n/index.ts`: `setStoredLanguage` يكتب أيضاً cookie `dbguard-lang` (Path=/, 1 سنة, SameSite=Lax).
+- `getStoredLanguage` يقرأ من cookie أولاً ثم localStorage (للتوافق).
 
-## 2. Server Functions (مركزية في DB-GUARD)
+### 2) قراءة اللغة في SSR وتطبيقها على `<html>`
+- في `src/routes/__root.tsx`:
+  - استعمال `createServerFn` أو قراءة الـ request headers في `beforeLoad` لاستخراج cookie `dbguard-lang`.
+  - تمريرها كـ loader data للـ root.
+  - في `RootShell` ضبط `<html lang={lang} dir={dir}>` بناءً على القيمة (افتراضي `en`/`ltr`).
+- هذا يضمن أن أول render (SSR) يحمل الاتجاه الصحيح → لا يوجد flash.
 
-تحت `src/lib/identity/`:
+### 3) إزالة الـ flicker في `I18nProvider`
+- بدل الانتظار حتى `useEffect`, قراءة اللغة من `document.documentElement.lang` (التي تم ضبطها في SSR) كقيمة أولية لـ i18n.
+- استدعاء `i18n.changeLanguage(lang)` مرة واحدة قبل أول render على العميل (في module init أو via `useState` initializer) بحيث تتطابق مع SSR.
+- إزالة `applyDocumentLanguage` من `languageChanged` handler عند SSR-match، والإبقاء عليها فقط عند تغيير المستخدم اللغة يدوياً.
 
-- `sso.functions.ts`
-  - `issueSsoTicket({ target_app, redirect_url })` — يصدر ticket لمستخدم مسجّل ويعيد URL.
-  - `consumeSsoTicket({ ticket })` — تستهلكه التطبيقات الأخرى → يرجع user payload + JWT موقّع بـ `HN_JWT_SECRET`.
-- `sessions.functions.ts`
-  - `listMySessions`, `revokeSession`, `revokeAllOtherSessions`.
-- `password-reset.functions.ts`
-  - `requestPasswordReset({ identifier })` — يقبل email أو `HN-XXXXXX`.
-  - `verifyResetCode({ token, code })`
-  - `completeReset({ token, newPassword })`
-- `owner.functions.ts` (Owner-only)
-  - `listAllRegisteredUsers({ filters })` — مع source_app, plan, status, last_login.
+### 4) تثبيت الـ sidebar في `DashboardShell`
+- الكود حالياً يستعمل `start-0`, `border-e`, `inset-y-0 start-0` → هذه logical properties تتبع `dir` تلقائياً. بمجرد أن يصبح `dir` ثابتاً من SSR، الـ sidebar لن يقفز.
+- التأكد من أن جميع المواضع تستعمل logical (`start/end`, `ms/me`, `ps/pe`, `border-s/border-e`) — مراجعة سريعة للملف، استبدال أي `left/right` متبقي.
 
-كل التسجيلات الموجودة (`register.functions.ts`) ستُعدَّل لتقبل `source_app` (chat|groupe|driver|souk|dbguard) وتعبّئ `registration_source`.
+### 5) تثبيت responsive
+- `<aside className="hidden lg:flex w-64 shrink-0 border-e ...">` يبقى كما هو.
+- الموبايل drawer: `fixed inset-y-0 start-0` صحيح مع `dir` ثابت.
+- لا تغيير في breakpoints.
 
-## 3. Routes جديدة
+### 6) منع hydration mismatch إضافي
+- `LanguageSwitcher`: حالياً يستعمل `mounted` flag — يبقى.
+- إزالة أي `Math.random()` أو `Date.now()` من initial render (خارج نطاق هذا الطلب لكن مذكور سابقاً).
 
-- `/forgot-password` — إدخال email أو HN code.
-- `/reset-password` — إدخال OTP + كلمة مرور جديدة.
-- `/sso/authorize` — يستقبل `?app=chat&redirect=https://...` → إن كان المستخدم مسجلًا يُصدر ticket ويعيد التوجيه؛ وإلا يحوّل لـ `/login` ثم يعود.
-- `/sso/callback` — endpoint يستهلكه التطبيقات الأخرى (`/api/public/sso/verify` server route لتحقق التذكرة + إصدار JWT).
-- `/owner/registered-users` — Owner Dashboard لعرض جميع المستخدمين (يتطلب صلاحية owner — سنستخدم `user_roles` مع `app_role='owner'`).
-- `/account/sessions` — إدارة الجلسات النشطة (revoke, devices, IPs).
+## الملفات المتأثرة
 
-## 4. SSO Flow (موجز)
+- `src/lib/i18n/index.ts` — إضافة cookie read/write helpers.
+- `src/routes/__root.tsx` — قراءة cookie في SSR، تمرير `lang`/`dir` إلى `<html>`.
+- `src/components/I18nProvider.tsx` — مزامنة i18n مع SSR lang بدون flicker.
+- `src/components/dashboard/DashboardShell.tsx` — مراجعة سريعة لأي `left/right` (لا تغييرات هيكلية).
 
-```
-HN-Chat ──(redirect)──▶ db-guard.lovable.app/sso/authorize?app=chat&redirect=...
-                          │
-                  مسجّل؟  ├── نعم → issueSsoTicket → redirect=...?ticket=XYZ
-                          └── لا  → /login?next=/sso/authorize?... ثم يكمل
-                          
-HN-Chat ──POST /api/public/sso/verify {ticket} ──▶ DB-GUARD
-                          ◀── { user, hn_user_code, jwt, expires_at }
-```
+## ما لن أفعله
 
-التذكرة: استخدام مرة واحدة، 60 ثانية، مرتبطة بـ target_app + redirect host في `connected_apps.allowed_redirect_hosts`.
+- لن أمسّ أي ملف auth/database/route آخر.
+- لن أعيد ترتيب navigation items.
+- لن أغيّر التصميم أو الألوان.
+- لا mock data، لا تغييرات في business logic.
 
-## 5. Forgot Password Flow
+## النتيجة المتوقعة
 
-1. `/forgot-password` → email/HN code → `requestPasswordReset` يولّد OTP 6 أرقام + token، يرسل بريد عبر Resend (template جديد).
-2. `/reset-password?token=...` → إدخال OTP + كلمة سر جديدة → `verifyResetCode` ثم `completeReset` → bcrypt hash + إبطال جميع الجلسات + log.
-3. كل خطوة تُسجَّل في `password_reset_logs`.
-
-## 6. Sessions Manager
-
-صفحة `/account/sessions` تعرض:
-- device (parsed user-agent)، IP، last_active، current/other.
-- زر Revoke لكل جلسة + Revoke All Other Sessions.
-
-## 7. Owner Dashboard
-
-`/owner/registered-users` (محمي بـ role=owner):
-- جدول: hn_user_code, email, full_name, source_app, plan, status, last_login, created_at.
-- فلاتر: source_app, status, plan + بحث.
-- تصدير CSV.
-
-## 8. i18n
-
-كل النصوص الجديدة (en/ar/fr/es) تحت keys: `identity.*`, `sso.*`, `passwordReset.*`, `sessions.*`, `owner.users.*`.
-
-## 9. ما يبقى خارج هذا الـ scope
-
-- **التطبيقات الخارجية نفسها** (Chat/Groupe/Driver/Souk) — هذا المشروع هو IdP فقط؛ سأوفّر **SDK snippet** بسيط (`docs/HN_SSO_INTEGRATION.md`) يبيّن كيف يستدعي أي موقع `/sso/authorize` و `/api/public/sso/verify`.
-- ربط Google/Apple SSO خارجي — السؤال أدناه.
-
-## أسئلة قبل البدء
-
-1. **Owner Role**: هل أنشئ جدول `user_roles` + `app_role enum('owner','admin','user')` وأمنحك دور owner يدويًا (أعطني email/HN code)، أم تستخدم email محدد (مثلاً `indo@hnchat.net`) كـ hardcoded owner للمرحلة الأولى؟
-2. **JWT للتطبيقات**: مدة JWT الذي يُسلَّم للمواقع بعد SSO verify — افتراضيًا **24 ساعة** access + refresh 30 يوم. موافق؟
-3. **OTP أم Reset Link**: للـ forgot password — **OTP 6 أرقام** (أبسط ولا يحتاج صفحة عامة في كل موقع) أم **reset link** قابل للنقر؟
-4. **Connected apps seed**: هل أضيف الأربعة (chat, groupe, driver, souk) كـ records أولية مع `allowed_redirect_hosts=['*.hnchat.net']` كـ placeholder، أم تعطيني الـ domains الفعلية الآن؟
-
-بعد إجاباتك أنفّذ كل شيء في خطوة واحدة (migration + server fns + routes + i18n + SDK doc).
+- العربية: `<html lang="ar" dir="rtl">` من SSR → sidebar يميناً ثابتاً.
+- الإنجليزية/الفرنسية/الإسبانية: `<html lang="xx" dir="ltr">` → sidebar يساراً ثابتاً.
+- لا قفزة layout بعد hydration.
+- تبديل اللغة يدوياً يطبّق فوراً ويُحفظ في cookie للزيارات القادمة.
