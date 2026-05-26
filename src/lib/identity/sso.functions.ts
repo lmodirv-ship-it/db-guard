@@ -58,10 +58,13 @@ export const issueSsoTicket = createServerFn({ method: "POST" })
 
     const { data: user } = await supabaseAdmin
       .from("hn_users")
-      .select("id, hn_user_code, source_app")
+      .select("id, hn_user_code, source_app, status")
       .eq("id", session.sub)
       .maybeSingle();
     if (!user) return { ok: false as const, error: "user_missing" as const };
+    if (user.status && user.status !== "active") {
+      return { ok: false as const, error: "account_disabled" as const };
+    }
 
     const raw = randomBytes(32).toString("hex");
     const expires_at = new Date(Date.now() + TICKET_TTL_SECONDS * 1000).toISOString();
