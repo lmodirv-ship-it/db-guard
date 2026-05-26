@@ -114,6 +114,14 @@ export function HnServicesFooter() {
         <span>🛡</span>
         حسابك محمي بأفضل تقنيات الأمان والخصوصية
       </p>
+      <p className="text-center text-xs mt-3 flex items-center justify-center gap-2 flex-wrap"
+         style={{ color: "var(--hn-text-muted)" }}>
+        <span>✉️</span>
+        <span>للتواصل:</span>
+        <a href="mailto:admin@hn-db.fun" className="hn-text-gold font-bold hover:underline" style={{ fontFamily: "Outfit, sans-serif" }}>
+          admin@hn-db.fun
+        </a>
+      </p>
     </div>
   );
 }
