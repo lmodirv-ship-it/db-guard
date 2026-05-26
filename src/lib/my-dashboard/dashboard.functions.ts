@@ -1,26 +1,27 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createMiddleware, createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { createHash, randomUUID } from "node:crypto";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getSessionFromRequest } from "@/lib/auth/session.server";
 
-function hashKey(raw: string) {
-  return createHash("sha256").update(raw).digest("hex");
-}
-function keyHint(raw: string) {
-  if (raw.length <= 8) return "****";
-  return `${raw.slice(0, 4)}…${raw.slice(-4)}`;
-}
+const requireSession = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const request = getRequest();
+  if (!request) throw new Error("Unauthorized: no request");
+  const session = await getSessionFromRequest(request);
+  if (!session) throw new Error("Unauthorized: please sign in");
+  return next({ context: { userId: session.sub, claims: session } });
+});
 
 export const getMyOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     const [recordsRes, filesRes, logsRes, exportsRes, connRes] = await Promise.all([
-      supabase.from("user_records").select("id, type, title, created_at").order("created_at", { ascending: false }).limit(100),
-      supabase.from("user_files").select("id, name, mime_type, size_bytes, created_at").order("created_at", { ascending: false }).limit(100),
-      supabase.from("user_activity_logs").select("id, action, metadata, created_at").order("created_at", { ascending: false }).limit(50),
-      supabase.from("dbguard_export_logs").select("id, status, items_count, payload_size, error, created_at").order("created_at", { ascending: false }).limit(20),
-      supabase.from("dbguard_connections").select("project_id, endpoint_url, api_key_hint, status, last_synced_at, updated_at").maybeSingle(),
+      supabaseAdmin.from("user_records").select("id, type, title, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(100),
+      supabaseAdmin.from("user_files").select("id, name, mime_type, size_bytes, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(100),
+      supabaseAdmin.from("user_activity_logs").select("id, action, metadata, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
+      supabaseAdmin.from("dbguard_export_logs").select("id, status, items_count, payload_size, error, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(20),
+      supabaseAdmin.from("dbguard_connections").select("project_id, endpoint_url, api_key_hint, status, last_synced_at, updated_at").eq("user_id", userId).maybeSingle(),
     ]);
     return {
       userId,
