@@ -4,7 +4,7 @@
  * Strategy (dual isolation):
  *   1. App layer  — every query takes a `tenantId` and includes a
  *                   `WHERE tenant_id = $tid` clause explicitly.
- *   2. RLS layer  — every query is wrapped in a HN Database Engine transaction
+ *   2. RLS layer  — every query is wrapped in a Neon HTTP transaction
  *                   that begins with `SET LOCAL app.tenant_id = '<tid>'`,
  *                   so Postgres RLS policies enforce the same predicate.
  *
@@ -15,7 +15,7 @@
 import { neon } from "@neondatabase/serverless";
 import { requireEnv } from "../env.server";
 
-// Loose alias — the HN Database Engine driver's generics are too strict to mix with
+// Loose alias — the Neon HTTP driver's generics are too strict to mix with
 // generic helpers; we accept any pre-built query promise.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyQuery = any;

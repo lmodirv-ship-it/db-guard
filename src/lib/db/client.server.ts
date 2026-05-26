@@ -1,5 +1,5 @@
 /**
- * HN Database Engine client (Workers-compatible, stateless).
+ * Neon HTTP client (Workers-compatible, stateless).
  * Singleton per worker isolate.
  */
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
