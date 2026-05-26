@@ -126,12 +126,12 @@ export const consumeSsoTicket = createServerFn({ method: "POST" })
     // Record session in hn_sessions
     const ip = (() => { try { return getRequestIP({ xForwardedFor: true }) ?? null; } catch { return null; } })();
     const ua = (() => { try { return getRequestHeader("user-agent") ?? null; } catch { return null; } })();
-    const session_token = randomBytes(32).toString("hex");
+    const session_token = randomBytesHex(32);
     await supabaseAdmin.from("hn_sessions").insert({
       user_id: user.id,
       hn_user_code: user.hn_user_code,
       source_app: data.app_key,
-      token_hash: sha256(session_token),
+      token_hash: await sha256(session_token),
       expires_at: new Date(Date.now() + APP_JWT_TTL_SECONDS * 1000).toISOString(),
       ip_address: ip,
       user_agent: ua,
