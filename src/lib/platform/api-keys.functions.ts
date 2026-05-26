@@ -1,6 +1,8 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getSessionFromRequest } from "@/lib/auth/session.server";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz";
 
@@ -19,6 +21,14 @@ async function sha256(input: string): Promise<string> {
     .join("");
 }
 
+const requireSession = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const request = getRequest();
+  if (!request) throw new Error("Unauthorized: no request");
+  const session = await getSessionFromRequest(request);
+  if (!session) throw new Error("Unauthorized: please sign in");
+  return next({ context: { userId: session.sub } });
+});
+
 const NameSchema = z.object({
   name: z
     .string()
@@ -29,31 +39,29 @@ const NameSchema = z.object({
 });
 
 export const listApiKeys = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("api_keys")
       .select("id,name,key_prefix,scopes,status,revoked_at,created_at")
-      .eq("user_id", userId)
+      .eq("user_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return { keys: data ?? [] };
   });
 
 export const createApiKey = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((input) => NameSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
     const key = genKey();
     const key_hash = await sha256(key);
     const key_prefix = key.slice(0, 12);
 
-    const { data: row, error } = await supabase
+    const { data: row, error } = await supabaseAdmin
       .from("api_keys")
       .insert({
-        user_id: userId,
+        user_id: context.userId,
         name: data.name,
         key_prefix,
         key_hash,
@@ -67,15 +75,14 @@ export const createApiKey = createServerFn({ method: "POST" })
   });
 
 export const revokeApiKey = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("api_keys")
       .update({ status: "revoked", revoked_at: new Date().toISOString() })
       .eq("id", data.id)
-      .eq("user_id", userId);
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
