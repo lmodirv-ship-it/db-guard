@@ -115,7 +115,7 @@ export const Route = createFileRoute("/api/auth/register")({
 
           // Provision workspace + database + api key (best-effort, non-fatal)
           try {
-            const slug = `${slugify(full_name)}-${randomBytes(2).toString("hex")}`;
+            const slug = `${slugify(full_name)}-${randomBytesHex(2)}`;
             const { data: ws } = await supabaseAdmin
               .from("hn_workspaces")
               .insert({ hn_user_id: user.id, name: `${full_name}'s workspace`, slug })
@@ -124,10 +124,10 @@ export const Route = createFileRoute("/api/auth/register")({
               await supabaseAdmin.from("hn_databases").insert({
                 workspace_id: ws.id, hn_user_id: user.id, name: "primary", status: "active",
               });
-              const raw = `hn_live_${randomBytes(24).toString("hex")}`;
+              const raw = `hn_live_${randomBytesHex(24)}`;
               await supabaseAdmin.from("hn_api_keys").insert({
                 workspace_id: ws.id, hn_user_id: user.id, label: "default",
-                key_hash: sha256(raw), key_prefix: raw.slice(0, 8),
+                key_hash: await sha256Hex(raw), key_prefix: raw.slice(0, 8),
                 key_hint: `${raw.slice(0, 12)}…${raw.slice(-4)}`,
               });
             }
