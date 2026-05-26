@@ -3,6 +3,8 @@ import {
   Shield, Database, Lock, Zap, ArrowRight, ShieldCheck,
   MessageCircle, Car, ShoppingCart, Camera, PlayCircle, Activity, Server, Globe, KeyRound, Cpu,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -68,17 +70,8 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b backdrop-blur-xl"
         style={{ borderColor: "oklch(0.85 0.18 85 / 0.15)", background: "oklch(0.07 0.02 270 / 0.65)" }}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl font-brand text-sm font-black"
-              style={{
-                background: "linear-gradient(135deg, oklch(0.92 0.18 90), oklch(0.7 0.22 55))",
-                color: "oklch(0.13 0.02 270)",
-                boxShadow: "0 0 28px oklch(0.85 0.18 85 / 0.55)",
-              }}>HN</div>
-            <div className="font-brand text-sm font-bold tracking-[0.25em]" style={{ color: "oklch(0.88 0.18 85)" }}>
-              HN ACCOUNT
-            </div>
-          </div>
+          <Logo size={40} />
+
           <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
             <a href="#services" className="hover:text-foreground transition">Services</a>
             <a href="#dbguard" className="hover:text-foreground transition">DB·GUARD</a>
