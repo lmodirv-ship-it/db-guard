@@ -128,11 +128,11 @@ export const registerHnAccount = createServerFn({ method: "POST" })
       userId = ins.id;
     }
 
-    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+    const code = String(randomIntBelow(1_000_000)).padStart(6, "0");
     const expires_at = new Date(Date.now() + OTP_TTL_MIN * 60_000).toISOString();
     await supabaseAdmin.from("email_verification_codes").insert({
       email: data.email,
-      code_hash: sha256(code),
+      code_hash: await sha256(code),
       purpose: "hn_register",
       expires_at,
     });
