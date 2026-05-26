@@ -957,6 +957,13 @@ export type Database = {
         Returns: number
       }
       generate_hn_user_code: { Args: never; Returns: string }
+      get_public_tables: {
+        Args: never
+        Returns: {
+          row_count_est: number
+          table_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
