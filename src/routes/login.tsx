@@ -26,7 +26,13 @@ function LoginPage() {
       });
       const json = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "login_failed");
+        const map: Record<string, string> = {
+          invalid_credentials: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+          invalid_input: "البيانات غير صالحة. تأكد من البريد وكلمة المرور.",
+          invalid_json: "طلب غير صالح.",
+          login_failed: "تعذّر تسجيل الدخول. حاول مرة أخرى.",
+        };
+        setError(map[json.error ?? "login_failed"] ?? json.error ?? "تعذّر تسجيل الدخول.");
         return;
       }
       window.location.href = "/dashboard";
