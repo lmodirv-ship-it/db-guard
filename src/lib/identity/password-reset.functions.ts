@@ -97,7 +97,7 @@ export const verifyResetCode = createServerFn({ method: "POST" })
     const { data: rec } = await supabaseAdmin
       .from("password_reset_tokens")
       .select("*")
-      .eq("token_hash", sha256(data.token))
+      .eq("token_hash", await sha256(data.token))
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .maybeSingle();
@@ -107,7 +107,7 @@ export const verifyResetCode = createServerFn({ method: "POST" })
       return { ok: false as const, error: "too_many_attempts" as const };
     }
 
-    if (rec.code_hash !== sha256(data.code)) {
+    if (rec.code_hash !== (await sha256(data.code))) {
       await supabaseAdmin
         .from("password_reset_tokens")
         .update({ attempts: (rec.attempts ?? 0) + 1 })
