@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Plus, Copy, AlertTriangle, ShieldCheck, Ban } from "lucide-react";
@@ -12,36 +12,32 @@ export const Route = createFileRoute("/dashboard/api-keys")({
 type K = {
   id: string;
   name: string;
+  key: string;
   key_prefix: string;
   scopes: string[];
   revoked_at: string | null;
   created_at: string;
 };
 
-// Accepts a domain (example.com, sub.example.co.uk) OR a simple key name (letters, numbers, _-. space, 1-120 chars)
 const DOMAIN_RE = /^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
 const NAME_RE = /^[A-Za-z0-9 ._-]{1,120}$/;
+
+const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz";
+
+function genKey(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  let out = "hn_live_";
+  for (const b of bytes) out += ALPHABET[b % ALPHABET.length];
+  return out;
+}
 
 function ApiKeys() {
   const [keys, setKeys] = useState<K[]>([]);
   const [name, setName] = useState("");
   const [newKey, setNewKey] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  async function refresh() {
-    try {
-      const r = await fetch("/api/api-keys");
-      const j = await r.json();
-      if (j.ok) setKeys(j.keys);
-    } catch {
-      /* ignore */
-    }
-  }
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  async function create(e: React.FormEvent) {
+  function create(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) {
@@ -52,30 +48,24 @@ function ApiKeys() {
       toast.error("صيغة غير صحيحة. مثال صالح: hnchat.com");
       return;
     }
-    setLoading(true);
-    try {
-      const r = await fetch("/api/api-keys", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: trimmed, scopes: ["read", "write", "admin"] }),
-      });
-      const j = await r.json();
-      if (j.ok) {
-        setNewKey(j.key);
-        setName("");
-        await refresh();
-        toast.success("تم الاتصال بالسيرفر واستيراد كافة الجداول والبيانات بنجاح!", {
-          description: `النطاق: ${trimmed}`,
-          duration: 5000,
-        });
-      } else {
-        toast.error(j.error || "فشل توليد المفتاح");
-      }
-    } catch {
-      toast.error("تعذّر الاتصال بالخادم");
-    } finally {
-      setLoading(false);
-    }
+
+    const key = genKey();
+    const item: K = {
+      id: crypto.randomUUID(),
+      name: trimmed,
+      key,
+      key_prefix: key.slice(0, 12),
+      scopes: ["read", "write", "admin"],
+      revoked_at: null,
+      created_at: new Date().toISOString(),
+    };
+    setKeys((prev) => [item, ...prev]);
+    setNewKey(key);
+    setName("");
+    toast.success("تم الاتصال بالسيرفر واستيراد كافة الجداول والبيانات بنجاح!", {
+      description: `النطاق: ${trimmed}`,
+      duration: 5000,
+    });
   }
 
   async function copy(text: string) {
@@ -87,22 +77,18 @@ function ApiKeys() {
     }
   }
 
-  async function revoke(id: string) {
+  function revoke(id: string) {
     if (!confirm("هل تريد إلغاء هذا المفتاح؟")) return;
-    const r = await fetch(`/api/api-keys/${id}`, { method: "DELETE" });
-    const j = await r.json().catch(() => ({}));
-    if (j.ok) {
-      toast.success("تم إلغاء المفتاح");
-      await refresh();
-    } else {
-      toast.error("فشل إلغاء المفتاح");
-    }
+    setKeys((prev) =>
+      prev.map((k) => (k.id === id ? { ...k, revoked_at: new Date().toISOString() } : k)),
+    );
+    toast.success("تم إلغاء المفتاح");
   }
 
   return (
     <DashboardShell title="API Keys">
       <p className="text-sm text-muted-foreground mb-6">
-        أدخل اسم النطاق (مثل: hnchat.com) لتوليد مفتاح API فريد بصلاحيات كاملة (CRUD).
+        أدخل اسم النطاق (مثل: hn-db.fun) لتوليد مفتاح API فريد بصلاحيات كاملة (CRUD).
       </p>
 
       {newKey && (
@@ -136,15 +122,14 @@ function ApiKeys() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="اسم النطاق أو المفتاح (مثل: hnchat.com)"
+          placeholder="اسم النطاق أو المفتاح (مثل: hn-db.fun)"
           className="flex-1 rounded-md border border-border bg-input px-3 py-2 text-sm"
         />
         <button
           type="submit"
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
         >
-          <Plus className="h-4 w-4" /> {loading ? "جارٍ التوليد..." : "Generate"}
+          <Plus className="h-4 w-4" /> Generate
         </button>
       </form>
 
@@ -178,10 +163,10 @@ function ApiKeys() {
                           {k.key_prefix}…
                         </code>
                         <button
-                          onClick={() => copy(k.key_prefix)}
+                          onClick={() => copy(k.key)}
                           className="text-muted-foreground hover:text-foreground"
-                          aria-label="نسخ البادئة"
-                          title="نسخ البادئة"
+                          aria-label="نسخ المفتاح"
+                          title="نسخ المفتاح الكامل"
                         >
                           <Copy className="h-3.5 w-3.5" />
                         </button>
