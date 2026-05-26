@@ -9,7 +9,7 @@ const CODE_TTL_MINUTES = 10;
 const MAX_REQUESTS_PER_HOUR = 3;
 const MAX_VERIFY_ATTEMPTS = 5;
 
-function hashCode(code: string) {
+async function hashCode(code: string) {
   return sha256Hex(code);
 }
 
