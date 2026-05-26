@@ -1,24 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt, randomBytes } from "node:crypto";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { sendEmail } from "@/lib/email";
 import { renderOtpEmail } from "@/lib/email/templates/otp";
 import { renderAdminSignupEmail, renderWelcomeEmail } from "@/lib/email/templates/admin-signup";
+import { sha256Hex, randomBytesHex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const OTP_TTL_MIN = 10;
 const SESSION_TTL_MIN = 5;
 const ADMIN_NOTIFY_EMAIL = "indo@hnchat.net";
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function generateUserCode(): string {
   // HN-XXXXXX  (6 digits)
-  const digits = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const digits = String(randomIntBelow(1_000_000)).padStart(6, "0");
   return `HN-${digits}`;
 }
 
