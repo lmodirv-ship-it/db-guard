@@ -40,28 +40,28 @@ const recordSchema = z.object({
 });
 
 export const createMyRecord = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((d) => recordSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { data: row, error } = await supabase
+    const { userId } = context;
+    const { data: row, error } = await supabaseAdmin
       .from("user_records")
       .insert({ user_id: userId, type: data.type, title: data.title, data: data.data as never })
       .select()
       .single();
     if (error) throw new Error(error.message);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "record.create", metadata: { id: row.id, title: row.title } });
+    await supabaseAdmin.from("user_activity_logs").insert({ user_id: userId, action: "record.create", metadata: { id: row.id, title: row.title } });
     return row;
   });
 
 export const deleteMyRecord = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { error } = await supabase.from("user_records").delete().eq("id", data.id);
+    const { userId } = context;
+    const { error } = await supabaseAdmin.from("user_records").delete().eq("id", data.id).eq("user_id", userId);
     if (error) throw new Error(error.message);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "record.delete", metadata: { id: data.id } });
+    await supabaseAdmin.from("user_activity_logs").insert({ user_id: userId, action: "record.delete", metadata: { id: data.id } });
     return { ok: true };
   });
 
@@ -73,10 +73,10 @@ const connectionSchema = z.object({
 });
 
 export const saveDbguardConnection = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((d) => connectionSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     const payload = {
       user_id: userId,
       project_id: data.project_id,
@@ -86,13 +86,13 @@ export const saveDbguardConnection = createServerFn({ method: "POST" })
       status: "connected",
       updated_at: new Date().toISOString(),
     };
-    const { data: row, error } = await supabase
+    const { data: row, error } = await supabaseAdmin
       .from("dbguard_connections")
       .upsert(payload, { onConflict: "user_id" })
       .select("project_id, endpoint_url, api_key_hint, status, last_synced_at, updated_at")
       .single();
     if (error) throw new Error(error.message);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.configure", metadata: { project_id: data.project_id, target: data.target_hn_code || null } });
+    await supabaseAdmin.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.configure", metadata: { project_id: data.project_id, target: data.target_hn_code || null } });
     return row;
   });
 
