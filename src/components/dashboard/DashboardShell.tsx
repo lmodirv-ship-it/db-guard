@@ -3,12 +3,14 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
-  Activity, Users, CreditCard, Settings, LogOut, Shield, Menu, Globe,
+  Activity, Users, CreditCard, Settings, LogOut, Menu, Globe,
   Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/Logo";
 import { PulseDot } from "@/components/dashboard/CyberCard";
+
 
 type NavItem = {
   to: string;
