@@ -162,7 +162,7 @@ const verifySchema = z.object({
 export const verifyHnAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => verifySchema.parse(d))
   .handler(async ({ data }) => {
-    const code_hash = sha256(data.code);
+    const code_hash = await sha256(data.code);
     const { data: rows } = await supabaseAdmin
       .from("email_verification_codes")
       .select("*")
