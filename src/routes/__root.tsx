@@ -1,8 +1,16 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 
 import appCss from "../styles.css?url";
 import "@/lib/i18n";
 import { AppProviders } from "@/components/I18nProvider";
+import { parseLangCookie, dirFor, DEFAULT_LANGUAGE, type LanguageCode } from "@/lib/i18n";
+
+const getInitialLanguage = createServerFn({ method: "GET" }).handler(async () => {
+  const cookie = getRequestHeader("cookie");
+  return { lang: parseLangCookie(cookie) as LanguageCode };
+});
 
 function NotFoundComponent() {
   return (
