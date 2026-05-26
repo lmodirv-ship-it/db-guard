@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { randomBytes, createHash } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword, verifyPassword } from "@/lib/auth/password.server";
 import { signSession, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth/jwt.server";
 import { jsonError, jsonOk } from "@/lib/auth/session.server";
 import { sendRegistrationEmail } from "@/lib/email/send-registration.server";
+import { sha256Hex, randomBytesHex } from "@/lib/crypto/web-crypto";
 
 const RegisterSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -14,10 +14,6 @@ const RegisterSchema = z.object({
   password: z.string().min(8).max(256),
   source_app: z.string().max(40).optional(),
 });
-
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
 
 function buildCookie(token: string): string {
   return [
