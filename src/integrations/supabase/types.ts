@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          name: string
+          revoked_at: string | null
+          scopes: string[]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          name: string
+          revoked_at?: string | null
+          scopes?: string[]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          name?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       auth_audit_log: {
         Row: {
           created_at: string
@@ -927,6 +963,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      list_public_tables: {
+        Args: never
+        Returns: {
+          row_count: number
+          table_name: string
+        }[]
       }
       move_to_dlq: {
         Args: {
