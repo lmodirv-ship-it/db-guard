@@ -8,7 +8,7 @@ export const Route = createFileRoute("/dashboard/api-keys")({
   component: ApiKeys,
 });
 
-type K = { id: string; name: string; key_prefix: string; scopes: string[]; revoked_at: string | null; created_at: string };
+type K = { id: string; name: string; key_prefix: string; scopes: string[]; revoked_at: string | null; created_at: string; last_used_at: string | null };
 
 function ApiKeys() {
   const [keys, setKeys] = useState<K[]>([]);
@@ -55,15 +55,16 @@ function ApiKeys() {
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left">
-            <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Prefix</th><th className="px-4 py-3">Scopes</th><th className="px-4 py-3">Status</th><th /></tr>
+            <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Prefix</th><th className="px-4 py-3">Scopes</th><th className="px-4 py-3">Last used</th><th className="px-4 py-3">Status</th><th /></tr>
           </thead>
           <tbody>
-            {keys.length === 0 ? <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No API keys yet.</td></tr> :
+            {keys.length === 0 ? <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No API keys yet.</td></tr> :
               keys.map((k) => (
                 <tr key={k.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-3">{k.name}</td>
                   <td className="px-4 py-3 font-mono text-xs">{k.key_prefix}…</td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">{k.scopes.join(", ")}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{k.last_used_at ? new Date(k.last_used_at).toLocaleString() : "—"}</td>
                   <td className="px-4 py-3">{k.revoked_at ? <span className="text-destructive text-xs">Revoked</span> : <span className="text-primary text-xs">Active</span>}</td>
                   <td className="px-4 py-3 text-right">
                     {!k.revoked_at && <button onClick={() => revoke(k.id)} className="text-destructive text-xs hover:underline">Revoke</button>}
