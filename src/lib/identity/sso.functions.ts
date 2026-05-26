@@ -115,6 +115,9 @@ export const consumeSsoTicket = createServerFn({ method: "POST" })
       .eq("id", rec.user_id)
       .maybeSingle();
     if (!user) return { ok: false as const, error: "user_missing" as const };
+    if (user.status && user.status !== "active") {
+      return { ok: false as const, error: "account_disabled" as const };
+    }
 
     // Update last_login_at
     await supabaseAdmin
