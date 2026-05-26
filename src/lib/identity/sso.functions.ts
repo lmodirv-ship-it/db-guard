@@ -91,7 +91,7 @@ const consumeSchema = z.object({
 export const consumeSsoTicket = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => consumeSchema.parse(d))
   .handler(async ({ data }) => {
-    const ticket_hash = sha256(data.ticket);
+    const ticket_hash = await sha256(data.ticket);
     const { data: rec } = await supabaseAdmin
       .from("hn_sso_tickets")
       .select("*")
