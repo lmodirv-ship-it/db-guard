@@ -47,6 +47,9 @@ export const Route = createFileRoute("/api/public/sso/verify")({
         if (!user) {
           return new Response(JSON.stringify({ ok: false, error: "user_missing" }), { status: 404, headers: cors });
         }
+        if (user.status && user.status !== "active") {
+          return new Response(JSON.stringify({ ok: false, error: "account_disabled" }), { status: 403, headers: cors });
+        }
 
         await supabaseAdmin.from("hn_users").update({ last_login_at: new Date().toISOString() }).eq("id", user.id);
 
