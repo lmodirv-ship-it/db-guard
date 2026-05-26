@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/public/sso/verify")({
         const { data: rec } = await supabaseAdmin
           .from("hn_sso_tickets")
           .select("*")
-          .eq("ticket_hash", sha256(ticket))
+          .eq("ticket_hash", await sha256Hex(ticket))
           .eq("target_app", app_key)
           .is("used_at", null)
           .gte("expires_at", new Date().toISOString())
