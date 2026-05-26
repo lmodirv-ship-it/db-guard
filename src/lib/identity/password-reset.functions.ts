@@ -56,14 +56,14 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
       return { ok: true as const, masked_email: maskEmail(isHnCode ? "" : id), token: null as string | null };
     }
 
-    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
-    const token = randomBytes(24).toString("hex");
+    const code = String(randomIntBelow(1_000_000)).padStart(6, "0");
+    const token = randomBytesHex(24);
     const expires_at = new Date(Date.now() + RESET_TTL_MIN * 60_000).toISOString();
 
     await supabaseAdmin.from("password_reset_tokens").insert({
       user_id: user.id,
-      token_hash: sha256(token),
-      code_hash: sha256(code),
+      token_hash: await sha256(token),
+      code_hash: await sha256(code),
       channel: "otp",
       expires_at,
       ip,
