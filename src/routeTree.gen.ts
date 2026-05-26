@@ -48,6 +48,8 @@ import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
 import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
 import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
+import { Route as ApiSsoSignupRouteImport } from './routes/api/sso/signup'
+import { Route as ApiSsoLoginRouteImport } from './routes/api/sso/login'
 import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
 import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
@@ -66,6 +68,8 @@ import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$i
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
 import { Route as ApiTablesIdColumnsRouteImport } from './routes/api/tables/$id/columns'
+import { Route as ApiPublicSsoVerifyRouteImport } from './routes/api/public/sso/verify'
+import { Route as ApiPublicSsoMeRouteImport } from './routes/api/public/sso/me'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
@@ -266,6 +270,16 @@ const ApiTablesIdRoute = ApiTablesIdRouteImport.update({
   path: '/api/tables/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSsoSignupRoute = ApiSsoSignupRouteImport.update({
+  id: '/api/sso/signup',
+  path: '/api/sso/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSsoLoginRoute = ApiSsoLoginRouteImport.update({
+  id: '/api/sso/login',
+  path: '/api/sso/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRecordsIdRoute = ApiRecordsIdRouteImport.update({
   id: '/api/records/$id',
   path: '/api/records/$id',
@@ -357,6 +371,16 @@ const ApiTablesIdColumnsRoute = ApiTablesIdColumnsRouteImport.update({
   path: '/columns',
   getParentRoute: () => ApiTablesIdRoute,
 } as any)
+const ApiPublicSsoVerifyRoute = ApiPublicSsoVerifyRouteImport.update({
+  id: '/api/public/sso/verify',
+  path: '/api/public/sso/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSsoMeRoute = ApiPublicSsoMeRouteImport.update({
+  id: '/api/public/sso/me',
+  path: '/api/public/sso/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsIdVerifyRoute = ApiProjectsIdVerifyRouteImport.update({
   id: '/api/projects/$id/verify',
   path: '/api/projects/$id/verify',
@@ -425,6 +449,8 @@ export interface FileRoutesByFullPath {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/sso/login': typeof ApiSsoLoginRoute
+  '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
@@ -436,6 +462,8 @@ export interface FileRoutesByFullPath {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/me': typeof ApiPublicSsoMeRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -486,6 +514,8 @@ export interface FileRoutesByTo {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/sso/login': typeof ApiSsoLoginRoute
+  '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
@@ -497,6 +527,8 @@ export interface FileRoutesByTo {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/me': typeof ApiPublicSsoMeRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -550,6 +582,8 @@ export interface FileRoutesById {
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
+  '/api/sso/login': typeof ApiSsoLoginRoute
+  '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
@@ -561,6 +595,8 @@ export interface FileRoutesById {
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
+  '/api/public/sso/me': typeof ApiPublicSsoMeRoute
+  '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -615,6 +651,8 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/records/$id'
+    | '/api/sso/login'
+    | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/api/api-keys/'
@@ -626,6 +664,8 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/me'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -676,6 +716,8 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/records/$id'
+    | '/api/sso/login'
+    | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/api/api-keys'
@@ -687,6 +729,8 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/me'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -739,6 +783,8 @@ export interface FileRouteTypes {
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/records/$id'
+    | '/api/sso/login'
+    | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/api/api-keys/'
@@ -750,6 +796,8 @@ export interface FileRouteTypes {
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
+    | '/api/public/sso/me'
+    | '/api/public/sso/verify'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
@@ -778,6 +826,8 @@ export interface RootRouteChildren {
   ApiJobsDrainRoute: typeof ApiJobsDrainRoute
   ApiJobsEnqueueRoute: typeof ApiJobsEnqueueRoute
   ApiRecordsIdRoute: typeof ApiRecordsIdRoute
+  ApiSsoLoginRoute: typeof ApiSsoLoginRoute
+  ApiSsoSignupRoute: typeof ApiSsoSignupRoute
   ApiTablesIdRoute: typeof ApiTablesIdRouteWithChildren
   ApiApiKeysIndexRoute: typeof ApiApiKeysIndexRoute
   ApiBackupsIndexRoute: typeof ApiBackupsIndexRoute
@@ -787,6 +837,8 @@ export interface RootRouteChildren {
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
+  ApiPublicSsoMeRoute: typeof ApiPublicSsoMeRoute
+  ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
 }
@@ -1066,6 +1118,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTablesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/sso/signup': {
+      id: '/api/sso/signup'
+      path: '/api/sso/signup'
+      fullPath: '/api/sso/signup'
+      preLoaderRoute: typeof ApiSsoSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sso/login': {
+      id: '/api/sso/login'
+      path: '/api/sso/login'
+      fullPath: '/api/sso/login'
+      preLoaderRoute: typeof ApiSsoLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/records/$id': {
       id: '/api/records/$id'
       path: '/api/records/$id'
@@ -1191,6 +1257,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/tables/$id/columns'
       preLoaderRoute: typeof ApiTablesIdColumnsRouteImport
       parentRoute: typeof ApiTablesIdRoute
+    }
+    '/api/public/sso/verify': {
+      id: '/api/public/sso/verify'
+      path: '/api/public/sso/verify'
+      fullPath: '/api/public/sso/verify'
+      preLoaderRoute: typeof ApiPublicSsoVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sso/me': {
+      id: '/api/public/sso/me'
+      path: '/api/public/sso/me'
+      fullPath: '/api/public/sso/me'
+      preLoaderRoute: typeof ApiPublicSsoMeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/projects/$id/verify': {
       id: '/api/projects/$id/verify'
@@ -1351,6 +1431,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiJobsDrainRoute: ApiJobsDrainRoute,
   ApiJobsEnqueueRoute: ApiJobsEnqueueRoute,
   ApiRecordsIdRoute: ApiRecordsIdRoute,
+  ApiSsoLoginRoute: ApiSsoLoginRoute,
+  ApiSsoSignupRoute: ApiSsoSignupRoute,
   ApiTablesIdRoute: ApiTablesIdRouteWithChildren,
   ApiApiKeysIndexRoute: ApiApiKeysIndexRoute,
   ApiBackupsIndexRoute: ApiBackupsIndexRoute,
@@ -1360,6 +1442,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
+  ApiPublicSsoMeRoute: ApiPublicSsoMeRoute,
+  ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
 }
