@@ -251,7 +251,7 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
       database_id = db.id;
 
       // API key — show plaintext ONCE
-      const raw = `hn_live_${randomBytes(24).toString("hex")}`;
+      const raw = `hn_live_${randomBytesHex(24)}`;
       api_key_plaintext = raw;
       const { data: key, error: keyErr } = await supabaseAdmin
         .from("hn_api_keys")
@@ -259,7 +259,7 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
           workspace_id,
           hn_user_id: user.id,
           label: "default",
-          key_hash: sha256(raw),
+          key_hash: await sha256(raw),
           key_prefix: raw.slice(0, 8),
           key_hint: `${raw.slice(0, 12)}…${raw.slice(-4)}`,
         })
@@ -271,8 +271,8 @@ export const verifyHnAccount = createServerFn({ method: "POST" })
     }
 
     // Bridge session
-    const token = randomBytes(32).toString("hex");
-    const token_hash = sha256(token);
+    const token = randomBytesHex(32);
+    const token_hash = await sha256(token);
     const session_expires_at = new Date(Date.now() + SESSION_TTL_MIN * 60_000).toISOString();
 
     await supabaseAdmin.from("hn_sessions").insert({
