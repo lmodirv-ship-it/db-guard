@@ -57,7 +57,7 @@ export const requestOtp = createServerFn({ method: "POST" })
     }
 
     const code = generateCode();
-    const code_hash = hashCode(code);
+    const code_hash = await hashCode(code);
     const expires_at = new Date(Date.now() + CODE_TTL_MINUTES * 60 * 1000).toISOString();
 
     const { error: insertErr } = await supabaseAdmin.from("email_verification_codes").insert({
