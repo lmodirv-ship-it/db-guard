@@ -1,98 +1,51 @@
 ## الهدف
 
-تمكين تطبيقات خارجية (مثل HN-Build) من الاتصال بـ DB·GUARD عبر:
+إنشاء ملف `index.html` ثابت (Standalone) مطابق بصريًا للصفحة الرئيسية الحالية على Lovable (`hn-bd.online`)، يمكنك تحميله ورفعه عبر FTP إلى استضافة LWS واستعماله على نطاق آخر، مع بقاء DB·GUARD على Lovable كما هو.
 
-```
-Authorization: Bearer dbg_xxxxxxxxxxxxxx
-```
+## المخطط النهائي
 
-بدون الحاجة لـ session cookie.
-
----
-
-## ما سيتم بناؤه
-
-### 1) Middleware موحّد للمصادقة المزدوجة
-
-ملف جديد: `src/lib/auth/api-auth.server.ts`
-
-دالة `requireAuth(request)` تجرّب بالترتيب:
-1. إذا وُجد header `Authorization: Bearer dbg_...` → تحسب SHA-256 وتطابقها مع `api_keys.key_hash` (في DB Neon، جدول النظام، ليس Supabase). ترجع `{ tid, sub: 'api-key:<id>', email, via: 'api_key' }`.
-2. وإلا → fallback إلى `requireSession(request)` (الكوكي الحالي).
-
-سيستبدل `requireSession` في كل endpoints الجداول/السجلات/الأعمدة.
-
-### 2) تحديث endpoints
-
-استبدال `requireSession` بـ `requireAuth` في:
-- `src/routes/api/tables/index.ts`
-- `src/routes/api/tables/$id.ts`
-- `src/routes/api/tables/$id/columns.ts`
-- `src/routes/api/tables/$id/records.ts`
-- `src/routes/api/records/$id.ts`
-- `src/routes/api/billing/usage.ts`
-
-الـ endpoints الخاصة بإدارة API Keys نفسها (`/api/api-keys`) تبقى محمية بـ session cookie فقط (لمنع إنشاء مفاتيح عبر مفتاح).
-
-### 3) تحديث جدول `api_keys` (تتبّع آخر استخدام)
-
-إضافة عمودين:
-- `last_used_at TIMESTAMPTZ`
-- `last_used_ip TEXT`
-
-(يُحدَّثان async داخل middleware بدون إبطاء الطلب).
-
-### 4) صفحة Docs بسيطة `/dashboard/docs`
-
-تعرض:
-- Base URL: `https://www.hn-bd.online/api`
-- طريقة المصادقة + مثال curl
-- قائمة endpoints مع شكل JSON response
-- زر "Copy curl" لكل endpoint
-
-### 5) تحسين صفحة `/dashboard/api-keys`
-
-- إظهار آخر استخدام (`last_used_at`) و IP.
-- تنبيه واضح: "المفتاح يُعرض مرة واحدة فقط — احفظه الآن".
-
----
-
-## نموذج الاستعمال من HN-Build (بعد التنفيذ)
-
-```ts
-const r = await fetch("https://www.hn-bd.online/api/tables", {
-  headers: { Authorization: `Bearer ${process.env.DBGUARD_API_KEY}` },
-});
-const { tables } = await r.json();
+```text
+hn-bd.online            → استضافة LWS (index.html ثابت — الواجهة التعريفية)
+app.hn-bd.online        → Lovable (DB·GUARD — لوحة التحكم الكاملة)
+otobo.hn-bd.online      → VPS Otobo (تذاكر الدعم — تربطه أنت من LWS DNS)
 ```
 
----
+كل نطاق يعمل بشكل مستقل تمامًا.
 
-## تفاصيل تقنية
+## ما سأقوم بإنشائه
 
-- مكان جدول `api_keys`: **Neon DB** (HN_DB_URL) — ليس Supabase. الـ schema الموجود في `migrations/0006_db_platform.sql` يحتوي: `id, tenant_id, user_id, name, key_hash, key_prefix, scopes, created_at, revoked_at, last_used_at`.
-- التحقق: SHA-256 hex على المفتاح الكامل ثم مقارنة constant-time مع `key_hash` حيث `revoked_at IS NULL`.
-- في حالة عدم وجود `tenant_id` أو مفتاح مُلغى → 401 `invalid_api_key`.
-- الـ scopes الحالية (`read`, `write`, `admin`) **لن تُفرض في هذه الخطوة** (مستقبلاً).
-- لا تغيير في تصميم UI الحالي، فقط إضافة صفحة Docs.
-- لن نلمس Supabase schema — جدول `api_keys` المعروض في الـ schema الأعلى ليس هو المستعمل؛ المستعمل هو في Neon.
+1. **`/mnt/documents/index.html`** — صفحة HTML واحدة مكتفية بذاتها:
+   - بدون React، بدون build، بدون npm.
+   - نفس التصميم الحالي: Hero + Features + Dashboard preview + Pricing + CTA + Footer.
+   - CSS مُضمَّن داخل `<style>` (يحاكي ألوان Tailwind/oklch والـ gradient والـ glass والـ glow).
+   - أيقونات Lucide كـ SVG مُضمَّنة (بدون CDN).
+   - شعار DB·GUARD كصورة مرفقة منفصلة (`db-guard-logo.jpg`).
+   - meta tags كاملة (SEO + OG).
+   - أزرار "Get Started" و "Sign In" و "Dashboard" تشير إلى `https://app.hn-bd.online/...` (DB·GUARD على Lovable).
+   - رابط "Support" يشير إلى `https://otobo.hn-bd.online` (Otobo على VPS).
 
----
+2. **`/mnt/documents/db-guard-logo.jpg`** — نسخة من الشعار الحالي.
 
-## خارج النطاق
+3. **`/mnt/documents/README-deploy.txt`** — تعليمات مختصرة بالعربية:
+   - كيفية الرفع عبر FTP إلى `public_html/` في LWS.
+   - إعدادات DNS المطلوبة لكل نطاق (A records للنطاق الرئيسي على LWS، CNAME لـ `app` على Lovable، A لـ `otobo` على VPS).
 
-- Rate limiting (يأتي لاحقاً).
-- فرض الـ scopes (read/write/admin).
-- OAuth2 / refresh tokens.
-- SDK رسمي npm لـ DB·GUARD.
+## ما لن يتغير في المشروع الحالي
 
----
+- **لا تعديل** على أي ملف من DB·GUARD (لا `src/routes/`، لا `src/components/`).
+- **لا migration** لقاعدة البيانات.
+- المشروع الحالي على Lovable يبقى يعمل كما هو على `app.hn-bd.online`.
 
-## التقرير النهائي بعد التنفيذ
+## الملفات الناتجة
 
-سأقدّم باللغة العربية:
-- الملفات الجديدة/المعدّلة.
-- نص curl جاهز للنسخ لـ HN-Build.
-- خطوات إنشاء أول API Key من `/dashboard/api-keys`.
+ستظهر لك بعد التنفيذ كـ artifacts قابلة للتنزيل:
+- `index.html`
+- `db-guard-logo.jpg`
+- `README-deploy.txt`
+
+## ما يبقى على عاتقك
+
+- ضبط DNS في لوحة LWS: نقل النطاق الرئيسي إلى استضافة LWS، وإضافة CNAME لـ `app` يشير إلى Lovable، و A record لـ `otobo` يشير إلى IP الـ VPS.
+- نقل النطاق الأساسي من Lovable إلى LWS (سأشرح ذلك في README).
 
 هل أبدأ التنفيذ؟
