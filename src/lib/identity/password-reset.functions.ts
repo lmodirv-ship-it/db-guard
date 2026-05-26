@@ -145,12 +145,12 @@ export const completePasswordReset = createServerFn({ method: "POST" })
     const { data: rec } = await supabaseAdmin
       .from("password_reset_tokens")
       .select("*")
-      .eq("token_hash", sha256(data.token))
+      .eq("token_hash", await sha256(data.token))
       .is("used_at", null)
       .gte("expires_at", new Date().toISOString())
       .maybeSingle();
     if (!rec) return { ok: false as const, error: "invalid_token" as const };
-    if (rec.code_hash !== sha256(data.code)) {
+    if (rec.code_hash !== (await sha256(data.code))) {
       return { ok: false as const, error: "invalid_code" as const };
     }
 
