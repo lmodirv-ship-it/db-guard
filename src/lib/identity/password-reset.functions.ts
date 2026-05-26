@@ -1,18 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomInt, randomBytes } from "node:crypto";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { hashPassword } from "@/lib/auth/password.server";
 import { sendEmail } from "@/lib/email";
 import { renderPasswordResetEmail } from "@/lib/email/templates/password-reset";
+import { sha256Hex, randomBytesHex, randomIntBelow } from "@/lib/crypto/web-crypto";
 
 const RESET_TTL_MIN = 15;
 const MAX_ATTEMPTS = 5;
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function captureMeta() {
   let ip: string | null = null;
