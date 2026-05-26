@@ -48,7 +48,7 @@ function slugify(input: string, fallback: string): string {
 async function uniqueWorkspaceSlug(seed: string): Promise<string> {
   const base = slugify(seed, "ws");
   for (let i = 0; i < 10; i++) {
-    const candidate = i === 0 ? base : `${base}-${randomBytes(2).toString("hex")}`;
+    const candidate = i === 0 ? base : `${base}-${randomBytesHex(2)}`;
     const { data } = await supabaseAdmin
       .from("hn_workspaces")
       .select("id")
@@ -56,7 +56,7 @@ async function uniqueWorkspaceSlug(seed: string): Promise<string> {
       .maybeSingle();
     if (!data) return candidate;
   }
-  return `${base}-${randomBytes(4).toString("hex")}`;
+  return `${base}-${randomBytesHex(4)}`;
 }
 
 const ALLOWED_SOURCE_APPS = ["hn-chat", "hn-driver", "hn-souk", "hn-studio", "hn-video", "db-guard", "hn-account"] as const;
