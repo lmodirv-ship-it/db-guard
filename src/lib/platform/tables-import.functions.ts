@@ -1,14 +1,23 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getSessionFromRequest } from "@/lib/auth/session.server";
+
+const requireSession = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const request = getRequest();
+  if (!request) throw new Error("Unauthorized: no request");
+  const session = await getSessionFromRequest(request);
+  if (!session) throw new Error("Unauthorized: please sign in");
+  return next({ context: { userId: session.sub } });
+});
 
 /**
  * Imports the real list of public tables from the connected database.
  * Requires a valid API key belonging to the signed-in user.
  */
 export const importPublicTables = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((input) =>
     z
       .object({
@@ -17,13 +26,10 @@ export const importPublicTables = createServerFn({ method: "POST" })
       .parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-
-    // Verify the user has at least one active API key (optionally matching the prefix).
-    let q = supabase
+    let q = supabaseAdmin
       .from("api_keys")
       .select("id,key_prefix,status")
-      .eq("user_id", userId)
+      .eq("user_id", context.userId)
       .eq("status", "active");
     if (data.apiKeyPrefix) q = q.eq("key_prefix", data.apiKeyPrefix);
     const { data: keys, error: kErr } = await q.limit(1);
@@ -32,7 +38,6 @@ export const importPublicTables = createServerFn({ method: "POST" })
       throw new Error("No active API key. Generate one first.");
     }
 
-    // Real query against information_schema via SECURITY DEFINER function.
     const { data: rows, error } = await supabaseAdmin.rpc("list_public_tables");
     if (error) throw new Error(error.message);
 
