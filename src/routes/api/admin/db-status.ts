@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/admin/db-status")({
             meta: { ok: ping.ok, latencyMs: ping.latencyMs },
             request,
           });
-          return jsonOk({ ping, migrations, counts });
+          return jsonOk({ ping, counts });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
           console.error("db_status_failed", err);
