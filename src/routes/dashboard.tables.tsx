@@ -41,14 +41,63 @@ function TablesPage() {
     setName(""); setShowNew(false); await refresh();
   }
 
+  const importFn = useServerFn(importPublicTables);
+  const [imported, setImported] = useState<Array<{ table_name: string; row_count: number }> | null>(null);
+  const importMut = useMutation({
+    mutationFn: () => importFn({ data: {} }),
+    onSuccess: (res) => {
+      setImported(res.tables);
+      toast.success(`تم استيراد ${res.tables.length} جدولاً من قاعدة البيانات`);
+    },
+    onError: (e: Error) => toast.error(e.message || "فشل الاستيراد"),
+  });
+
   return (
     <DashboardShell title="Tables">
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between mb-6 gap-2 flex-wrap">
         <p className="text-sm text-muted-foreground">Define and manage your database tables.</p>
-        <button onClick={() => setShowNew((s) => !s)} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
-          <Plus className="h-4 w-4" /> New Table
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => importMut.mutate()}
+            disabled={importMut.isPending}
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-50"
+          >
+            <DownloadCloud className="h-4 w-4" />
+            {importMut.isPending ? "جارٍ الاستيراد…" : "Import from DB"}
+          </button>
+          <button onClick={() => setShowNew((s) => !s)} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+            <Plus className="h-4 w-4" /> New Table
+          </button>
+        </div>
       </div>
+
+      {imported && (
+        <div className="mb-6 rounded-xl border border-border bg-card overflow-hidden">
+          <div className="border-b border-border bg-muted/40 px-4 py-3 text-sm font-medium">
+            الجداول الحقيقية من information_schema ({imported.length})
+          </div>
+          {imported.length === 0 ? (
+            <p className="p-6 text-sm text-muted-foreground">لا توجد جداول.</p>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="border-b border-border text-left">
+                <tr>
+                  <th className="px-4 py-2 font-medium">Table name</th>
+                  <th className="px-4 py-2 font-medium text-right">Rows (approx)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {imported.map((t) => (
+                  <tr key={t.table_name} className="border-b border-border last:border-0">
+                    <td className="px-4 py-2 font-mono">{t.table_name}</td>
+                    <td className="px-4 py-2 text-right text-muted-foreground">{t.row_count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
       {showNew && (
         <form onSubmit={create} className="mb-6 rounded-xl border border-border bg-card p-4 flex gap-2">
           <input required value={name} onChange={(e) => setName(e.target.value)} pattern="[a-zA-Z][a-zA-Z0-9_]*" placeholder="table_name" className="flex-1 rounded-md border border-border bg-input px-3 py-2 font-mono text-sm" />
