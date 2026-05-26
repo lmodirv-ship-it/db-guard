@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/team/")({
       },
       POST: async ({ request }) => {
         try {
-          const s = await requireSession(request);
+          const s = await requireOwner(request);
           const body = await request.json().catch(() => null);
           const parsed = InviteSchema.safeParse(body);
           if (!parsed.success) return jsonError(400, "invalid_input");
