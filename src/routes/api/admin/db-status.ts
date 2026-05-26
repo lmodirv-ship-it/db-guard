@@ -12,24 +12,15 @@ export const Route = createFileRoute("/api/admin/db-status")({
           const session = await requireOwner(request);
           const ping = await pingDb();
           const sql = getSql();
-          let migrations: Array<{ name: string; applied_at: string }> = [];
           let counts = { tenants: 0, users: 0, projects: 0, jobs: 0, records: 0 };
-          try {
-            migrations = (await sql`
-              SELECT name, applied_at FROM schema_migrations
-              ORDER BY applied_at DESC LIMIT 20
-            `) as typeof migrations;
-          } catch {
-            // migrations table may not exist yet
-          }
           try {
             const rows = (await sql`
               SELECT
-                (SELECT COUNT(*)::int FROM tenants)  AS tenants,
-                (SELECT COUNT(*)::int FROM users)    AS users,
-                (SELECT COUNT(*)::int FROM projects) AS projects,
-                (SELECT COUNT(*)::int FROM jobs)     AS jobs,
-                (SELECT COUNT(*)::int FROM records)  AS records
+                1::int AS tenants,
+                (SELECT COUNT(*)::int FROM users    WHERE tenant_id = ${session.tid}) AS users,
+                (SELECT COUNT(*)::int FROM projects WHERE tenant_id = ${session.tid}) AS projects,
+                (SELECT COUNT(*)::int FROM jobs     WHERE tenant_id = ${session.tid}) AS jobs,
+                (SELECT COUNT(*)::int FROM records  WHERE tenant_id = ${session.tid}) AS records
             `) as Array<typeof counts>;
             counts = rows[0] ?? counts;
           } catch {
@@ -42,7 +33,7 @@ export const Route = createFileRoute("/api/admin/db-status")({
             meta: { ok: ping.ok, latencyMs: ping.latencyMs },
             request,
           });
-          return jsonOk({ ping, migrations, counts });
+          return jsonOk({ ping, counts });
         } catch (err) {
           if (err instanceof AuthError) return jsonError(err.status, err.code);
           console.error("db_status_failed", err);

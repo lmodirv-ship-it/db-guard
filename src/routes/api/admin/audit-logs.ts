@@ -18,7 +18,7 @@ export const Route = createFileRoute("/api/admin/audit-logs")({
           const rows = (await sql`
             SELECT id, ts, action, target, actor_user_id, actor_email, ip, user_agent, meta
             FROM audit_logs
-            WHERE tenant_id = ${session.tid} OR tenant_id IS NULL
+            WHERE tenant_id = ${session.tid}
             ORDER BY ts DESC
             LIMIT ${limit}
           `) as Array<Record<string, unknown>>;
