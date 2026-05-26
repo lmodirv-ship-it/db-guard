@@ -51,7 +51,7 @@ export const revokeAllOtherSessions = createServerFn({ method: "POST" }).handler
   try {
     const cookieHeader = getRequest().headers.get("cookie") ?? "";
     const m = cookieHeader.match(/(?:^|;\s*)hn_session=([^;]+)/);
-    if (m) currentHash = sha256(m[1]);
+    if (m) currentHash = await sha256(m[1]);
   } catch {}
 
   const q = supabaseAdmin
