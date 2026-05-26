@@ -14,6 +14,201 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          name: string
+          revoked_at: string | null
+          scopes: string[]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          name: string
+          revoked_at?: string | null
+          scopes?: string[]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          name?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      auth_audit_log: {
+        Row: {
+          created_at: string
+          email: string | null
+          event: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          success: boolean
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      connected_apps: {
+        Row: {
+          allowed_redirect_hosts: string[]
+          app_key: string
+          created_at: string
+          id: string
+          name: string
+          status: string
+        }
+        Insert: {
+          allowed_redirect_hosts?: string[]
+          app_key: string
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+        }
+        Update: {
+          allowed_redirect_hosts?: string[]
+          app_key?: string
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      dbguard_connections: {
+        Row: {
+          api_key_hash: string | null
+          api_key_hint: string | null
+          created_at: string
+          endpoint_url: string | null
+          id: string
+          last_synced_at: string | null
+          project_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key_hash?: string | null
+          api_key_hint?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_synced_at?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key_hash?: string | null
+          api_key_hint?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_synced_at?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dbguard_export_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          items_count: number
+          payload_size: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          items_count?: number
+          payload_size?: number
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          items_count?: number
+          payload_size?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          status: string
+          subject: string
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          status: string
+          subject: string
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          status?: string
+          subject?: string
+          to_email?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -101,6 +296,453 @@ export type Database = {
         }
         Relationships: []
       }
+      email_verification_codes: {
+        Row: {
+          attempts: number
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          ip_address: string | null
+          purpose: string
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          purpose?: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          purpose?: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      hn_api_keys: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          key_hash: string
+          key_hint: string
+          key_prefix: string
+          label: string
+          last_used_at: string | null
+          revoked_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          key_hash: string
+          key_hint: string
+          key_prefix: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          key_hash?: string
+          key_hint?: string
+          key_prefix?: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_api_keys_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hn_databases: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          name: string
+          region: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          name?: string
+          region?: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          name?: string
+          region?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_databases_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hn_sessions: {
+        Row: {
+          created_at: string
+          device: string | null
+          expires_at: string
+          hn_user_code: string
+          id: string
+          ip_address: string | null
+          last_active_at: string
+          revoked_at: string | null
+          source_app: string | null
+          token_hash: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device?: string | null
+          expires_at: string
+          hn_user_code: string
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          revoked_at?: string | null
+          source_app?: string | null
+          token_hash: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device?: string | null
+          expires_at?: string
+          hn_user_code?: string
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          revoked_at?: string | null
+          source_app?: string | null
+          token_hash?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "hn_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "registered_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hn_sso_tickets: {
+        Row: {
+          created_at: string
+          expires_at: string
+          hn_user_code: string
+          id: string
+          redirect_url: string
+          source_app: string | null
+          target_app: string
+          ticket_hash: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          hn_user_code: string
+          id?: string
+          redirect_url: string
+          source_app?: string | null
+          target_app: string
+          ticket_hash: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          hn_user_code?: string
+          id?: string
+          redirect_url?: string
+          source_app?: string | null
+          target_app?: string
+          ticket_hash?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hn_users: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string
+          email: string
+          email_verified: boolean
+          full_name: string
+          hn_user_code: string
+          id: string
+          last_login_at: string | null
+          password_hash: string
+          phone: string | null
+          plan: string
+          redirect_url: string | null
+          registration_source: string | null
+          source_app: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string
+          email: string
+          email_verified?: boolean
+          full_name: string
+          hn_user_code: string
+          id?: string
+          last_login_at?: string | null
+          password_hash: string
+          phone?: string | null
+          plan?: string
+          redirect_url?: string | null
+          registration_source?: string | null
+          source_app?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string
+          email?: string
+          email_verified?: boolean
+          full_name?: string
+          hn_user_code?: string
+          id?: string
+          last_login_at?: string | null
+          password_hash?: string
+          phone?: string | null
+          plan?: string
+          redirect_url?: string | null
+          registration_source?: string | null
+          source_app?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hn_workspaces: {
+        Row: {
+          created_at: string
+          hn_user_id: string
+          id: string
+          name: string
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hn_user_id: string
+          id?: string
+          name: string
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hn_user_id?: string
+          id?: string
+          name?: string
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      id_user_records: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          owner_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          owner_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          owner_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "id_user_records_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "id_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      id_users: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          login_id: string
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          login_id: string
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          login_id?: string
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      password_reset_logs: {
+        Row: {
+          action: string
+          created_at: string
+          email: string | null
+          id: string
+          ip: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      password_reset_tokens: {
+        Row: {
+          attempts: number
+          channel: string
+          code_hash: string
+          created_at: string
+          expires_at: string
+          id: string
+          ip: string | null
+          token_hash: string
+          used_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel?: string
+          code_hash: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip?: string | null
+          token_hash: string
+          used_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: string
+          code_hash?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          token_hash?: string
+          used_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -125,9 +767,185 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_files: {
+        Row: {
+          created_at: string
+          id: string
+          mime_type: string | null
+          name: string
+          size_bytes: number
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          name: string
+          size_bytes?: number
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          name?: string
+          size_bytes?: number
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          language: string
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          language?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          language?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_records: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      registered_users: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          email_verified: boolean | null
+          full_name: string | null
+          hn_user_code: string | null
+          id: string | null
+          last_login_at: string | null
+          phone: string | null
+          plan: string | null
+          registration_source: string | null
+          source_app: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: never
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: never
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
@@ -137,6 +955,28 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      generate_hn_user_code: { Args: never; Returns: string }
+      get_public_tables: {
+        Args: never
+        Returns: {
+          row_count_est: number
+          table_name: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      list_public_tables: {
+        Args: never
+        Returns: {
+          row_count: number
+          table_name: string
+        }[]
       }
       move_to_dlq: {
         Args: {
@@ -157,7 +997,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -284,6 +1124,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "admin", "user"],
+    },
   },
 } as const
