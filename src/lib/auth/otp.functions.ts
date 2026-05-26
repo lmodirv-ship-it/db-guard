@@ -97,7 +97,7 @@ export const verifyOtp = createServerFn({ method: "POST" })
   .inputValidator((d: { email: string; code: string }) => verifyOtpSchema.parse(d))
   .handler(async ({ data }) => {
     const { email, code } = data;
-    const code_hash = hashCode(code);
+    const code_hash = await hashCode(code);
 
     // Find any non-used non-expired code for email (handles rapid resends — user
     // may enter a code from an earlier email rather than the most recent one).
