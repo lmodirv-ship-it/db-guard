@@ -3,6 +3,8 @@ import {
   Shield, Database, Lock, Zap, ArrowRight, ShieldCheck,
   MessageCircle, Car, ShoppingCart, Camera, PlayCircle, Activity, Server, Globe, KeyRound, Cpu,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
