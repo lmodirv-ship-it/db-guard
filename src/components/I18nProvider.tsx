@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import i18n, { applyDocumentLanguage, getStoredLanguage, DEFAULT_LANGUAGE } from "@/lib/i18n";
+import i18n, { applyDocumentLanguage, getStoredLanguage } from "@/lib/i18n";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
   }));
 
-  // Hydration-safe i18n: first client render matches SSR (DEFAULT_LANGUAGE).
-  // After hydration, switch to the stored language.
-  const [hydrated, setHydrated] = useState(false);
-
+  // i18n is initialized with the SSR-injected language (read from <html lang>
+  // or cookie). Re-sync on mount only if storage diverges (e.g. user changed
+  // language in another tab) — keeps first render identical to SSR.
   useEffect(() => {
-    setHydrated(true);
     const stored = getStoredLanguage();
     if (stored !== i18n.language) {
       i18n.changeLanguage(stored);
@@ -21,9 +19,6 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       applyDocumentLanguage(stored);
     }
   }, []);
-
-  void DEFAULT_LANGUAGE;
-  void hydrated;
 
   return (
     <QueryClientProvider client={queryClient}>
