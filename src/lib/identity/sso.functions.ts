@@ -64,10 +64,10 @@ export const issueSsoTicket = createServerFn({ method: "POST" })
       return { ok: false as const, error: "account_disabled" as const };
     }
 
-    const raw = randomBytes(32).toString("hex");
+    const raw = randomBytesHex(32);
     const expires_at = new Date(Date.now() + TICKET_TTL_SECONDS * 1000).toISOString();
     const { error } = await supabaseAdmin.from("hn_sso_tickets").insert({
-      ticket_hash: sha256(raw),
+      ticket_hash: await sha256(raw),
       user_id: user.id,
       hn_user_code: user.hn_user_code,
       source_app: user.source_app ?? "dbguard",
