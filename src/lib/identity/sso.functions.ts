@@ -1,17 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomBytes } from "node:crypto";
 import { getRequest, getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getSessionFromRequest } from "@/lib/auth/session.server";
 import { signSession } from "@/lib/auth/jwt.server";
+import { sha256Hex, randomBytesHex } from "@/lib/crypto/web-crypto";
 
 const TICKET_TTL_SECONDS = 60;
 const APP_JWT_TTL_SECONDS = 60 * 60 * 24; // 24h
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const sha256 = sha256Hex;
 
 function hostMatches(allowed: string[], host: string): boolean {
   for (const pattern of allowed) {
