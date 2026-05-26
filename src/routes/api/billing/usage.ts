@@ -2,7 +2,8 @@
  * /api/billing/usage — current plan + usage counters
  */
 import { createFileRoute } from "@tanstack/react-router";
-import { jsonError, jsonOk, AuthError, requireSession } from "@/lib/auth/session.server";
+import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { requireAuth as requireSession } from "@/lib/auth/api-auth.server";
 import { getTenantPlan, getTenantUsage } from "@/lib/platform/plan-limits.server";
 
 export const Route = createFileRoute("/api/billing/usage")({

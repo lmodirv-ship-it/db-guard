@@ -6,7 +6,8 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { withTenant } from "@/lib/db/tenant.server";
-import { requireSession, jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
+import { requireAuth as requireSession } from "@/lib/auth/api-auth.server";
 import { audit } from "@/lib/audit/log.server";
 
 const AddCol = z.object({
