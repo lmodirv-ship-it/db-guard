@@ -10,7 +10,7 @@
  *   3. Exposes window.HN = { user, session_token, signIn(), signOut(), me() }.
  */
 (function () {
-  var ENDPOINT = "https://hn-db.fun";
+  var ENDPOINT = "https://hn-bd.online";
   var script = document.currentScript;
   var APP_KEY = (script && script.getAttribute("data-app-key")) || "";
   var STORAGE = "hn_sso";
