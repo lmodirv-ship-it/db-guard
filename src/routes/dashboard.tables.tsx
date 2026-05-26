@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { Plus, Lock } from "lucide-react";
+import { Plus, Lock, DownloadCloud } from "lucide-react";
+import { importPublicTables } from "@/lib/platform/tables-import.functions";
 
 export const Route = createFileRoute("/dashboard/tables")({
   head: () => ({ meta: [{ title: "Tables — DB·GUARD" }] }),
