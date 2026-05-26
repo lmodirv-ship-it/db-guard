@@ -51,7 +51,7 @@ function MyDashboardPage() {
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       if (!data.session) {
-        navigate({ to: "/login" });
+        navigate({ to: "/auth/login" });
       } else {
         setUserEmail(data.session.user.email ?? null);
         setAuthChecked(true);
@@ -328,12 +328,13 @@ function ConnectionSettings({ connection }: { connection: OverviewData["connecti
   const saveFn = useServerFn(saveDbguardConnection);
   const disconnectFn = useServerFn(disconnectDbguard);
   const [projectId, setProjectId] = useState(connection?.project_id ?? "");
-  const [targetCode, setTargetCode] = useState(connection?.endpoint_url ?? "");
+  const [endpoint, setEndpoint] = useState(connection?.endpoint_url ?? "");
+  const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const save = useMutation({
-    mutationFn: () => saveFn({ data: { project_id: projectId, target_hn_code: targetCode } }),
-    onSuccess: () => { setError(null); qc.invalidateQueries({ queryKey: ["my-dashboard"] }); },
+    mutationFn: () => saveFn({ data: { project_id: projectId, endpoint_url: endpoint, api_key: apiKey } }),
+    onSuccess: () => { setApiKey(""); setError(null); qc.invalidateQueries({ queryKey: ["my-dashboard"] }); },
     onError: (e) => setError(e instanceof Error ? e.message : "Error"),
   });
   const disc = useMutation({
@@ -356,17 +357,26 @@ function ConnectionSettings({ connection }: { connection: OverviewData["connecti
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label>{t("myDashboard.settings.channelName")}</Label>
-          <Input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="primary" />
+          <Label>{t("myDashboard.settings.projectId")}</Label>
+          <Input value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="proj_…" />
         </div>
         <div>
-          <Label>{t("myDashboard.settings.targetHnCode")}</Label>
-          <Input value={targetCode} onChange={(e) => setTargetCode(e.target.value)} placeholder="HN-000000" />
-          <p className="mt-1 text-xs text-muted-foreground">{t("myDashboard.settings.targetHnCodeHint")}</p>
+          <Label>{t("myDashboard.settings.endpoint")}</Label>
+          <Input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://api.dbguard.example/ingest" />
+        </div>
+        <div>
+          <Label>{t("myDashboard.settings.apiKey")}</Label>
+          <Input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder={connection?.api_key_hint ?? "sk_…"}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">{t("myDashboard.settings.keyHidden")}</p>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <div className="flex gap-2">
-          <Button onClick={() => save.mutate()} disabled={!projectId || save.isPending}>
+          <Button onClick={() => save.mutate()} disabled={!projectId || !endpoint || !apiKey || save.isPending}>
             {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("myDashboard.settings.save")}
           </Button>
@@ -380,7 +390,6 @@ function ConnectionSettings({ connection }: { connection: OverviewData["connecti
     </Card>
   );
 }
-
 
 function ExportPanel({ data }: { data: OverviewData }) {
   const { t } = useTranslation();
@@ -400,7 +409,7 @@ function ExportPanel({ data }: { data: OverviewData }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `hn-snapshot-${result.payload.export_id}.json`;
+    a.download = `dbguard-export-${result.payload.export_id}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -1,5 +1,6 @@
-import { createFileRoute, useSearch, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import {
@@ -25,6 +26,7 @@ import {
   Headphones,
   UserPlus,
 } from "lucide-react";
+import { registerHnAccount, verifyHnAccount } from "@/lib/hn-account/register.functions";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const searchSchema = z.object({
@@ -58,7 +60,8 @@ const HN_APPS = [
 function RegisterPage() {
   const { source_app, redirect_url } = useSearch({ from: "/register" });
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const register = useServerFn(registerHnAccount);
+  const verify = useServerFn(verifyHnAccount);
 
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
@@ -80,11 +83,6 @@ function RegisterPage() {
 
   const sourceLabel = source_app ?? "hn-account";
 
-  // Avoid SSR/client i18n hydration mismatch: render after mount.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return <div className="min-h-screen bg-background" />;
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -98,60 +96,47 @@ function RegisterPage() {
     }
     setLoading(true);
     try {
-      console.log("[register-ui] submit", { email, source_app });
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          full_name: fullName, email, phone, password,
-          source_app: source_app || "db-guard",
-        }),
+      const res = await register({
+        data: { full_name: fullName, email, phone, password, source_app, redirect_url },
       });
-      const json = (await res.json().catch(() => ({}))) as {
-        ok?: boolean; error?: string;
-        user?: { id: string; email: string; full_name: string; hn_user_code: string };
-      };
-      console.log("[register-ui] response", { status: res.status, body: json });
-      if (!res.ok || !json.ok || !json.user) {
-        const map: Record<string, string> = {
-          email_taken: t("hn.errors.emailTaken", "Email already registered"),
-          invalid_input: t("hn.errors.invalid", "Please check the form"),
-          register_failed: t("hn.errors.internal", "Registration failed"),
-        };
-        setError(map[json.error ?? "register_failed"] ?? json.error ?? "Registration failed");
-        return;
+      if (!res.ok) {
+        setError(res.error === "email_taken" ? t("hn.errors.emailTaken") : t("hn.errors.internal"));
+      } else {
+        setCode(res.hn_user_code);
+        setStep("verify");
       }
-      // Stash for confirmation page (best-effort)
-      try {
-        sessionStorage.setItem("hn_account_created", JSON.stringify({
-          hn_user_code: json.user.hn_user_code,
-          user_id: json.user.id,
-          full_name: json.user.full_name,
-          email: json.user.email,
-        }));
-      } catch { /* ignore */ }
-
-      // Hard navigation so freshly-set session cookie is sent on next request.
-      // Only allow same-origin relative paths to prevent open-redirect attacks.
-      const isSafeRedirect = (u: string) =>
-        typeof u === "string" && u.startsWith("/") && !u.startsWith("//");
-      if (redirect_url && isSafeRedirect(redirect_url)) {
-        window.location.href = redirect_url;
-        return;
-      }
-      window.location.href = "/dashboard";
     } catch (err) {
-      console.error("[register-ui] network_error", err);
       setError((err as Error).message || "error");
     } finally {
       setLoading(false);
     }
   }
 
-  // Legacy OTP verify path (no longer used after direct registration, kept as no-op).
   async function onVerify(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await verify({ data: { email, code: otp } });
+      if (!res.ok) {
+        setError(res.error === "too_many_attempts" ? t("hn.errors.tooMany") : t("hn.errors.invalidCode"));
+      } else {
+        setFinalCode(res.hn_user_code);
+        setStep("done");
+        if (res.redirect_url && res.session_token) {
+          const target = new URL(res.redirect_url);
+          target.searchParams.set("hn_token", res.session_token);
+          target.searchParams.set("hn_user_code", res.hn_user_code);
+          setTimeout(() => {
+            window.location.href = target.toString();
+          }, 4000);
+        }
+      }
+    } catch (err) {
+      setError((err as Error).message || "error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function copyCode() {
@@ -203,7 +188,7 @@ function RegisterPage() {
             <div className="font-brand text-sm font-bold tracking-[0.25em]" style={{ color: "oklch(0.85 0.18 85)" }}>
               HN ACCOUNT
             </div>
-            <div className="text-[11px] text-muted-foreground" suppressHydrationWarning>{t("hn.unifiedFor")}</div>
+            <div className="text-[11px] text-muted-foreground">{t("hn.unifiedFor")}</div>
           </div>
         </div>
         <LanguageSwitcher />
@@ -425,7 +410,7 @@ function RegisterPage() {
                   </div>
 
                   <Link
-                    to="/login"
+                    to="/auth/login"
                     className="flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-foreground/5"
                     style={{ borderColor: "oklch(0.85 0.18 85 / 0.35)" }}
                   >

@@ -27,7 +27,7 @@ function ProjectsPage() {
   async function refresh() {
     const r = await fetch("/api/projects");
     if (r.status === 401) {
-      await navigate({ to: "/login" });
+      await navigate({ to: "/auth/login" });
       return;
     }
     const j = (await r.json()) as { ok: boolean; projects?: Project[] };

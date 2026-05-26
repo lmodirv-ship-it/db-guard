@@ -3,14 +3,12 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
-  Activity, Users, CreditCard, Settings, LogOut, Menu, Globe,
+  Activity, Users, CreditCard, Settings, LogOut, Shield, Menu, Globe,
   Radio, Gauge, Terminal as TerminalIcon, HardDrive, Lock,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Logo } from "@/components/Logo";
 import { PulseDot } from "@/components/dashboard/CyberCard";
-
 
 type NavItem = {
   to: string;
@@ -69,7 +67,7 @@ export function DashboardShell({ title, children }: { title: string; children: R
   useEffect(() => {
     (async () => {
       const r = await fetch("/api/auth/me");
-      if (r.status === 401) { await navigate({ to: "/login" }); return; }
+      if (r.status === 401) { await navigate({ to: "/auth/login" }); return; }
       const j = (await r.json()) as { ok: boolean; user?: { email: string; tenantId: string } };
       if (j.ok && j.user) setMe(j.user);
     })();
@@ -79,15 +77,21 @@ export function DashboardShell({ title, children }: { title: string; children: R
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    await navigate({ to: "/login" });
+    await navigate({ to: "/auth/login" });
   }
 
   const sidebar = (
     <>
-      <div className="px-5 py-4 border-b border-primary/15 flex items-center bg-gradient-to-br from-primary/10 to-transparent">
-        <Logo size={36} />
+      <div className="px-5 py-4 border-b border-primary/15 flex items-center gap-2.5 bg-gradient-to-br from-primary/10 to-transparent">
+        <div className="relative">
+          <Shield className="h-6 w-6 text-primary" />
+          <span className="absolute -inset-1 rounded-full bg-primary/30 blur-md -z-10" />
+        </div>
+        <div className="leading-tight">
+          <div className="font-brand text-sm font-bold tracking-[0.2em]">DB·GUARD</div>
+          <div className="font-mono text-[9px] text-muted-foreground tracking-wider">CONTROL CENTER</div>
+        </div>
       </div>
-
       <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
         {NAV_GROUPS.map((g) => (
           <div key={g.title}>

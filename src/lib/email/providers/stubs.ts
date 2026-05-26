@@ -1,6 +1,12 @@
 // Stub providers — wire up real SDKs when adopted.
 import type { EmailProvider } from "../types";
 
+export const smtpProvider: EmailProvider = {
+  name: "smtp",
+  async send() {
+    throw new Error("SMTP provider not yet implemented. Configure SMTP_HOST/SMTP_USER/SMTP_PASS and implement.");
+  },
+};
 
 export const mailgunProvider: EmailProvider = {
   name: "mailgun",

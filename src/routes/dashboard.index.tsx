@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { CyberCard, StatPill, PulseDot } from "@/components/dashboard/CyberCard";
@@ -6,7 +6,7 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Terminal } from "@/components/dashboard/Terminal";
 import {
   Database, Table2, FileText, KeyRound, ArrowRight, Cpu, HardDrive,
-  Zap, TrendingUp, Activity, Globe2, Shield, Server, User, LogOut, Settings as SettingsIcon,
+  Zap, TrendingUp, Activity, Globe2, Shield, Server,
 } from "lucide-react";
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, BarChart, Bar,
@@ -25,9 +25,7 @@ type Usage = {
 };
 
 function Overview() {
-  const navigate = useNavigate();
   const [data, setData] = useState<Usage | null>(null);
-  const [me, setMe] = useState<{ email: string; tenantId: string; userId?: string; createdAt?: string } | null>(null);
   const [series, setSeries] = useState(timeSeries(30, 920, 380, 17));
   const [feed] = useState(activityFeed());
   const regions = regionalLoad();
@@ -35,13 +33,7 @@ function Overview() {
 
   useEffect(() => {
     fetch("/api/billing/usage").then((r) => r.json()).then((j) => j.ok && setData(j));
-    fetch("/api/auth/me").then((r) => r.json()).then((j) => j.ok && j.user && setMe(j.user));
   }, []);
-
-  async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    await navigate({ to: "/login" });
-  }
 
   // Simulate live metrics
   useEffect(() => {
@@ -321,58 +313,6 @@ function Overview() {
           );
         })}
       </div>
-
-      {/* User panel — below quick links */}
-      <CyberCard className="mt-6">
-        <div className="p-4 border-b border-primary/10 flex items-center justify-between">
-          <h3 className="font-semibold flex items-center gap-2">
-            <User className="h-4 w-4 text-primary" /> Current User
-          </h3>
-          <StatPill tone="success"><PulseDot /> active</StatPill>
-        </div>
-        <div className="p-4 flex flex-col md:flex-row gap-4">
-          <div className="flex items-center gap-3 md:w-64 shrink-0">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-accent grid place-items-center text-primary-foreground font-bold">
-              {(me?.email ?? "U").slice(0, 1).toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <div className="font-medium truncate">{me?.email?.split("@")[0] ?? "—"}</div>
-              <div className="text-xs text-muted-foreground truncate">{me?.email ?? "loading…"}</div>
-            </div>
-          </div>
-          <div className="flex-1 overflow-x-auto">
-            <table className="w-full text-sm">
-              <tbody>
-                <tr className="border-b border-border">
-                  <td className="py-2 pr-4 font-mono text-[10px] uppercase text-muted-foreground tracking-wider">Email</td>
-                  <td className="py-2 truncate">{me?.email ?? "—"}</td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="py-2 pr-4 font-mono text-[10px] uppercase text-muted-foreground tracking-wider">User ID</td>
-                  <td className="py-2 font-mono text-xs">{me?.userId?.slice(0, 16) ?? "—"}</td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="py-2 pr-4 font-mono text-[10px] uppercase text-muted-foreground tracking-wider">Tenant</td>
-                  <td className="py-2 font-mono text-xs text-primary">{me?.tenantId?.slice(0, 16) ?? "—"}</td>
-                </tr>
-                <tr>
-                  <td className="py-2 pr-4 font-mono text-[10px] uppercase text-muted-foreground tracking-wider">Plan</td>
-                  <td className="py-2">{data?.plan.name ?? "—"}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="flex md:flex-col gap-2 md:w-40 shrink-0">
-            <Link to="/dashboard/settings" className="flex-1 inline-flex items-center justify-center gap-2 rounded-md border border-border px-3 py-2 text-xs hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition">
-              <SettingsIcon className="h-3.5 w-3.5" /> Settings
-            </Link>
-            <button onClick={logout} className="flex-1 inline-flex items-center justify-center gap-2 rounded-md border border-border px-3 py-2 text-xs hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition">
-              <LogOut className="h-3.5 w-3.5" /> Sign out
-            </button>
-          </div>
-        </div>
-      </CyberCard>
-
 
       {/* Hidden radial keeps recharts tree-shaking off the unused symbol */}
       <div className="hidden">

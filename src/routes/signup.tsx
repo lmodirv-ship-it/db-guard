@@ -1,32 +1,6 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Logo } from "@/components/Logo";
-
-function AuthShell({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
-  return (
-    <div className="relative min-h-screen bg-background text-foreground overflow-hidden">
-      <div className="pointer-events-none absolute inset-0" style={{ background: "var(--gradient-glow)" }} />
-      <div className="pointer-events-none absolute inset-0 cyber-grid" />
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
-        <div className="mb-8 flex justify-center"><Logo animated /></div>
-        <div className="rounded-2xl glass p-8 shadow-[var(--shadow-glow)]">
-          <h1 className="text-2xl font-bold">{title}</h1>
-          {subtitle && <p className="mb-6 mt-1 text-sm text-muted-foreground">{subtitle}</p>}
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium">{label}</span>
-      {children}
-    </label>
-  );
-}
+import { AuthShell, Field } from "./login";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Sign up — db-guard" }] }),

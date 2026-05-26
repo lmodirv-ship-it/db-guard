@@ -7,7 +7,6 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { withTenant } from "@/lib/db/tenant.server";
 import { requireSession, jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
-import { requireOwner } from "@/lib/auth/owner.server";
 import { getTenantPlan } from "@/lib/platform/plan-limits.server";
 import { audit } from "@/lib/audit/log.server";
 
@@ -43,7 +42,7 @@ export const Route = createFileRoute("/api/team/")({
       },
       POST: async ({ request }) => {
         try {
-          const s = await requireOwner(request);
+          const s = await requireSession(request);
           const body = await request.json().catch(() => null);
           const parsed = InviteSchema.safeParse(body);
           if (!parsed.success) return jsonError(400, "invalid_input");

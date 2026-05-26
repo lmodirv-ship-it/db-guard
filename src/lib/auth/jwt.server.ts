@@ -3,6 +3,7 @@
  * Token claims: sub (userId), tid (tenantId), email, iat, exp.
  */
 import { SignJWT, jwtVerify } from "jose";
+import { requireEnv } from "../env.server";
 
 const ISSUER = "smart-generator";
 const AUDIENCE = "smart-generator-app";
@@ -17,10 +18,8 @@ export type SessionClaims = {
 let _key: Uint8Array | null = null;
 function getKey(): Uint8Array {
   if (_key) return _key;
-  const secret = process.env.HN_JWT_SECRET?.trim();
-  if (!secret) throw new Error("env_misconfigured: missing=HN_JWT_SECRET");
-  if (secret.length < 32) throw new Error("env_misconfigured: invalid=HN_JWT_SECRET");
-  _key = new TextEncoder().encode(secret);
+  const env = requireEnv();
+  _key = new TextEncoder().encode(env.HN_JWT_SECRET);
   return _key;
 }
 

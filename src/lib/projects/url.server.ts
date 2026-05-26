@@ -90,48 +90,26 @@ function isPrivateIp(host: string): boolean {
   return false;
 }
 
-/**
- * Safe fetch with timeout + size cap. Used by verification & analyzer.
- *
- * SSRF hardening: redirects are followed manually so each hop's Location
- * is re-validated through normalizeProjectUrl. This prevents an
- * attacker-controlled URL from redirecting (or DNS-rebinding via a
- * follow-up hop) into a private-network address.
- */
+/** Safe fetch with timeout + size cap. Used by verification & analyzer. */
 export async function safeFetch(
   url: string,
-  opts: { timeoutMs?: number; maxBytes?: number; headers?: Record<string, string>; maxRedirects?: number } = {},
+  opts: { timeoutMs?: number; maxBytes?: number; headers?: Record<string, string> } = {},
 ): Promise<{ status: number; body: string; contentType: string | null }> {
   const timeoutMs = opts.timeoutMs ?? 10_000;
   const maxBytes = opts.maxBytes ?? 2_000_000; // 2 MB
-  const maxRedirects = opts.maxRedirects ?? 5;
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    let currentUrl = normalizeProjectUrl(url).normalized;
-    let res: Response | null = null;
-    for (let hop = 0; hop <= maxRedirects; hop++) {
-      res = await fetch(currentUrl, {
-        method: "GET",
-        redirect: "manual",
-        signal: ctrl.signal,
-        headers: {
-          "User-Agent": "SmartGeneratorBot/1.0 (+verification)",
-          Accept: "text/html,application/xhtml+xml,text/plain,*/*;q=0.5",
-          ...(opts.headers ?? {}),
-        },
-      });
-      if (res.status >= 300 && res.status < 400) {
-        const loc = res.headers.get("location");
-        if (!loc) break;
-        // Re-validate the redirect target — blocks SSRF via redirect chains.
-        const next = new URL(loc, currentUrl).toString();
-        currentUrl = normalizeProjectUrl(next).normalized;
-        continue;
-      }
-      break;
-    }
-    if (!res) throw new UrlValidationError("url_invalid");
+    const res = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      signal: ctrl.signal,
+      headers: {
+        "User-Agent": "SmartGeneratorBot/1.0 (+verification)",
+        Accept: "text/html,application/xhtml+xml,text/plain,*/*;q=0.5",
+        ...(opts.headers ?? {}),
+      },
+    });
     const contentType = res.headers.get("content-type");
     const reader = res.body?.getReader();
     if (!reader) {

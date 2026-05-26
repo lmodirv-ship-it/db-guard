@@ -8,7 +8,7 @@ const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz";
 export function generateApiKey(): string {
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
-  let out = "hn_live_";
+  let out = "dbg_";
   for (const b of bytes) {
     out += ALPHABET[b % ALPHABET.length];
   }

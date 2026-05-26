@@ -1,16 +1,8 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader } from "@tanstack/react-start/server";
 
 import appCss from "../styles.css?url";
 import "@/lib/i18n";
 import { AppProviders } from "@/components/I18nProvider";
-import { parseLangCookie, dirFor, DEFAULT_LANGUAGE, type LanguageCode } from "@/lib/i18n";
-
-const getInitialLanguage = createServerFn({ method: "GET" }).handler(async () => {
-  const cookie = getRequestHeader("cookie");
-  return { lang: parseLangCookie(cookie) as LanguageCode };
-});
 
 function NotFoundComponent() {
   return (
@@ -35,11 +27,6 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  beforeLoad: async () => {
-    const { lang } = await getInitialLanguage();
-    return { lang };
-  },
-  loader: ({ context }) => ({ lang: (context as { lang?: LanguageCode }).lang ?? DEFAULT_LANGUAGE }),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -66,11 +53,8 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  const data = Route.useLoaderData();
-  const lang = data?.lang ?? DEFAULT_LANGUAGE;
-  const dir = dirFor(lang);
   return (
-    <html lang={lang} dir={dir}>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
@@ -89,4 +73,3 @@ function RootComponent() {
     </AppProviders>
   );
 }
-

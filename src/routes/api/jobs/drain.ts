@@ -6,8 +6,7 @@
  * processed (defense-in-depth — claim itself bypasses RLS but we filter).
  */
 import { createFileRoute } from "@tanstack/react-router";
-import { jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
-import { requireOwner } from "@/lib/auth/owner.server";
+import { requireSession, jsonError, jsonOk, AuthError } from "@/lib/auth/session.server";
 import { claimNextJobs } from "@/lib/jobs/queue.server";
 import { processJob } from "@/lib/jobs/process.server";
 
@@ -16,7 +15,7 @@ export const Route = createFileRoute("/api/jobs/drain")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const session = await requireOwner(request);
+          const session = await requireSession(request);
           const claimed = await claimNextJobs(10);
           // filter to caller's tenant (jobs from other tenants stay queued)
           const mine = claimed.filter((j) => j.tenant_id === session.tid);

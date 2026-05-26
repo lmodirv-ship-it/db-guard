@@ -1,59 +1,114 @@
+# خطة تحويل DB-GUARD إلى منصة SaaS عالمية
 
-## المشكلة
+طلبك ضخم ويغطي 4 محاور كبيرة. سأنفذها على مراحل متتابعة بدون حذف أي كود حالي.
 
-1. `<html lang="en">` ثابت في `__root.tsx` بدون `dir` → لا يوجد اتجاه على مستوى الـ document في SSR.
-2. `I18nProvider` ينتظر hydration ثم يطبّق اللغة المخزّنة في `localStorage` عبر `applyDocumentLanguage` → اتجاه الصفحة يتبدّل بعد التحميل (layout shift + sidebar يقفز يمين/يسار).
-3. `DashboardShell` يستعمل `start-0` / `border-e` (logical properties) — صحيح، لكن لأن `dir` يتغير بعد hydration الـ sidebar ينتقل من يسار إلى يمين بشكل مرئي.
-4. لا يوجد cookie لحفظ اللغة على السيرفر → SSR لا يعرف لغة المستخدم.
+---
 
-## الحل
+## المرحلة 1 — نظام i18n متعدد اللغات
 
-### 1) حفظ اللغة في cookie (مقروء على السيرفر)
-- تعديل `src/lib/i18n/index.ts`: `setStoredLanguage` يكتب أيضاً cookie `dbguard-lang` (Path=/, 1 سنة, SameSite=Lax).
-- `getStoredLanguage` يقرأ من cookie أولاً ثم localStorage (للتوافق).
+**المكتبة:** `i18next` + `react-i18next` + `i18next-browser-languagedetector`
 
-### 2) قراءة اللغة في SSR وتطبيقها على `<html>`
-- في `src/routes/__root.tsx`:
-  - استعمال `createServerFn` أو قراءة الـ request headers في `beforeLoad` لاستخراج cookie `dbguard-lang`.
-  - تمريرها كـ loader data للـ root.
-  - في `RootShell` ضبط `<html lang={lang} dir={dir}>` بناءً على القيمة (افتراضي `en`/`ltr`).
-- هذا يضمن أن أول render (SSR) يحمل الاتجاه الصحيح → لا يوجد flash.
+**الهيكل:**
+```
+src/locales/
+  ├─ ar/common.json, dashboard.json, auth.json, errors.json, plans.json, tables.json, settings.json
+  ├─ en/(same)
+  ├─ fr/(same)
+  └─ es/(same)
+src/lib/i18n/index.ts        # init + detection
+src/components/LanguageSwitcher.tsx
+```
 
-### 3) إزالة الـ flicker في `I18nProvider`
-- بدل الانتظار حتى `useEffect`, قراءة اللغة من `document.documentElement.lang` (التي تم ضبطها في SSR) كقيمة أولية لـ i18n.
-- استدعاء `i18n.changeLanguage(lang)` مرة واحدة قبل أول render على العميل (في module init أو via `useState` initializer) بحيث تتطابق مع SSR.
-- إزالة `applyDocumentLanguage` من `languageChanged` handler عند SSR-match، والإبقاء عليها فقط عند تغيير المستخدم اللغة يدوياً.
+**المنطق:**
+- اكتشاف لغة المتصفح تلقائيًا (fallback: en)
+- حفظ اختيار المستخدم في `localStorage` + جدول `user_preferences`
+- دعم RTL تلقائي للعربية (`dir="rtl"` على `<html>`)
+- استخراج كل النصوص من المكونات الحالية (Dashboard, Auth, Tables, Records, API Keys, Backups, Logs, Team, Billing, Settings) واستبدالها بـ `t('key')`
 
-### 4) تثبيت الـ sidebar في `DashboardShell`
-- الكود حالياً يستعمل `start-0`, `border-e`, `inset-y-0 start-0` → هذه logical properties تتبع `dir` تلقائياً. بمجرد أن يصبح `dir` ثابتاً من SSR، الـ sidebar لن يقفز.
-- التأكد من أن جميع المواضع تستعمل logical (`start/end`, `ms/me`, `ps/pe`, `border-s/border-e`) — مراجعة سريعة للملف، استبدال أي `left/right` متبقي.
+---
 
-### 5) تثبيت responsive
-- `<aside className="hidden lg:flex w-64 shrink-0 border-e ...">` يبقى كما هو.
-- الموبايل drawer: `fixed inset-y-0 start-0` صحيح مع `dir` ثابت.
-- لا تغيير في breakpoints.
+## المرحلة 2 — Email OTP Authentication
 
-### 6) منع hydration mismatch إضافي
-- `LanguageSwitcher`: حالياً يستعمل `mounted` flag — يبقى.
-- إزالة أي `Math.random()` أو `Date.now()` من initial render (خارج نطاق هذا الطلب لكن مذكور سابقاً).
+**استبدال password login بـ OTP من 6 أرقام**
 
-## الملفات المتأثرة
+**جدول جديد:**
+```sql
+email_verification_codes (
+  id, email, code_hash (sha256), purpose ('login'|'signup'),
+  expires_at, used_at, attempts, ip_address, created_at
+)
+auth_audit_log (id, user_id, email, event, ip, user_agent, success, created_at)
+```
 
-- `src/lib/i18n/index.ts` — إضافة cookie read/write helpers.
-- `src/routes/__root.tsx` — قراءة cookie في SSR، تمرير `lang`/`dir` إلى `<html>`.
-- `src/components/I18nProvider.tsx` — مزامنة i18n مع SSR lang بدون flicker.
-- `src/components/dashboard/DashboardShell.tsx` — مراجعة سريعة لأي `left/right` (لا تغييرات هيكلية).
+**Server Functions:**
+- `requestOtp({ email })` — يولّد code، يخزّن hash، يحدد expiry 10 دقائق، rate limit (3 طلبات/ساعة لكل بريد)
+- `verifyOtp({ email, code })` — يتحقق، ينشئ Supabase session عبر `signInWithOtp` token، إذا مستخدم جديد ينفذ `provision_tenant_defaults`
+- `resendOtp` — مع timer 60 ثانية
 
-## ما لن أفعله
+**صفحات جديدة:**
+- `/auth/login` — حقل email فقط
+- `/auth/verify` — 6 خانات OTP + countdown + resend
+- إزالة password forms الحالية (مع الاحتفاظ بالكود كـ legacy)
 
-- لن أمسّ أي ملف auth/database/route آخر.
-- لن أعيد ترتيب navigation items.
-- لن أغيّر التصميم أو الألوان.
-- لا mock data، لا تغييرات في business logic.
+**أمان:**
+- codes hashed (SHA-256)
+- max 5 محاولات
+- session آمنة عبر Supabase JWT (httpOnly cookies حيث ممكن)
+- كل login يُسجّل في audit log
 
-## النتيجة المتوقعة
+---
 
-- العربية: `<html lang="ar" dir="rtl">` من SSR → sidebar يميناً ثابتاً.
-- الإنجليزية/الفرنسية/الإسبانية: `<html lang="xx" dir="ltr">` → sidebar يساراً ثابتاً.
-- لا قفزة layout بعد hydration.
-- تبديل اللغة يدوياً يطبّق فوراً ويُحفظ في cookie للزيارات القادمة.
+## المرحلة 3 — Email Abstraction Layer
+
+```
+src/lib/email/
+  ├─ types.ts            # EmailProvider interface
+  ├─ index.ts            # getProvider() — يقرأ EMAIL_PROVIDER env
+  ├─ providers/
+  │   ├─ lovable.ts      # default (Lovable Email)
+  │   ├─ resend.ts
+  │   ├─ smtp.ts
+  │   ├─ mailgun.ts
+  │   └─ ses.ts
+  └─ templates/
+      ├─ otp-code.tsx
+      └─ welcome.tsx
+```
+
+**Interface موحد:**
+```ts
+interface EmailProvider {
+  send(opts: { to, subject, html, text? }): Promise<{ id: string }>
+}
+```
+
+التبديل بمتغير `EMAIL_PROVIDER` فقط، بدون لمس بقية الكود.
+
+---
+
+## المرحلة 4 — UI احترافي عالمي
+
+- **Dark/Light mode** عبر `next-themes` + toggle في Topbar
+- **Responsive كامل:** sidebar يتحول لـ sheet على mobile، tables بـ horizontal scroll، grid layouts متجاوبة
+- **Loading skeletons** لكل صفحة بدل spinners
+- **Optimistic updates** عبر TanStack Query mutations
+- **Animations** عبر `framer-motion` (page transitions, list items stagger)
+- **تصميم enterprise** مستوحى من Supabase/Neon: typography محكم، spacing منتظم، subtle borders، monospace للـ IDs/keys
+
+---
+
+## ما لن يتم تغييره
+- الجداول الحالية (tenants, workspaces, db_tables, db_records, api_keys...) تبقى كما هي
+- routes الحالية تُحدّث فقط (نصوص → i18n) ولا تُحذف
+- التصميم الحالي يُحسّن لا يُعاد بناؤه
+
+---
+
+## ترتيب التنفيذ المقترح
+1. i18n infrastructure + locales/en + locales/ar (الأساس)
+2. ترجمة dashboard pages واحدة تلو الأخرى + إضافة fr, es
+3. OTP auth (migration + server functions + UI)
+4. Email abstraction layer
+5. Dark mode + responsive polish + skeletons + animations
+
+**هل تريد أن أبدأ بالمرحلة 1 (i18n) الآن؟ أم تفضل ترتيبًا مختلفًا؟** سأنفذها مرحلة بمرحلة وأقدم تقريرًا عربيًا بعد كل مرحلة.
