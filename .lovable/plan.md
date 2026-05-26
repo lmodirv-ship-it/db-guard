@@ -1,51 +1,87 @@
+
+# بناء صفحة التسجيل الموحّدة (HN SSO)
+
 ## الهدف
+صفحة `/signup` و `/login` على `hn-bd.online` تستقبل المستخدمين من أي موقع (`hn-db.fun`, Otobo, مواقع مستقبلية)، تسجّلهم في `hn_users`، ثم تُعيدهم إلى موقع المصدر **مسجّلين** عبر SSO ticket. كل البيانات تُحفظ مركزياً وتظهر في لوحة المالك.
 
-إنشاء ملف `index.html` ثابت (Standalone) مطابق بصريًا للصفحة الرئيسية الحالية على Lovable (`hn-bd.online`)، يمكنك تحميله ورفعه عبر FTP إلى استضافة LWS واستعماله على نطاق آخر، مع بقاء DB·GUARD على Lovable كما هو.
+## التصميم (مطابق للصورة المرفقة)
+- خلفية داكنة `#0a0e1a` + شبكة ذهبية متوهجة (gradient + glow)
+- اللون الذهبي الأساسي: `#f5b800` / `#ffd54a` (gradient)
+- خطوط: **Cairo** للعربية + **Outfit** للأرقام/اللاتيني
+- عمود يسار: شعار HN + كرة أرضية + 6 أيقونات خدمات (HN Chat / Driver / Souk / Studio / Video AI / DB Guard)
+- عمود يمين: بطاقة زجاجية (glassmorphism) فيها النموذج
+- 4 بطاقات صغيرة أسفل اليسار: حساب آمن / دخول فوري / إشعارات / دعم 24/7
+- شريط سفلي: "يمكنك استعمال هذا الحساب في جميع خدمات HN" + 6 أيقونات
+- RTL كامل
 
-## المخطط النهائي
+## الحقول
+الاسم الكامل · البريد الإلكتروني · رقم الهاتف (مع `+213` 🇩🇿) · كلمة المرور · تأكيد كلمة المرور · checkbox الشروط
+
+## آلية SSO
 
 ```text
-hn-bd.online            → استضافة LWS (index.html ثابت — الواجهة التعريفية)
-app.hn-bd.online        → Lovable (DB·GUARD — لوحة التحكم الكاملة)
-otobo.hn-bd.online      → VPS Otobo (تذاكر الدعم — تربطه أنت من LWS DNS)
+موقع المصدر (hn-db.fun)
+   ↓ زر "تسجيل" → window.location = "https://hn-bd.online/signup?app=hn-db-fun&redirect=https://hn-db.fun/dashboard"
+صفحة /signup على hn-bd.online
+   ↓ المستخدم يُكمل النموذج → INSERT في hn_users (password bcrypt) + hn_user_code تلقائي
+   ↓ إصدار hn_sso_ticket صالح لـ 60 ثانية
+   ↓ redirect إلى: https://hn-db.fun/dashboard?hn_ticket=<token>
+موقع المصدر
+   ↓ يستقبل ticket → يستدعي POST /api/public/sso/verify
+   ↓ يستلم: { hn_user_code, full_name, email, session_token }
+   ↓ يحفظ session_token في cookie ويعتبر المستخدم مسجّلاً
 ```
 
-كل نطاق يعمل بشكل مستقل تمامًا.
+## الملفات المطلوب إنشاؤها
 
-## ما سأقوم بإنشائه
+### Frontend (TanStack routes)
+- `src/routes/signup.tsx` — صفحة التسجيل الموحدة (التصميم الذهبي/الأسود)
+- `src/routes/login.tsx` — صفحة الدخول بنفس التصميم (تحديث الحالية)
+- `src/components/hn/HnAuthLayout.tsx` — تخطيط مشترك (يسار: branding + خدمات / يمين: نموذج)
+- `src/components/hn/HnServicesPanel.tsx` — لوحة الخدمات الست
+- `src/components/hn/HnFormCard.tsx` — البطاقة الزجاجية للنموذج
+- `src/components/hn/PhoneInput.tsx` — حقل الهاتف مع علم الجزائر +213
+- `src/lib/hn-sso.functions.ts` — server functions
 
-1. **`/mnt/documents/index.html`** — صفحة HTML واحدة مكتفية بذاتها:
-   - بدون React، بدون build، بدون npm.
-   - نفس التصميم الحالي: Hero + Features + Dashboard preview + Pricing + CTA + Footer.
-   - CSS مُضمَّن داخل `<style>` (يحاكي ألوان Tailwind/oklch والـ gradient والـ glass والـ glow).
-   - أيقونات Lucide كـ SVG مُضمَّنة (بدون CDN).
-   - شعار DB·GUARD كصورة مرفقة منفصلة (`db-guard-logo.jpg`).
-   - meta tags كاملة (SEO + OG).
-   - أزرار "Get Started" و "Sign In" و "Dashboard" تشير إلى `https://app.hn-bd.online/...` (DB·GUARD على Lovable).
-   - رابط "Support" يشير إلى `https://otobo.hn-bd.online` (Otobo على VPS).
+### Backend (Server Functions + Public API)
+- `signupHnUser` (createServerFn): تحقق Zod → bcrypt password → insert `hn_users` → توليد `hn_user_code` (HN000001) → إنشاء `hn_workspace` افتراضي → إصدار `hn_sso_ticket` → إرجاع `redirect_url + ticket`
+- `loginHnUser` (createServerFn): تحقق email/password → إصدار ticket
+- `src/routes/api/public/sso/verify.ts` (server route): POST يستقبل `{ ticket, app_key }` → يتحقق من `connected_apps` (CORS) → يستهلك التذكرة (`used_at`) → ينشئ `hn_sessions` ويرجع `{ hn_user_code, full_name, email, session_token, expires_at }`
+- `src/routes/api/public/sso/me.ts`: GET للتحقق من `session_token` (Bearer)
 
-2. **`/mnt/documents/db-guard-logo.jpg`** — نسخة من الشعار الحالي.
+### قاعدة البيانات (الجداول موجودة، لا migration جديدة)
+- استخدام `hn_users` + `hn_sessions` + `hn_sso_tickets` + `connected_apps` + `hn_workspaces`
+- إضافة سياسة DB function `generate_hn_user_code()` لتوليد HN000001 تسلسلياً (لو غير موجودة)
 
-3. **`/mnt/documents/README-deploy.txt`** — تعليمات مختصرة بالعربية:
-   - كيفية الرفع عبر FTP إلى `public_html/` في LWS.
-   - إعدادات DNS المطلوبة لكل نطاق (A records للنطاق الرئيسي على LWS، CNAME لـ `app` على Lovable، A لـ `otobo` على VPS).
+### لوحة المالك (موجودة سابقاً)
+- التأكد أن صفحة Owner تعرض `hn_users` الجديدة مع `source_app` (الموقع الذي جاء منه)
 
-## ما لن يتغير في المشروع الحالي
+## التكامل مع المواقع الأخرى
+في كل موقع، استبدال أزرار "تسجيل/دخول" بـ:
+```html
+<a href="https://hn-bd.online/signup?app=hn-db-fun&redirect=https://hn-db.fun/">إنشاء حساب</a>
+<a href="https://hn-bd.online/login?app=hn-db-fun&redirect=https://hn-db.fun/">تسجيل الدخول</a>
+```
+وإضافة سكريبت صغير `hn-sso-client.js` (سأضعه في `hn-db-fun-site.zip`) يلتقط `?hn_ticket=` ويستدعي `/api/public/sso/verify` ثم يحفظ الـ session.
 
-- **لا تعديل** على أي ملف من DB·GUARD (لا `src/routes/`، لا `src/components/`).
-- **لا migration** لقاعدة البيانات.
-- المشروع الحالي على Lovable يبقى يعمل كما هو على `app.hn-bd.online`.
+## ملاحظات أمنية
+- `password_hash` بـ bcrypt (cost 10) — لن يُعرض في أي API
+- التذكرة صالحة 60 ثانية، تُستهلك مرة واحدة (`used_at`)
+- session token = SHA-256 مخزّن في `hn_sessions.token_hash`، الأصل يُرسل للعميل فقط مرة واحدة
+- التحقق من `connected_apps.allowed_redirect_hosts` قبل أي redirect (منع open-redirect)
+- Rate limit على signup/login (5 محاولات / 15 دقيقة)
+- Zod validation صارم على كل المدخلات
 
-## الملفات الناتجة
+## الترتيب
+1. مكونات التصميم (Layout + ServicesPanel + FormCard + PhoneInput)
+2. صفحة `/signup` بالتصميم الكامل
+3. تحديث `/login` بنفس التصميم
+4. server functions (`signupHnUser`, `loginHnUser`)
+5. server routes العامة (`/api/public/sso/verify`, `/me`)
+6. تحديث `hn-db-fun-site` لاستخدام روابط SSO + سكريبت العميل
+7. اختبار الدورة كاملة من `hn-db.fun` → `hn-bd.online/signup` → عودة مسجّل
 
-ستظهر لك بعد التنفيذ كـ artifacts قابلة للتنزيل:
-- `index.html`
-- `db-guard-logo.jpg`
-- `README-deploy.txt`
-
-## ما يبقى على عاتقك
-
-- ضبط DNS في لوحة LWS: نقل النطاق الرئيسي إلى استضافة LWS، وإضافة CNAME لـ `app` يشير إلى Lovable، و A record لـ `otobo` يشير إلى IP الـ VPS.
-- نقل النطاق الأساسي من Lovable إلى LWS (سأشرح ذلك في README).
-
-هل أبدأ التنفيذ؟
+## ما لن أغيّره
+- جداول قاعدة البيانات (موجودة وكافية)
+- لوحة المالك الحالية (ستعرض المستخدمين الجدد تلقائياً)
+- تطبيق DB·GUARD الرئيسي
