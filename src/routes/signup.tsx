@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { HnAuthShell, HnField } from "@/components/hn/HnAuthShell";
 import { Mail, Lock, User as UserIcon, Phone, Eye, EyeOff, UserPlus, ChevronLeft } from "lucide-react";
