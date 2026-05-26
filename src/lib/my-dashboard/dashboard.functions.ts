@@ -97,25 +97,25 @@ export const saveDbguardConnection = createServerFn({ method: "POST" })
   });
 
 export const disconnectDbguard = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    await supabase.from("dbguard_connections").update({ status: "disconnected", updated_at: new Date().toISOString() }).eq("user_id", userId);
-    await supabase.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.disable", metadata: {} });
+    const { userId } = context;
+    await supabaseAdmin.from("dbguard_connections").update({ status: "disconnected", updated_at: new Date().toISOString() }).eq("user_id", userId);
+    await supabaseAdmin.from("user_activity_logs").insert({ user_id: userId, action: "hn.sync.disable", metadata: {} });
     return { ok: true };
   });
 
 // Internal snapshot — no external network call.
 export const runDbguardExport = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireSession])
   .inputValidator((d) => z.object({ confirm: z.literal(true) }).parse(d))
   .handler(async ({ context }) => {
-    const { supabase, userId, claims } = context;
+    const { userId, claims } = context;
     const [{ data: records }, { data: files }, { data: logs }, { data: conn }] = await Promise.all([
-      supabase.from("user_records").select("id, type, title, data, created_at, updated_at"),
-      supabase.from("user_files").select("id, name, mime_type, size_bytes, url, created_at"),
-      supabase.from("user_activity_logs").select("id, action, metadata, created_at").order("created_at", { ascending: false }).limit(500),
-      supabase.from("dbguard_connections").select("project_id, endpoint_url, status").maybeSingle(),
+      supabaseAdmin.from("user_records").select("id, type, title, data, created_at, updated_at").eq("user_id", userId),
+      supabaseAdmin.from("user_files").select("id, name, mime_type, size_bytes, url, created_at").eq("user_id", userId),
+      supabaseAdmin.from("user_activity_logs").select("id, action, metadata, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(500),
+      supabaseAdmin.from("dbguard_connections").select("project_id, endpoint_url, status").eq("user_id", userId).maybeSingle(),
     ]);
 
     const profile = {
@@ -124,7 +124,7 @@ export const runDbguardExport = createServerFn({ method: "POST" })
       hn_user_code: (claims as { hn_user_code?: string })?.hn_user_code ?? null,
     };
     const payload = {
-      export_id: randomUUID(),
+      export_id: crypto.randomUUID(),
       source_app: "hn-dbguard",
       kind: "internal_snapshot",
       user_id: userId,
@@ -139,12 +139,12 @@ export const runDbguardExport = createServerFn({ method: "POST" })
     const status: "completed" = "completed";
 
     if (conn?.status === "connected") {
-      await supabase.from("dbguard_connections").update({ last_synced_at: new Date().toISOString() }).eq("user_id", userId);
+      await supabaseAdmin.from("dbguard_connections").update({ last_synced_at: new Date().toISOString() }).eq("user_id", userId);
     }
-    await supabase.from("dbguard_export_logs").insert({
+    await supabaseAdmin.from("dbguard_export_logs").insert({
       user_id: userId, status, items_count: itemsCount, payload_size: json.length, error: null,
     });
-    await supabase.from("user_activity_logs").insert({
+    await supabaseAdmin.from("user_activity_logs").insert({
       user_id: userId, action: "hn.snapshot", metadata: { status, items_count: itemsCount, payload_size: json.length },
     });
 
