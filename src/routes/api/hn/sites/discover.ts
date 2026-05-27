@@ -203,20 +203,9 @@ export const Route = createFileRoute("/api/hn/sites/discover")({
           const verificationToken = "hnv_" + randToken(24);
           const name = parsed.data.name || (report.title as string | null) || url.hostname.replace(/^www\./, "");
 
-          // Ensure tenant has a default workspace
-          const ws = await withTenant<{ id: string }>(ctx.tenantId, (sql) => sql`
-            SELECT id FROM workspaces WHERE tenant_id = ${ctx.tenantId}
-            ORDER BY is_default DESC, created_at ASC LIMIT 1
-          `);
-          let workspaceId = ws[0]?.id;
-          if (!workspaceId) {
-            const created = await withTenant<{ id: string }>(ctx.tenantId, (sql) => sql`
-              INSERT INTO workspaces (tenant_id, name, slug, is_default)
-              VALUES (${ctx.tenantId}, 'Default', 'default', TRUE)
-              RETURNING id
-            `);
-            workspaceId = created[0].id;
-          }
+          // Ensure tenant has a default workspace (auto-create if missing).
+          const workspace = await ensureOwnerWorkspace(ctx.tenantId);
+          const workspaceId = workspace.id;
 
           // Insert site
           const allowedOrigins = [url.origin];

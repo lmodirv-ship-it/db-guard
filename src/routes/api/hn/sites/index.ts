@@ -11,6 +11,7 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { requireHnAccess, hnAccessErrorResponse } from "@/lib/hn/access.server";
 import { withTenant } from "@/lib/db/tenant.server";
+import { ensureOwnerWorkspace } from "@/lib/hn/workspaces.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -68,26 +69,26 @@ export const Route = createFileRoute("/api/hn/sites/")({
           `);
           if (dup.length) return json(409, { ok: false, error: "slug_taken" });
 
-          // pick a workspace for this tenant (first one)
-          const ws = await withTenant<{ id: string }>(ctx.tenantId, (sql) => sql`
-            SELECT id FROM workspaces WHERE tenant_id = ${ctx.tenantId}
-            ORDER BY is_default DESC, created_at ASC LIMIT 1
-          `);
-          if (!ws.length) return json(400, { ok: false, error: "no_workspace" });
+          // Auto-create the default workspace if the tenant doesn't have one.
+          const workspace = await ensureOwnerWorkspace(ctx.tenantId);
 
           const rows = await withTenant(ctx.tenantId, (sql) => sql`
             INSERT INTO hn_sites (
               tenant_id, workspace_id, slug, name, site_host, allowed_origins,
               db_enabled, storage_enabled, auth_enabled
             ) VALUES (
-              ${ctx.tenantId}, ${ws[0].id}, ${d.slug}, ${d.name}, ${d.site_host},
+              ${ctx.tenantId}, ${workspace.id}, ${d.slug}, ${d.name}, ${d.site_host},
               ${d.allowed_origins ?? []},
               ${d.db_enabled ?? true}, ${d.storage_enabled ?? false}, ${d.auth_enabled ?? false}
             )
             RETURNING id, slug, name, site_host, allowed_origins, status,
                       db_enabled, storage_enabled, auth_enabled, created_at
           `);
-          return json(200, { ok: true, site: rows[0] });
+          return json(200, {
+            ok: true,
+            site: rows[0],
+            workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug, created: workspace.created },
+          });
         } catch (err) {
           return hnAccessErrorResponse(err);
         }
