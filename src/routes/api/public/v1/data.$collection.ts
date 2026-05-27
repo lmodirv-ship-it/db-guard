@@ -27,11 +27,15 @@ const CORS = {
 const CollectionParam = z.string().regex(/^[a-z][a-z0-9_]{0,62}$/, "invalid_collection");
 const PostBody = z.object({ data: z.record(z.unknown()).default({}) });
 
-function json(status: number, body: unknown) {
+function json(status: number, body: unknown, extra?: Record<string, string>) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json", ...CORS, ...(extra ?? {}) },
   });
+}
+
+function idHeaders(key: { workspace_id: string; key_id: string }) {
+  return { "x-hn-workspace": key.workspace_id, "x-hn-key-id": key.key_id };
 }
 
 export const Route = createFileRoute("/api/public/v1/data/$collection")({
