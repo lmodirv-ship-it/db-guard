@@ -41,6 +41,25 @@ function LoginPage() {
     setError(null);
     setLoading(true);
     try {
+      // 1) Try platform owner/user login first (Neon, sets hn_session cookie).
+      //    Skip when external SSO redirect is requested.
+      if (!fromApp && !redirect) {
+        const ownerRes = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim(), password }),
+        });
+        if (ownerRes.ok) {
+          const data = await ownerRes.json().catch(() => null);
+          if (data?.ok) {
+            const isOwner = /lmodirv@gmail\.com/i.test(email.trim());
+            window.location.href = isOwner ? "/owner" : "/dashboard";
+            return;
+          }
+        }
+      }
+
+      // 2) Fallback: SSO login (hn_users, ticket-based).
       const res = await fetch("/api/sso/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
