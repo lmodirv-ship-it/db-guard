@@ -20,7 +20,10 @@ type NavItem = { label: string; icon: React.ComponentType<{ className?: string }
 type NavSection = { title?: string; items: NavItem[] };
 
 const NAV: NavSection[] = [
-  { items: [{ label: "Overview", icon: LayoutDashboard, to: "/owner" }] },
+  { items: [
+    { label: "Overview", icon: LayoutDashboard, to: "/owner" },
+    { label: "Quick Start", icon: Rocket, to: "/quickstart" },
+  ] },
   { title: "Data Management", items: [
     { label: "Projects", icon: FolderKanban, to: "/owner/projects" },
     { label: "Records",  icon: Database,     to: "/owner/records" },
