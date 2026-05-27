@@ -77,11 +77,17 @@ function SiteDetailPage() {
   if (q.isLoading) return <div className="p-10 text-sm text-muted-foreground">جارٍ التحميل…</div>;
   if (q.isError || !q.data) return <div className="p-10 text-sm text-destructive">تعذر التحميل</div>;
 
-  const { site, workspace, keys, collections, storageCount } = q.data;
+  const { site, workspace, keys, collections, storageCount } = q.data as {
+    site: { id: string; name: string; site_url: string; site_host: string; workspace_id: string; status: string; auth_enabled: boolean; storage_enabled: boolean; data_enabled: boolean; verified_at: string | null; created_at: string };
+    workspace: { id: string; name: string; slug: string; hn_user_id: string } | null;
+    keys: ApiKey[];
+    collections: Collection[];
+    storageCount: number;
+  };
   const activeKey =
-    (selectedKeyId && keys.find((k) => k.id === selectedKeyId)) ||
-    keys.find((k) => !k.revoked_at && k.full_key) ||
-    keys.find((k) => !k.revoked_at) ||
+    (selectedKeyId && keys.find((k: ApiKey) => k.id === selectedKeyId)) ||
+    keys.find((k: ApiKey) => !k.revoked_at && k.full_key) ||
+    keys.find((k: ApiKey) => !k.revoked_at) ||
     keys[0];
   const apiKeyForSnippets = activeKey?.full_key ?? "YOUR_API_KEY";
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://hn-bd.online";
