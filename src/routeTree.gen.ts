@@ -89,6 +89,7 @@ import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 import { Route as ApiHnStorageIdRouteImport } from './routes/api/hn/storage/$id'
+import { Route as ApiHnSitesDiscoverRouteImport } from './routes/api/hn/sites/discover'
 import { Route as ApiHnAuthSignupRouteImport } from './routes/api/hn/auth/signup'
 import { Route as ApiHnAuthMeRouteImport } from './routes/api/hn/auth/me'
 import { Route as ApiHnAuthLogoutRouteImport } from './routes/api/hn/auth/logout'
@@ -500,6 +501,11 @@ const ApiHnStorageIdRoute = ApiHnStorageIdRouteImport.update({
   path: '/api/hn/storage/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnSitesDiscoverRoute = ApiHnSitesDiscoverRouteImport.update({
+  id: '/api/hn/sites/discover',
+  path: '/api/hn/sites/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHnAuthSignupRoute = ApiHnAuthSignupRouteImport.update({
   id: '/api/hn/auth/signup',
   path: '/api/hn/auth/signup',
@@ -620,6 +626,7 @@ export interface FileRoutesByFullPath {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
@@ -709,6 +716,7 @@ export interface FileRoutesByTo {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
@@ -801,6 +809,7 @@ export interface FileRoutesById {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
@@ -894,6 +903,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
@@ -983,6 +993,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
@@ -1074,6 +1085,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
@@ -1133,6 +1145,7 @@ export interface RootRouteChildren {
   ApiHnAuthLogoutRoute: typeof ApiHnAuthLogoutRoute
   ApiHnAuthMeRoute: typeof ApiHnAuthMeRoute
   ApiHnAuthSignupRoute: typeof ApiHnAuthSignupRoute
+  ApiHnSitesDiscoverRoute: typeof ApiHnSitesDiscoverRoute
   ApiHnStorageIdRoute: typeof ApiHnStorageIdRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
@@ -1711,6 +1724,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHnStorageIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/sites/discover': {
+      id: '/api/hn/sites/discover'
+      path: '/api/hn/sites/discover'
+      fullPath: '/api/hn/sites/discover'
+      preLoaderRoute: typeof ApiHnSitesDiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hn/auth/signup': {
       id: '/api/hn/auth/signup'
       path: '/api/hn/auth/signup'
@@ -1956,6 +1976,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnAuthLogoutRoute: ApiHnAuthLogoutRoute,
   ApiHnAuthMeRoute: ApiHnAuthMeRoute,
   ApiHnAuthSignupRoute: ApiHnAuthSignupRoute,
+  ApiHnSitesDiscoverRoute: ApiHnSitesDiscoverRoute,
   ApiHnStorageIdRoute: ApiHnStorageIdRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
