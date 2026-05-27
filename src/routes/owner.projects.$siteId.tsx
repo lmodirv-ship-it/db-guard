@@ -12,6 +12,7 @@ import {
 import {
   ArrowLeft, KeyRound, Copy, Eye, EyeOff, Plus, Loader2, Trash2,
   Database, HardDrive, ShieldCheck, ExternalLink, Table2, Code2,
+  Rocket, FileCode2, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
