@@ -338,6 +338,7 @@ export type Database = {
       hn_api_keys: {
         Row: {
           created_at: string
+          full_key: string | null
           hn_user_id: string
           id: string
           key_hash: string
@@ -350,6 +351,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          full_key?: string | null
           hn_user_id: string
           id?: string
           key_hash: string
@@ -362,6 +364,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          full_key?: string | null
           hn_user_id?: string
           id?: string
           key_hash?: string
