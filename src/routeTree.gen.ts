@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
+import { Route as OwnerVisitorsRouteImport } from './routes/owner.visitors'
 import { Route as OwnerUsersRouteImport } from './routes/owner.users'
 import { Route as OwnerTenantsRouteImport } from './routes/owner.tenants'
 import { Route as OwnerSettingsRouteImport } from './routes/owner.settings'
@@ -62,6 +63,7 @@ import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthChangePasswordRouteImport } from './routes/api/auth/change-password'
 import { Route as ApiApiKeysIdRouteImport } from './routes/api/api-keys/$id'
+import { Route as ApiAdminVisitorsRouteImport } from './routes/api/admin/visitors'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-status'
 import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
@@ -115,6 +117,11 @@ const ProjectsIdRoute = ProjectsIdRouteImport.update({
   id: '/projects/$id',
   path: '/projects/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerVisitorsRoute = OwnerVisitorsRouteImport.update({
+  id: '/visitors',
+  path: '/visitors',
+  getParentRoute: () => OwnerRoute,
 } as any)
 const OwnerUsersRoute = OwnerUsersRouteImport.update({
   id: '/users',
@@ -341,6 +348,11 @@ const ApiApiKeysIdRoute = ApiApiKeysIdRouteImport.update({
   path: '/api/api-keys/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminVisitorsRoute = ApiAdminVisitorsRouteImport.update({
+  id: '/api/admin/visitors',
+  path: '/api/admin/visitors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
   id: '/api/admin/users',
   path: '/api/admin/users',
@@ -439,12 +451,14 @@ export interface FileRoutesByFullPath {
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
+  '/owner/visitors': typeof OwnerVisitorsRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/admin/visitors': typeof ApiAdminVisitorsRoute
   '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -505,12 +519,14 @@ export interface FileRoutesByTo {
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
+  '/owner/visitors': typeof OwnerVisitorsRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/admin/visitors': typeof ApiAdminVisitorsRoute
   '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -574,12 +590,14 @@ export interface FileRoutesById {
   '/owner/settings': typeof OwnerSettingsRoute
   '/owner/tenants': typeof OwnerTenantsRoute
   '/owner/users': typeof OwnerUsersRoute
+  '/owner/visitors': typeof OwnerVisitorsRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
+  '/api/admin/visitors': typeof ApiAdminVisitorsRoute
   '/api/api-keys/$id': typeof ApiApiKeysIdRoute
   '/api/auth/change-password': typeof ApiAuthChangePasswordRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -644,12 +662,14 @@ export interface FileRouteTypes {
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
+    | '/owner/visitors'
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/admin/visitors'
     | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
@@ -710,12 +730,14 @@ export interface FileRouteTypes {
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
+    | '/owner/visitors'
     | '/projects/$id'
     | '/dashboard'
     | '/owner'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/admin/visitors'
     | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
@@ -778,12 +800,14 @@ export interface FileRouteTypes {
     | '/owner/settings'
     | '/owner/tenants'
     | '/owner/users'
+    | '/owner/visitors'
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
     | '/api/admin/users'
+    | '/api/admin/visitors'
     | '/api/api-keys/$id'
     | '/api/auth/change-password'
     | '/api/auth/login'
@@ -827,6 +851,7 @@ export interface RootRouteChildren {
   ApiAdminAuditLogsRoute: typeof ApiAdminAuditLogsRoute
   ApiAdminDbStatusRoute: typeof ApiAdminDbStatusRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
+  ApiAdminVisitorsRoute: typeof ApiAdminVisitorsRoute
   ApiApiKeysIdRoute: typeof ApiApiKeysIdRoute
   ApiAuthChangePasswordRoute: typeof ApiAuthChangePasswordRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
@@ -912,6 +937,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/projects/$id'
       preLoaderRoute: typeof ProjectsIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/owner/visitors': {
+      id: '/owner/visitors'
+      path: '/visitors'
+      fullPath: '/owner/visitors'
+      preLoaderRoute: typeof OwnerVisitorsRouteImport
+      parentRoute: typeof OwnerRoute
     }
     '/owner/users': {
       id: '/owner/users'
@@ -1228,6 +1260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiApiKeysIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/visitors': {
+      id: '/api/admin/visitors'
+      path: '/api/admin/visitors'
+      fullPath: '/api/admin/visitors'
+      preLoaderRoute: typeof ApiAdminVisitorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/users': {
       id: '/api/admin/users'
       path: '/api/admin/users'
@@ -1381,6 +1420,7 @@ interface OwnerRouteChildren {
   OwnerSettingsRoute: typeof OwnerSettingsRoute
   OwnerTenantsRoute: typeof OwnerTenantsRoute
   OwnerUsersRoute: typeof OwnerUsersRoute
+  OwnerVisitorsRoute: typeof OwnerVisitorsRoute
   OwnerIndexRoute: typeof OwnerIndexRoute
 }
 
@@ -1399,6 +1439,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerSettingsRoute: OwnerSettingsRoute,
   OwnerTenantsRoute: OwnerTenantsRoute,
   OwnerUsersRoute: OwnerUsersRoute,
+  OwnerVisitorsRoute: OwnerVisitorsRoute,
   OwnerIndexRoute: OwnerIndexRoute,
 }
 
@@ -1441,6 +1482,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminAuditLogsRoute: ApiAdminAuditLogsRoute,
   ApiAdminDbStatusRoute: ApiAdminDbStatusRoute,
   ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
+  ApiAdminVisitorsRoute: ApiAdminVisitorsRoute,
   ApiApiKeysIdRoute: ApiApiKeysIdRoute,
   ApiAuthChangePasswordRoute: ApiAuthChangePasswordRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
