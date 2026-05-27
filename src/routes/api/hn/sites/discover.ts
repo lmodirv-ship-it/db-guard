@@ -15,6 +15,7 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { requireHnAccess, hnAccessErrorResponse } from "@/lib/hn/access.server";
 import { withTenant } from "@/lib/db/tenant.server";
+import { ensureOwnerWorkspace } from "@/lib/hn/workspaces.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
