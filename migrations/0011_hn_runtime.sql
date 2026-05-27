@@ -59,10 +59,4 @@ CREATE TABLE IF NOT EXISTS hn_workers (
   meta          jsonb NOT NULL DEFAULT '{}'::jsonb
 );
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.hn_events  TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.hn_jobs    TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.hn_metrics TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.hn_workers TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE hn_metrics_id_seq TO authenticated;
-GRANT ALL ON public.hn_events, public.hn_jobs, public.hn_metrics, public.hn_workers TO service_role;
-GRANT USAGE, SELECT ON SEQUENCE hn_metrics_id_seq TO service_role;
+-- Neon: no Supabase roles; the app connects as the DB owner.
