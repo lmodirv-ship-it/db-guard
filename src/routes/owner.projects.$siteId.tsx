@@ -248,50 +248,82 @@ function SiteDetailPage() {
         {keys.length === 0 ? (
           <EmptyState icon={KeyRound} title="لا توجد مفاتيح بعد" description="اضغط «توليد مفتاح» لإنشاء أول مفتاح." />
         ) : (
-          <div className="space-y-2">
-            {keys.map((k: ApiKey) => {
-              const isOpen = !!revealed[k.id];
-              const display = k.revoked_at ? "— ملغاة —" : (k.full_key ?? "— مفتاح قديم —");
-              const isActive = activeKey?.id === k.id;
-              return (
-                <div
-                  key={k.id}
-                  className={`rounded-xl border p-3 ${isActive ? "border-primary/40 bg-primary/5" : "border-border bg-background/40"}`}
-                >
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <button
-                      onClick={() => setSelectedKeyId(k.id)}
-                      className="text-xs font-semibold hover:text-primary"
-                    >
-                      {k.label} {isActive && <span className="text-[10px] text-primary">• مستخدم في الأكواد</span>}
-                    </button>
-                    <div className="flex items-center gap-1">
-                      {!k.revoked_at && k.full_key && (
-                        <>
-                          <button onClick={() => setRevealed((s) => ({ ...s, [k.id]: !isOpen }))}
-                                  className="p-1.5 rounded-md hover:bg-muted text-muted-foreground">
-                            {isOpen ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                          </button>
-                          <button onClick={() => { navigator.clipboard.writeText(k.full_key!); toast.success("نُسخ"); }}
-                                  className="p-1.5 rounded-md hover:bg-muted text-muted-foreground">
-                            <Copy className="h-3.5 w-3.5" />
-                          </button>
-                        </>
-                      )}
-                      {!k.revoked_at && (
-                        <button onClick={() => { if (confirm("إلغاء المفتاح؟")) revoke.mutate(k.id); }}
-                                className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive">
-                          <Trash2 className="h-3.5 w-3.5" />
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/40 text-right">
+                <tr>
+                  <th className="px-3 py-2 font-semibold w-32">الاسم</th>
+                  <th className="px-3 py-2 font-semibold">المفتاح</th>
+                  <th className="px-3 py-2 font-semibold w-24">الحالة</th>
+                  <th className="px-3 py-2 font-semibold w-44 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="text-right">
+                {keys.map((k: ApiKey) => {
+                  const isOpen = !!revealed[k.id];
+                  const isActive = activeKey?.id === k.id;
+                  const masked = k.full_key
+                    ? k.full_key.slice(0, 8) + "•".repeat(20) + k.full_key.slice(-4)
+                    : (k.key_hint || "— مفتاح قديم —");
+                  const shown = k.revoked_at
+                    ? "— ملغاة —"
+                    : isOpen && k.full_key
+                      ? k.full_key
+                      : masked;
+                  return (
+                    <tr key={k.id} className={`border-t border-border ${isActive ? "bg-primary/5" : ""}`}>
+                      <td className="px-3 py-2 align-middle">
+                        <button onClick={() => setSelectedKeyId(k.id)} className="font-semibold hover:text-primary text-right">
+                          {k.label}
                         </button>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-1.5 font-mono text-[11px] text-muted-foreground break-all">
-                    {isOpen && k.full_key ? k.full_key : (k.key_hint || display)}
-                  </div>
-                </div>
-              );
-            })}
+                        {isActive && <div className="text-[10px] text-primary mt-0.5">• مستخدم في الأكواد</div>}
+                      </td>
+                      <td className="px-3 py-2 align-middle">
+                        <code className="font-mono text-[11px] text-foreground/90 break-all select-all">{shown}</code>
+                      </td>
+                      <td className="px-3 py-2 align-middle">
+                        {k.revoked_at ? (
+                          <span className="inline-block rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-[10px]">ملغاة</span>
+                        ) : (
+                          <span className="inline-block rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 text-[10px]">نشط</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 align-middle">
+                        <div className="flex items-center justify-center gap-1">
+                          {!k.revoked_at && k.full_key && (
+                            <>
+                              <button
+                                onClick={() => { navigator.clipboard.writeText(k.full_key!); toast.success("تم نسخ المفتاح"); }}
+                                className="inline-flex items-center gap-1 rounded-md bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 text-[11px] font-semibold"
+                                title="نسخ المفتاح"
+                              >
+                                <Copy className="h-3 w-3" /> نسخ
+                              </button>
+                              <button
+                                onClick={() => setRevealed((s) => ({ ...s, [k.id]: !isOpen }))}
+                                className="p-1.5 rounded-md hover:bg-muted text-muted-foreground"
+                                title={isOpen ? "إخفاء" : "إظهار"}
+                              >
+                                {isOpen ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                              </button>
+                            </>
+                          )}
+                          {!k.revoked_at && (
+                            <button
+                              onClick={() => { if (confirm("إلغاء المفتاح؟")) revoke.mutate(k.id); }}
+                              className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive"
+                              title="إلغاء"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </Panel>
