@@ -71,6 +71,7 @@ function ProjectsPage() {
       setJustCreated(r);
       setName(""); setUrl("");
       qc.invalidateQueries({ queryKey: ["owner", "sites"] });
+      qc.invalidateQueries({ queryKey: ["owner", "workspaces"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
