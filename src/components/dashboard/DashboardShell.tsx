@@ -2,12 +2,13 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, Database, Table2, FileText, KeyRound, Archive,
-  Activity, Users, CreditCard, Settings, LogOut, Shield, BookOpen, Cloud,
+  Activity, Users, CreditCard, Settings, LogOut, Shield, BookOpen, Cloud, TestTube2,
 } from "lucide-react";
 
 const NAV: Array<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/dashboard/hn-data", label: "HN Data Platform", icon: Cloud },
+  { to: "/dashboard/sdk-test", label: "SDK Test", icon: TestTube2 },
   { to: "/dashboard/databases", label: "Databases", icon: Database },
   { to: "/dashboard/tables", label: "Tables", icon: Table2 },
   { to: "/dashboard/records", label: "Records", icon: FileText },

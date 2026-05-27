@@ -37,6 +37,7 @@ import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
 import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
 import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardSdkTestRouteImport } from './routes/dashboard.sdk-test'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
 import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
 import { Route as DashboardHnDataRouteImport } from './routes/dashboard.hn-data'
@@ -236,6 +237,11 @@ const DashboardTablesRoute = DashboardTablesRouteImport.update({
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSdkTestRoute = DashboardSdkTestRouteImport.update({
+  id: '/sdk-test',
+  path: '/sdk-test',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
@@ -557,6 +563,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -645,6 +652,7 @@ export interface FileRoutesByTo {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -736,6 +744,7 @@ export interface FileRoutesById {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -828,6 +837,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -916,6 +926,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -1006,6 +1017,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -1333,6 +1345,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/sdk-test': {
+      id: '/dashboard/sdk-test'
+      path: '/sdk-test'
+      fullPath: '/dashboard/sdk-test'
+      preLoaderRoute: typeof DashboardSdkTestRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/records': {
@@ -1779,6 +1798,7 @@ interface DashboardRouteChildren {
   DashboardHnDataRoute: typeof DashboardHnDataRoute
   DashboardLogsRoute: typeof DashboardLogsRoute
   DashboardRecordsRoute: typeof DashboardRecordsRoute
+  DashboardSdkTestRoute: typeof DashboardSdkTestRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
   DashboardTeamRoute: typeof DashboardTeamRoute
@@ -1794,6 +1814,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardHnDataRoute: DashboardHnDataRoute,
   DashboardLogsRoute: DashboardLogsRoute,
   DashboardRecordsRoute: DashboardRecordsRoute,
+  DashboardSdkTestRoute: DashboardSdkTestRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardTablesRoute: DashboardTablesRouteWithChildren,
   DashboardTeamRoute: DashboardTeamRoute,
