@@ -10,13 +10,19 @@ import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.s
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
-  .handler(async ({ context }) => {
-    const { data, error } = await supabaseAdmin
+  .handler(async () => {
+    const { data: ws, error } = await supabaseAdmin
       .from("hn_workspaces")
-      .select("id, name, slug, hn_user_id, created_at, hn_users(email, full_name)")
+      .select("id, name, slug, hn_user_id, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error("list_failed");
-    return { workspaces: data ?? [] };
+    if (error) throw new Error(`list_failed: ${error.message}`);
+    const ids = Array.from(new Set((ws ?? []).map((w) => w.hn_user_id)));
+    const usersRes = ids.length
+      ? await supabaseAdmin.from("hn_users").select("id, email, full_name").in("id", ids)
+      : { data: [] as Array<{ id: string; email: string; full_name: string }> };
+    const byId = new Map((usersRes.data ?? []).map((u) => [u.id, { email: u.email, full_name: u.full_name }]));
+    const workspaces = (ws ?? []).map((w) => ({ ...w, hn_users: byId.get(w.hn_user_id) ?? null }));
+    return { workspaces };
   });
 
 export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
