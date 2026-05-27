@@ -9,9 +9,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.server";
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .handler(async ({ context }) => {
-    await assertOwner(context.userId);
     const { data, error } = await supabaseAdmin
       .from("hn_workspaces")
       .select("id, name, slug, hn_user_id, created_at, hn_users(email, full_name)")
@@ -21,9 +20,8 @@ export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   });
 
 export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .handler(async ({ context }) => {
-    await assertOwner(context.userId);
     const { data, error } = await supabaseAdmin
       .from("hn_api_keys")
       .select("id, label, key_prefix, key_hint, full_key, workspace_id, hn_user_id, created_at, last_used_at, revoked_at")
@@ -33,7 +31,7 @@ export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
   });
 
 export const ownerGenerateApiKey = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { workspaceId: string; label?: string }) =>
     z.object({
       workspaceId: z.string().uuid(),
@@ -41,7 +39,6 @@ export const ownerGenerateApiKey = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
 
     const { data: ws } = await supabaseAdmin
       .from("hn_workspaces")
@@ -73,12 +70,11 @@ export const ownerGenerateApiKey = createServerFn({ method: "POST" })
   });
 
 export const ownerRevokeApiKey = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { keyId: string }) =>
     z.object({ keyId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
     const { error } = await supabaseAdmin
       .from("hn_api_keys")
       .update({ revoked_at: new Date().toISOString() })
@@ -90,9 +86,8 @@ export const ownerRevokeApiKey = createServerFn({ method: "POST" })
 // -------------------- Sites (projects) --------------------
 
 export const listOwnerSites = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .handler(async ({ context }) => {
-    await assertOwner(context.userId);
     const { data, error } = await supabaseAdmin
       .from("hn_sites")
       .select("id, name, site_url, site_host, workspace_id, status, auth_enabled, storage_enabled, data_enabled, verified_at, created_at")
@@ -102,7 +97,7 @@ export const listOwnerSites = createServerFn({ method: "GET" })
   });
 
 export const ownerAddSite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { workspaceId: string; name: string; siteUrl: string }) =>
     z.object({
       workspaceId: z.string().uuid(),
@@ -111,7 +106,6 @@ export const ownerAddSite = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
     let host: string;
     try {
       host = new URL(data.siteUrl).hostname.toLowerCase();
@@ -134,12 +128,11 @@ export const ownerAddSite = createServerFn({ method: "POST" })
   });
 
 export const ownerDeleteSite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { siteId: string }) =>
     z.object({ siteId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
     const { error } = await supabaseAdmin.from("hn_sites").delete().eq("id", data.siteId);
     if (error) throw new Error("delete_failed");
     return { ok: true };
@@ -148,12 +141,11 @@ export const ownerDeleteSite = createServerFn({ method: "POST" })
 // -------------------- Site detail / overview --------------------
 
 export const getSiteOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { siteId: string }) =>
     z.object({ siteId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
 
     const { data: site, error: siteErr } = await supabaseAdmin
       .from("hn_sites")
@@ -204,7 +196,7 @@ export const getSiteOverview = createServerFn({ method: "GET" })
 
 
 export const ownerToggleSiteFeature = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHnOwner])
   .inputValidator((d: { siteId: string; feature: "auth" | "storage" | "data"; enabled: boolean }) =>
     z.object({
       siteId: z.string().uuid(),
@@ -213,7 +205,6 @@ export const ownerToggleSiteFeature = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ context, data }) => {
-    await assertOwner(context.userId);
     const patch: { auth_enabled?: boolean; storage_enabled?: boolean; data_enabled?: boolean } = {};
     if (data.feature === "auth") patch.auth_enabled = data.enabled;
     else if (data.feature === "storage") patch.storage_enabled = data.enabled;
