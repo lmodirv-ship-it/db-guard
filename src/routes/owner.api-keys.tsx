@@ -127,7 +127,7 @@ function OwnerApiKeysPage() {
                 }
               >
                 <div className="text-xs text-muted-foreground mb-3">
-                  {w.hn_users?.email ?? "—"} · <span className="font-mono">{w.id.slice(0, 8)}…</span>
+                  {(Array.isArray(w.hn_users) ? w.hn_users[0]?.email : w.hn_users?.email) ?? "—"} · <span className="font-mono">{w.id.slice(0, 8)}…</span>
                 </div>
                 {wsKeys.length === 0 ? (
                   <div className="text-xs text-muted-foreground py-4 text-center border border-dashed border-border rounded-lg">
