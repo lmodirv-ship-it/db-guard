@@ -54,12 +54,44 @@ export const Route = createFileRoute("/api/auth/signup")({
           `) as Array<{ id: string }>;
           const userId = userRows[0].id;
 
+          // Log visitor in the registrations table (best-effort).
+          try {
+            await sql`
+              CREATE TABLE IF NOT EXISTS visitors (
+                id            BIGSERIAL PRIMARY KEY,
+                user_id       UUID,
+                email         TEXT NOT NULL,
+                name          TEXT,
+                ip_address    TEXT,
+                user_agent    TEXT,
+                referer       TEXT,
+                country       TEXT,
+                registered_at TIMESTAMPTZ NOT NULL DEFAULT now()
+              )
+            `;
+            const ip =
+              request.headers.get("cf-connecting-ip") ??
+              request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+              null;
+            const ua = request.headers.get("user-agent");
+            const ref = request.headers.get("referer");
+            const country = request.headers.get("cf-ipcountry");
+            await sql`
+              INSERT INTO visitors (user_id, email, name, ip_address, user_agent, referer, country)
+              VALUES (${userId}, ${email}, ${name ?? null}, ${ip}, ${ua}, ${ref}, ${country})
+            `;
+          } catch (err) {
+            console.error("visitor_log_failed", err);
+          }
+
           // Provision default workspace + 8 default tables for the new tenant.
           try {
             await sql`SELECT provision_tenant_defaults(${tenantId}::uuid)`;
           } catch (err) {
             console.error("provision_defaults_failed", err);
           }
+
+
 
 
           const token = await signSession({ sub: userId, tid: tenantId, email });
