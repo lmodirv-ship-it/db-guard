@@ -72,8 +72,9 @@ export const Route = createFileRoute("/api/public/v1/storage")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       GET: withApiLog(async ({ request }) => {
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const url = new URL(request.url);
         const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 50), 1), 200);
@@ -107,8 +108,9 @@ export const Route = createFileRoute("/api/public/v1/storage")({
         });
       }),
       POST: withApiLog(async ({ request }) => {
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         let body: unknown;
         try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }); }
@@ -154,8 +156,9 @@ export const Route = createFileRoute("/api/public/v1/storage")({
         }
       }),
       DELETE: withApiLog(async ({ request }) => {
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const objectKey = new URL(request.url).searchParams.get("key");
         if (!objectKey) return json(400, { ok: false, error: "missing_key" });
