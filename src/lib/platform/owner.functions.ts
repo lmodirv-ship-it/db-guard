@@ -7,6 +7,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireHnOwner } from "@/lib/auth/hn-owner-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.server";
+import { ensureOwnerWorkspaceSupabase } from "@/lib/hn/ensure-supabase-workspace.server";
+
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
