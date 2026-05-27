@@ -37,6 +37,7 @@ import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
 import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
 import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardSdkTestRouteImport } from './routes/dashboard.sdk-test'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
 import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
 import { Route as DashboardHnDataRouteImport } from './routes/dashboard.hn-data'
@@ -58,6 +59,7 @@ import { Route as ApiSsoSignupRouteImport } from './routes/api/sso/signup'
 import { Route as ApiSsoLoginRouteImport } from './routes/api/sso/login'
 import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiPublicConfigRouteImport } from './routes/api/public/config'
+import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
 import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
 import { Route as ApiHnRolesRouteImport } from './routes/api/hn/roles'
@@ -237,6 +239,11 @@ const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardSdkTestRoute = DashboardSdkTestRouteImport.update({
+  id: '/sdk-test',
+  path: '/sdk-test',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
   id: '/records',
   path: '/records',
@@ -340,6 +347,11 @@ const ApiRecordsIdRoute = ApiRecordsIdRouteImport.update({
 const ApiPublicConfigRoute = ApiPublicConfigRouteImport.update({
   id: '/api/public/config',
   path: '/api/public/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
+  id: '/api/public/analytics',
+  path: '/api/public/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiJobsEnqueueRoute = ApiJobsEnqueueRouteImport.update({
@@ -551,6 +563,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -589,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -638,6 +652,7 @@ export interface FileRoutesByTo {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -676,6 +691,7 @@ export interface FileRoutesByTo {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -728,6 +744,7 @@ export interface FileRoutesById {
   '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
+  '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
@@ -766,6 +783,7 @@ export interface FileRoutesById {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -819,6 +837,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -857,6 +876,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -906,6 +926,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -944,6 +965,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -995,6 +1017,7 @@ export interface FileRouteTypes {
     | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
+    | '/dashboard/sdk-test'
     | '/dashboard/settings'
     | '/dashboard/tables'
     | '/dashboard/team'
@@ -1033,6 +1056,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -1094,6 +1118,7 @@ export interface RootRouteChildren {
   ApiHnRolesRoute: typeof ApiHnRolesRoute
   ApiJobsDrainRoute: typeof ApiJobsDrainRoute
   ApiJobsEnqueueRoute: typeof ApiJobsEnqueueRoute
+  ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
   ApiPublicConfigRoute: typeof ApiPublicConfigRoute
   ApiRecordsIdRoute: typeof ApiRecordsIdRoute
   ApiSsoLoginRoute: typeof ApiSsoLoginRoute
@@ -1322,6 +1347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/sdk-test': {
+      id: '/dashboard/sdk-test'
+      path: '/sdk-test'
+      fullPath: '/dashboard/sdk-test'
+      preLoaderRoute: typeof DashboardSdkTestRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/records': {
       id: '/dashboard/records'
       path: '/records'
@@ -1467,6 +1499,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/config'
       fullPath: '/api/public/config'
       preLoaderRoute: typeof ApiPublicConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/analytics': {
+      id: '/api/public/analytics'
+      path: '/api/public/analytics'
+      fullPath: '/api/public/analytics'
+      preLoaderRoute: typeof ApiPublicAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/jobs/enqueue': {
@@ -1759,6 +1798,7 @@ interface DashboardRouteChildren {
   DashboardHnDataRoute: typeof DashboardHnDataRoute
   DashboardLogsRoute: typeof DashboardLogsRoute
   DashboardRecordsRoute: typeof DashboardRecordsRoute
+  DashboardSdkTestRoute: typeof DashboardSdkTestRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
   DashboardTeamRoute: typeof DashboardTeamRoute
@@ -1774,6 +1814,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardHnDataRoute: DashboardHnDataRoute,
   DashboardLogsRoute: DashboardLogsRoute,
   DashboardRecordsRoute: DashboardRecordsRoute,
+  DashboardSdkTestRoute: DashboardSdkTestRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardTablesRoute: DashboardTablesRouteWithChildren,
   DashboardTeamRoute: DashboardTeamRoute,
@@ -1900,6 +1941,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnRolesRoute: ApiHnRolesRoute,
   ApiJobsDrainRoute: ApiJobsDrainRoute,
   ApiJobsEnqueueRoute: ApiJobsEnqueueRoute,
+  ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
   ApiPublicConfigRoute: ApiPublicConfigRoute,
   ApiRecordsIdRoute: ApiRecordsIdRoute,
   ApiSsoLoginRoute: ApiSsoLoginRoute,
