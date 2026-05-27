@@ -600,7 +600,7 @@ export type Database = {
           name: string
           site_host: string
           site_url: string
-          slug: string
+          slug?: string
           sso_app_key?: string | null
           status?: string
           storage_enabled?: boolean
