@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RuntimeRouteImport } from './routes/runtime'
 import { Route as QuickstartRouteImport } from './routes/quickstart'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RuntimeIndexRouteImport } from './routes/runtime.index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
@@ -53,6 +55,7 @@ import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
+import { Route as RuntimeSitesSlugRouteImport } from './routes/runtime.sites.$slug'
 import { Route as OwnerProjectsSiteIdRouteImport } from './routes/owner.projects.$siteId'
 import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
 import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
@@ -112,6 +115,11 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RuntimeRoute = RuntimeRouteImport.update({
+  id: '/runtime',
+  path: '/runtime',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuickstartRoute = QuickstartRouteImport.update({
   id: '/quickstart',
   path: '/quickstart',
@@ -136,6 +144,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RuntimeIndexRoute = RuntimeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RuntimeRoute,
 } as any)
 const OwnerIndexRoute = OwnerIndexRouteImport.update({
   id: '/',
@@ -326,6 +339,11 @@ const ApiApiKeysIndexRoute = ApiApiKeysIndexRouteImport.update({
   id: '/api/api-keys/',
   path: '/api/api-keys/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RuntimeSitesSlugRoute = RuntimeSitesSlugRouteImport.update({
+  id: '/sites/$slug',
+  path: '/sites/$slug',
+  getParentRoute: () => RuntimeRoute,
 } as any)
 const OwnerProjectsSiteIdRoute = OwnerProjectsSiteIdRouteImport.update({
   id: '/$siteId',
@@ -601,6 +619,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/quickstart': typeof QuickstartRoute
+  '/runtime': typeof RuntimeRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -635,6 +654,7 @@ export interface FileRoutesByFullPath {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
+  '/runtime/': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -659,6 +679,7 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -732,6 +753,7 @@ export interface FileRoutesByTo {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
+  '/runtime': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -756,6 +778,7 @@ export interface FileRoutesByTo {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
   '/api/backups': typeof ApiBackupsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
@@ -798,6 +821,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/quickstart': typeof QuickstartRoute
+  '/runtime': typeof RuntimeRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -832,6 +856,7 @@ export interface FileRoutesById {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
+  '/runtime/': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -856,6 +881,7 @@ export interface FileRoutesById {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -899,6 +925,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/owner'
     | '/quickstart'
+    | '/runtime'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -933,6 +960,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
+    | '/runtime/'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -957,6 +985,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -1030,6 +1059,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard'
     | '/owner'
+    | '/runtime'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -1054,6 +1084,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys'
     | '/api/backups'
     | '/api/projects'
@@ -1095,6 +1126,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/owner'
     | '/quickstart'
+    | '/runtime'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -1129,6 +1161,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
+    | '/runtime/'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -1153,6 +1186,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -1195,6 +1229,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   QuickstartRoute: typeof QuickstartRoute
+  RuntimeRoute: typeof RuntimeRouteWithChildren
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
@@ -1261,6 +1296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/runtime': {
+      id: '/runtime'
+      path: '/runtime'
+      fullPath: '/runtime'
+      preLoaderRoute: typeof RuntimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quickstart': {
       id: '/quickstart'
       path: '/quickstart'
@@ -1295,6 +1337,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/runtime/': {
+      id: '/runtime/'
+      path: '/'
+      fullPath: '/runtime/'
+      preLoaderRoute: typeof RuntimeIndexRouteImport
+      parentRoute: typeof RuntimeRoute
     }
     '/owner/': {
       id: '/owner/'
@@ -1561,6 +1610,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/api-keys/'
       preLoaderRoute: typeof ApiApiKeysIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/runtime/sites/$slug': {
+      id: '/runtime/sites/$slug'
+      path: '/sites/$slug'
+      fullPath: '/runtime/sites/$slug'
+      preLoaderRoute: typeof RuntimeSitesSlugRouteImport
+      parentRoute: typeof RuntimeRoute
     }
     '/owner/projects/$siteId': {
       id: '/owner/projects/$siteId'
@@ -2040,6 +2096,19 @@ const OwnerRouteChildren: OwnerRouteChildren = {
 
 const OwnerRouteWithChildren = OwnerRoute._addFileChildren(OwnerRouteChildren)
 
+interface RuntimeRouteChildren {
+  RuntimeIndexRoute: typeof RuntimeIndexRoute
+  RuntimeSitesSlugRoute: typeof RuntimeSitesSlugRoute
+}
+
+const RuntimeRouteChildren: RuntimeRouteChildren = {
+  RuntimeIndexRoute: RuntimeIndexRoute,
+  RuntimeSitesSlugRoute: RuntimeSitesSlugRoute,
+}
+
+const RuntimeRouteWithChildren =
+  RuntimeRoute._addFileChildren(RuntimeRouteChildren)
+
 interface ApiAdminUsersRouteChildren {
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
 }
@@ -2083,6 +2152,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OwnerRoute: OwnerRouteWithChildren,
   QuickstartRoute: QuickstartRoute,
+  RuntimeRoute: RuntimeRouteWithChildren,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
