@@ -88,7 +88,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
             url: `/api/public/v1/storage/file?key=${encodeURIComponent(item.object_key)}`,
           })),
         });
-      },
+      }),
       POST: withApiLog(async ({ request }) => {
         const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
@@ -135,7 +135,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
           const code = msg === "storage_not_enabled_for_site" ? 400 : 500;
           return json(code, { ok: false, error: msg });
         }
-      },
+      }),
       DELETE: withApiLog(async ({ request }) => {
         const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
@@ -159,7 +159,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
           .eq("object_key", objectKey);
         if (error) return json(500, { ok: false, error: "storage_delete_failed" });
         return json(200, { ok: true });
-      },
+      }),
     },
   },
 });
