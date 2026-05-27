@@ -578,6 +578,7 @@ export type Database = {
           auth_enabled: boolean
           created_at: string
           data_enabled: boolean
+          discovery: Json
           id: string
           name: string
           site_host: string
@@ -588,6 +589,8 @@ export type Database = {
           storage_enabled: boolean
           storage_scope: string
           updated_at: string
+          verification_method: string | null
+          verification_token: string | null
           verified_at: string | null
           workspace_id: string
         }
@@ -596,6 +599,7 @@ export type Database = {
           auth_enabled?: boolean
           created_at?: string
           data_enabled?: boolean
+          discovery?: Json
           id?: string
           name: string
           site_host: string
@@ -606,6 +610,8 @@ export type Database = {
           storage_enabled?: boolean
           storage_scope?: string
           updated_at?: string
+          verification_method?: string | null
+          verification_token?: string | null
           verified_at?: string | null
           workspace_id: string
         }
@@ -614,6 +620,7 @@ export type Database = {
           auth_enabled?: boolean
           created_at?: string
           data_enabled?: boolean
+          discovery?: Json
           id?: string
           name?: string
           site_host?: string
@@ -624,6 +631,8 @@ export type Database = {
           storage_enabled?: boolean
           storage_scope?: string
           updated_at?: string
+          verification_method?: string | null
+          verification_token?: string | null
           verified_at?: string | null
           workspace_id?: string
         }
