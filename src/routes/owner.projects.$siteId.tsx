@@ -112,7 +112,7 @@ function SiteDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <StatCard icon={Table2} label="جداول مكتشفة" value={collections.length} />
         <StatCard icon={HardDrive} label="ملفات التخزين" value={storageCount} />
-        <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter(k => !k.revoked_at).length} />
+        <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter((k: ApiKey) => !k.revoked_at).length} />
       </div>
 
       {/* Features */}
@@ -146,7 +146,7 @@ function SiteDetailPage() {
           <EmptyState icon={KeyRound} title="لا توجد مفاتيح بعد" description="اضغط «توليد مفتاح» لإنشاء أول مفتاح." />
         ) : (
           <div className="space-y-2">
-            {keys.map((k) => {
+            {keys.map((k: ApiKey) => {
               const isOpen = !!revealed[k.id];
               const display = k.revoked_at ? "— ملغاة —" : (k.full_key ?? "— مفتاح قديم —");
               const isActive = activeKey?.id === k.id;
@@ -202,7 +202,7 @@ function SiteDetailPage() {
           <EmptyState icon={Table2} title="لا توجد جداول بعد" description="أرسل أول سجل من الكود أدناه ليظهر الجدول هنا." />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {collections.map((c) => (
+            {collections.map((c: Collection) => (
               <div key={c.name} className="rounded-lg border border-border bg-background/40 px-3 py-2 flex items-center justify-between">
                 <span className="font-mono text-xs">{c.name}</span>
                 <span className="text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5">{c.count}</span>
