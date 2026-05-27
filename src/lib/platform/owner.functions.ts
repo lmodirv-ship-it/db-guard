@@ -4,7 +4,7 @@
  */
 import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
-import { requireHnOwner } from "@/lib/auth/hn-owner-middleware.server";
+import { requireHnOwner } from "@/lib/auth/hn-owner-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.server";
 
