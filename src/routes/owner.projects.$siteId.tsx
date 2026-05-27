@@ -51,7 +51,7 @@ function SiteDetailPage() {
   const generate = useMutation({
     mutationFn: (workspaceId: string) =>
       genKey({ data: { workspaceId, label: "site-key" } }),
-    onSuccess: async (r) => {
+    onSuccess: async (r: { id: string; key: string }) => {
       await navigator.clipboard.writeText(r.key).catch(() => {});
       toast.success("تم توليد المفتاح ونسخه");
       setRevealed((s) => ({ ...s, [r.id]: true }));
