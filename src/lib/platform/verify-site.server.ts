@@ -71,9 +71,8 @@ export async function verifySiteSlug(
     SELECT s.id, s.tenant_id, s.workspace_id, s.site_host, s.slug,
            s.db_enabled, s.storage_enabled, s.auth_enabled,
            s.sso_app_key, s.allowed_origins, s.status,
-           w.created_by AS owner_user_id
+           (SELECT u.id FROM users u WHERE u.tenant_id = s.tenant_id ORDER BY u.created_at ASC LIMIT 1) AS owner_user_id
     FROM hn_sites s
-    LEFT JOIN workspaces w ON w.id = s.workspace_id
     WHERE LOWER(s.slug) = ${s}
     LIMIT 1
   `);
