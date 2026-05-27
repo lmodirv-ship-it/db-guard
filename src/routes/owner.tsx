@@ -5,7 +5,7 @@ import {
   Users, UserPlus, ShieldCheck, KeyRound, Lock,
   ScrollText, BellRing, HeartPulse,
   Plug, Settings as SettingsIcon,
-  Search, Bell, HelpCircle, Sun, ChevronDown, Sparkles, Building2,
+  Search, Bell, HelpCircle, Sun, ChevronDown, Sparkles, Building2, Rocket,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
