@@ -30,8 +30,9 @@ type Workspace = {
   name: string;
   slug: string;
   hn_user_id: string;
-  hn_users: { email: string; full_name: string } | null;
+  hn_users: { email: string; full_name: string }[] | { email: string; full_name: string } | null;
 };
+
 
 export const Route = createFileRoute("/owner/api-keys")({
   head: () => ({ meta: [{ title: "API Keys — DB·GUARD" }] }),
