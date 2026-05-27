@@ -154,6 +154,64 @@ export const ownerDeleteSite = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// -------------------- Site detail / overview --------------------
+
+export const getSiteOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string }) =>
+    z.object({ siteId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertOwner(context.userId);
+
+    const { data: site, error: siteErr } = await supabaseAdmin
+      .from("hn_sites")
+      .select("id, name, site_url, site_host, workspace_id, status, auth_enabled, storage_enabled, data_enabled, verified_at, created_at")
+      .eq("id", data.siteId)
+      .maybeSingle();
+    if (siteErr || !site) throw new Error("site_not_found");
+
+    const { data: ws } = await supabaseAdmin
+      .from("hn_workspaces")
+      .select("id, name, slug, hn_user_id")
+      .eq("id", site.workspace_id)
+      .maybeSingle();
+
+    const { data: keys } = await supabaseAdmin
+      .from("hn_api_keys")
+      .select("id, label, key_prefix, key_hint, full_key, created_at, last_used_at, revoked_at")
+      .eq("workspace_id", site.workspace_id)
+      .order("created_at", { ascending: false });
+
+    // Auto-detected "tables" = distinct collections used by this workspace
+    const { data: recs } = await supabaseAdmin
+      .from("hn_data_records")
+      .select("collection")
+      .eq("workspace_id", site.workspace_id)
+      .limit(1000);
+    const counts = new Map<string, number>();
+    for (const r of recs ?? []) {
+      counts.set(r.collection, (counts.get(r.collection) ?? 0) + 1);
+    }
+    const collections = Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    const { count: storageCount } = await supabaseAdmin
+      .from("hn_storage_objects")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", site.workspace_id);
+
+    return {
+      site,
+      workspace: ws ?? null,
+      keys: keys ?? [],
+      collections,
+      storageCount: storageCount ?? 0,
+    };
+  });
+
+
 export const ownerToggleSiteFeature = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { siteId: string; feature: "auth" | "storage" | "data"; enabled: boolean }) =>
