@@ -12,6 +12,7 @@ import {
 import {
   ArrowLeft, KeyRound, Copy, Eye, EyeOff, Plus, Loader2, Trash2,
   Database, HardDrive, ShieldCheck, ExternalLink, Table2, Code2,
+  Rocket, FileCode2, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -114,6 +115,71 @@ function SiteDetailPage() {
         <StatCard icon={HardDrive} label="ملفات التخزين" value={storageCount} />
         <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter((k: ApiKey) => !k.revoked_at).length} />
       </div>
+
+      {/* Quick start */}
+      <Panel
+        title="بدء سريع — 4 خطوات"
+        right={
+          <button
+            onClick={() => {
+              const starter = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>${site.name}</title>
+</head>
+<body>
+  <h1>مرحباً بـ ${site.name}</h1>
+  <button id="add">إضافة سجل تجريبي</button>
+  <pre id="out"></pre>
+
+  <!-- 1) سكربت HN-DATA -->
+  <script src="${baseUrl}/hn-data.js"></script>
+  <script>
+    // 2) تهيئة بالمفتاح
+    const db = HNData.init({
+      apiKey: '${apiKeyForSnippets}',
+      baseUrl: '${baseUrl}'
+    });
+
+    // 3) إضافة سجل
+    document.getElementById('add').onclick = async () => {
+      await db.insert('posts', { title: 'Hello', created: Date.now() });
+      // 4) قراءة آخر السجلات
+      const { items } = await db.list('posts', { limit: 10 });
+      document.getElementById('out').textContent = JSON.stringify(items, null, 2);
+    };
+  </script>
+</body>
+</html>`;
+              navigator.clipboard.writeText(starter);
+              toast.success("تم نسخ ملف HTML جاهز — الصقه في موقعك");
+            }}
+            disabled={!activeKey?.full_key}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+          >
+            <FileCode2 className="h-3.5 w-3.5" /> نسخ ملف HTML جاهز
+          </button>
+        }
+        className="mb-6"
+      >
+        {!activeKey?.full_key && (
+          <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-2 text-xs">
+            ابدأ بتوليد مفتاح API من الأسفل ثم ارجع هنا لنسخ الملف الجاهز.
+          </div>
+        )}
+        <ol className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <QuickStep n={1} icon={KeyRound} title="ولّد مفتاح API"
+            desc="من قسم «مفاتيح API» في الأسفل — انقر «توليد مفتاح»." />
+          <QuickStep n={2} icon={Rocket} title="انسخ الكود"
+            desc="استخدم زر «نسخ ملف HTML جاهز» أعلاه، أو انسخ أي كود من «أكواد الربط»." />
+          <QuickStep n={3} icon={Code2} title="الصق في موقعك"
+            desc="ضع الكود في صفحة HTML أو قبل </body> في موقعك." />
+          <QuickStep n={4} icon={CheckCircle2} title="جرّب الإرسال"
+            desc="نفّذ insert واحد — سيظهر الجدول تلقائياً في «الجداول المُكتشفة»." />
+        </ol>
+      </Panel>
+
 
       {/* Features */}
       <Panel title="الميزات المُفعّلة" className="mb-6">
@@ -334,3 +400,21 @@ function Snippet({ icon: Icon, title, code }: { icon: React.ComponentType<{ clas
     </div>
   );
 }
+
+function QuickStep({
+  n, icon: Icon, title, desc,
+}: { n: number; icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) {
+  return (
+    <li className="relative rounded-xl border border-border bg-background/40 p-3">
+      <span className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground text-[11px] font-bold grid place-items-center">
+        {n}
+      </span>
+      <div className="flex items-center gap-2 mb-1.5">
+        <Icon className="h-4 w-4 text-primary" />
+        <span className="text-xs font-semibold">{title}</span>
+      </div>
+      <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
+    </li>
+  );
+}
+
