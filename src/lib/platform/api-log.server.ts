@@ -49,7 +49,7 @@ export function logApiRequest(entry: ApiLogEntry): void {
  * Usage:
  *   GET: withApiLog(async ({ request, params }) => { ... })
  */
-export function withApiLog<P>(
+export function withApiLog<P = unknown>(
   handler: (ctx: { request: Request; params: P }) => Promise<Response> | Response,
 ) {
   return async (ctx: { request: Request; params: P }): Promise<Response> => {
