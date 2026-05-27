@@ -338,7 +338,6 @@ export type Database = {
       hn_api_keys: {
         Row: {
           created_at: string
-          full_key: string | null
           hn_user_id: string
           id: string
           key_hash: string
@@ -351,7 +350,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          full_key?: string | null
           hn_user_id: string
           id?: string
           key_hash: string
@@ -364,7 +362,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          full_key?: string | null
           hn_user_id?: string
           id?: string
           key_hash?: string
@@ -567,6 +564,13 @@ export type Database = {
             foreignKeyName: "hn_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "hn_users_admin_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "registered_users"
             referencedColumns: ["id"]
           },
@@ -738,6 +742,13 @@ export type Database = {
             columns: ["uploaded_by_hn_user_id"]
             isOneToOne: false
             referencedRelation: "hn_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_storage_objects_uploaded_by_hn_user_id_fkey"
+            columns: ["uploaded_by_hn_user_id"]
+            isOneToOne: false
+            referencedRelation: "hn_users_admin_view"
             referencedColumns: ["id"]
           },
           {
@@ -1135,6 +1146,57 @@ export type Database = {
       }
     }
     Views: {
+      hn_users_admin_view: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string | null
+          email: string | null
+          email_verified: boolean | null
+          full_name: string | null
+          hn_user_code: string | null
+          id: string | null
+          last_login_at: string | null
+          phone: string | null
+          plan: string | null
+          registration_source: string | null
+          source_app: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          full_name?: string | null
+          hn_user_code?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          phone?: string | null
+          plan?: string | null
+          registration_source?: string | null
+          source_app?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       registered_users: {
         Row: {
           created_at: string | null

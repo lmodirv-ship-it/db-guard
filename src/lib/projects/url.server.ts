@@ -90,26 +90,55 @@ function isPrivateIp(host: string): boolean {
   return false;
 }
 
-/** Safe fetch with timeout + size cap. Used by verification & analyzer. */
+/**
+ * Safe fetch with timeout + size cap + manual redirect re-validation.
+ * Every redirect hop is re-checked against the SSRF blocklist to prevent
+ * external hosts from redirecting us to private / metadata IPs.
+ */
 export async function safeFetch(
   url: string,
   opts: { timeoutMs?: number; maxBytes?: number; headers?: Record<string, string> } = {},
 ): Promise<{ status: number; body: string; contentType: string | null }> {
   const timeoutMs = opts.timeoutMs ?? 10_000;
   const maxBytes = opts.maxBytes ?? 2_000_000; // 2 MB
+  const MAX_REDIRECTS = 5;
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
-      method: "GET",
-      redirect: "follow",
-      signal: ctrl.signal,
-      headers: {
-        "User-Agent": "SmartGeneratorBot/1.0 (+verification)",
-        Accept: "text/html,application/xhtml+xml,text/plain,*/*;q=0.5",
-        ...(opts.headers ?? {}),
-      },
-    });
+    let currentUrl = url;
+    // Validate the initial URL too.
+    normalizeProjectUrl(currentUrl);
+
+    let res: Response | null = null;
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      res = await fetch(currentUrl, {
+        method: "GET",
+        redirect: "manual",
+        signal: ctrl.signal,
+        headers: {
+          "User-Agent": "SmartGeneratorBot/1.0 (+verification)",
+          Accept: "text/html,application/xhtml+xml,text/plain,*/*;q=0.5",
+          ...(opts.headers ?? {}),
+        },
+      });
+      if (res.status < 300 || res.status >= 400) break;
+      const loc = res.headers.get("location");
+      if (!loc) break;
+      const next = new URL(loc, currentUrl).toString();
+      // Re-validate the redirect target against the SSRF blocklist.
+      normalizeProjectUrl(next);
+      try {
+        await res.body?.cancel();
+      } catch {
+        /* ignore */
+      }
+      currentUrl = next;
+      if (hop === MAX_REDIRECTS) {
+        throw new UrlValidationError("too_many_redirects");
+      }
+    }
+    if (!res) throw new UrlValidationError("url_invalid");
+
     const contentType = res.headers.get("content-type");
     const reader = res.body?.getReader();
     if (!reader) {
