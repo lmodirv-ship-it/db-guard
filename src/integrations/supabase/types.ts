@@ -515,6 +515,65 @@ export type Database = {
           },
         ]
       }
+      hn_sites: {
+        Row: {
+          auth_enabled: boolean
+          created_at: string
+          data_enabled: boolean
+          id: string
+          name: string
+          site_host: string
+          site_url: string
+          sso_app_key: string | null
+          status: string
+          storage_enabled: boolean
+          storage_scope: string
+          updated_at: string
+          verified_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          auth_enabled?: boolean
+          created_at?: string
+          data_enabled?: boolean
+          id?: string
+          name: string
+          site_host: string
+          site_url: string
+          sso_app_key?: string | null
+          status?: string
+          storage_enabled?: boolean
+          storage_scope?: string
+          updated_at?: string
+          verified_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          auth_enabled?: boolean
+          created_at?: string
+          data_enabled?: boolean
+          id?: string
+          name?: string
+          site_host?: string
+          site_url?: string
+          sso_app_key?: string | null
+          status?: string
+          storage_enabled?: boolean
+          storage_scope?: string
+          updated_at?: string
+          verified_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_sites_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hn_sso_tickets: {
         Row: {
           created_at: string
@@ -553,6 +612,77 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      hn_storage_objects: {
+        Row: {
+          content_type: string | null
+          created_at: string
+          file_name: string
+          id: string
+          object_key: string
+          site_id: string | null
+          size_bytes: number
+          updated_at: string
+          uploaded_by_hn_user_id: string | null
+          visibility: string
+          workspace_id: string
+        }
+        Insert: {
+          content_type?: string | null
+          created_at?: string
+          file_name: string
+          id?: string
+          object_key: string
+          site_id?: string | null
+          size_bytes?: number
+          updated_at?: string
+          uploaded_by_hn_user_id?: string | null
+          visibility?: string
+          workspace_id: string
+        }
+        Update: {
+          content_type?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          object_key?: string
+          site_id?: string | null
+          size_bytes?: number
+          updated_at?: string
+          uploaded_by_hn_user_id?: string | null
+          visibility?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_storage_objects_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "hn_sites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_storage_objects_uploaded_by_hn_user_id_fkey"
+            columns: ["uploaded_by_hn_user_id"]
+            isOneToOne: false
+            referencedRelation: "hn_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_storage_objects_uploaded_by_hn_user_id_fkey"
+            columns: ["uploaded_by_hn_user_id"]
+            isOneToOne: false
+            referencedRelation: "registered_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hn_storage_objects_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hn_users: {
         Row: {
