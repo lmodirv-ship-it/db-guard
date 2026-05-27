@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
 
-      GET: async ({ request, params }) => {
+      GET: withApiLog(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
@@ -62,11 +62,11 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
           .order("created_at", { ascending: false })
           .range(offset, offset + limit - 1);
 
-        if (error) return json(500, { ok: false, error: "read_failed" });
-        return json(200, { ok: true, items: data ?? [], total: count ?? 0, limit, offset });
-      },
+        if (error) return json(500, { ok: false, error: "read_failed" }, idHeaders(key));
+        return json(200, { ok: true, items: data ?? [], total: count ?? 0, limit, offset }, idHeaders(key));
+      }),
 
-      POST: async ({ request, params }) => {
+      POST: withApiLog(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
@@ -74,12 +74,12 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
 
         let body: unknown;
-        try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }); }
+        try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }, idHeaders(key)); }
         const parsed = PostBody.safeParse(body);
-        if (!parsed.success) return json(400, { ok: false, error: "invalid_body" });
+        if (!parsed.success) return json(400, { ok: false, error: "invalid_body" }, idHeaders(key));
 
         const payload = JSON.stringify(parsed.data.data);
-        if (payload.length > 64_000) return json(413, { ok: false, error: "payload_too_large" });
+        if (payload.length > 64_000) return json(413, { ok: false, error: "payload_too_large" }, idHeaders(key));
 
         const { data, error } = await supabaseAdmin
           .from("hn_data_records")
@@ -91,11 +91,11 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
           .select("id, data, created_at")
           .single();
 
-        if (error || !data) return json(500, { ok: false, error: "write_failed" });
-        return json(201, { ok: true, id: data.id, data: data.data, created_at: data.created_at });
-      },
+        if (error || !data) return json(500, { ok: false, error: "write_failed" }, idHeaders(key));
+        return json(201, { ok: true, id: data.id, data: data.data, created_at: data.created_at }, idHeaders(key));
+      }),
 
-      DELETE: async ({ request, params }) => {
+      DELETE: withApiLog(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
@@ -103,7 +103,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
 
         const id = new URL(request.url).searchParams.get("id");
-        if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json(400, { ok: false, error: "invalid_id" });
+        if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json(400, { ok: false, error: "invalid_id" }, idHeaders(key));
 
         const { error } = await supabaseAdmin
           .from("hn_data_records")
@@ -112,9 +112,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
           .eq("collection", col.data)
           .eq("id", id);
 
-        if (error) return json(500, { ok: false, error: "delete_failed" });
-        return json(200, { ok: true });
-      },
+        if (error) return json(500, { ok: false, error: "delete_failed" }, idHeaders(key));
+        return json(200, { ok: true }, idHeaders(key));
+      }),
     },
   },
 });
