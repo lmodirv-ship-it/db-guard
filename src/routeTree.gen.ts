@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as QuickstartRouteImport } from './routes/quickstart'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -86,6 +87,11 @@ import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/publ
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuickstartRoute = QuickstartRouteImport.update({
+  id: '/quickstart',
+  path: '/quickstart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OwnerRoute = OwnerRouteImport.update({
@@ -456,6 +462,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
+  '/quickstart': typeof QuickstartRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -529,6 +536,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/quickstart': typeof QuickstartRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -605,6 +613,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
+  '/quickstart': typeof QuickstartRoute
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -682,6 +691,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/owner'
+    | '/quickstart'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -755,6 +765,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/quickstart'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -830,6 +841,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/owner'
+    | '/quickstart'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -906,6 +918,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   OwnerRoute: typeof OwnerRouteWithChildren
+  QuickstartRoute: typeof QuickstartRoute
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
@@ -950,6 +963,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quickstart': {
+      id: '/quickstart'
+      path: '/quickstart'
+      fullPath: '/quickstart'
+      preLoaderRoute: typeof QuickstartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/owner': {
@@ -1599,6 +1619,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   OwnerRoute: OwnerRouteWithChildren,
+  QuickstartRoute: QuickstartRoute,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
