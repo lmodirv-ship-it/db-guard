@@ -1,6 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -68,6 +68,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [queryClient] = useState(() => new QueryClient());
+
+  // Force canonical host: redirect apex (hn-bd.online) to www to avoid
+  // the edge 302 that drops POST bodies on signup/login forms.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.hostname === "hn-bd.online") {
+      window.location.replace(
+        `https://www.hn-bd.online${window.location.pathname}${window.location.search}${window.location.hash}`
+      );
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
