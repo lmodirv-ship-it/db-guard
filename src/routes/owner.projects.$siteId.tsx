@@ -15,6 +15,18 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+type ApiKey = {
+  id: string;
+  label: string;
+  key_prefix: string;
+  key_hint: string;
+  full_key: string | null;
+  created_at: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+};
+type Collection = { name: string; count: number };
+
 export const Route = createFileRoute("/owner/projects/$siteId")({
   head: () => ({ meta: [{ title: "Project — DB·GUARD" }] }),
   component: SiteDetailPage,
@@ -39,7 +51,7 @@ function SiteDetailPage() {
   const generate = useMutation({
     mutationFn: (workspaceId: string) =>
       genKey({ data: { workspaceId, label: "site-key" } }),
-    onSuccess: async (r) => {
+    onSuccess: async (r: { id: string; key: string }) => {
       await navigator.clipboard.writeText(r.key).catch(() => {});
       toast.success("تم توليد المفتاح ونسخه");
       setRevealed((s) => ({ ...s, [r.id]: true }));
@@ -65,11 +77,17 @@ function SiteDetailPage() {
   if (q.isLoading) return <div className="p-10 text-sm text-muted-foreground">جارٍ التحميل…</div>;
   if (q.isError || !q.data) return <div className="p-10 text-sm text-destructive">تعذر التحميل</div>;
 
-  const { site, workspace, keys, collections, storageCount } = q.data;
+  const { site, workspace, keys, collections, storageCount } = q.data as {
+    site: { id: string; name: string; site_url: string; site_host: string; workspace_id: string; status: string; auth_enabled: boolean; storage_enabled: boolean; data_enabled: boolean; verified_at: string | null; created_at: string };
+    workspace: { id: string; name: string; slug: string; hn_user_id: string } | null;
+    keys: ApiKey[];
+    collections: Collection[];
+    storageCount: number;
+  };
   const activeKey =
-    (selectedKeyId && keys.find((k) => k.id === selectedKeyId)) ||
-    keys.find((k) => !k.revoked_at && k.full_key) ||
-    keys.find((k) => !k.revoked_at) ||
+    (selectedKeyId && keys.find((k: ApiKey) => k.id === selectedKeyId)) ||
+    keys.find((k: ApiKey) => !k.revoked_at && k.full_key) ||
+    keys.find((k: ApiKey) => !k.revoked_at) ||
     keys[0];
   const apiKeyForSnippets = activeKey?.full_key ?? "YOUR_API_KEY";
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://hn-bd.online";
@@ -94,7 +112,7 @@ function SiteDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <StatCard icon={Table2} label="جداول مكتشفة" value={collections.length} />
         <StatCard icon={HardDrive} label="ملفات التخزين" value={storageCount} />
-        <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter(k => !k.revoked_at).length} />
+        <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter((k: ApiKey) => !k.revoked_at).length} />
       </div>
 
       {/* Features */}
@@ -128,7 +146,7 @@ function SiteDetailPage() {
           <EmptyState icon={KeyRound} title="لا توجد مفاتيح بعد" description="اضغط «توليد مفتاح» لإنشاء أول مفتاح." />
         ) : (
           <div className="space-y-2">
-            {keys.map((k) => {
+            {keys.map((k: ApiKey) => {
               const isOpen = !!revealed[k.id];
               const display = k.revoked_at ? "— ملغاة —" : (k.full_key ?? "— مفتاح قديم —");
               const isActive = activeKey?.id === k.id;
@@ -184,7 +202,7 @@ function SiteDetailPage() {
           <EmptyState icon={Table2} title="لا توجد جداول بعد" description="أرسل أول سجل من الكود أدناه ليظهر الجدول هنا." />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {collections.map((c) => (
+            {collections.map((c: Collection) => (
               <div key={c.name} className="rounded-lg border border-border bg-background/40 px-3 py-2 flex items-center justify-between">
                 <span className="font-mono text-xs">{c.name}</span>
                 <span className="text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5">{c.count}</span>

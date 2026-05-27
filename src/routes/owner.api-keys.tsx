@@ -70,7 +70,7 @@ function OwnerApiKeysPage() {
 
   const generate = useMutation({
     mutationFn: (workspaceId: string) => genKey({ data: { workspaceId, label: "owner-generated" } }),
-    onSuccess: (res) => {
+    onSuccess: (res: { id: string; key: string }) => {
       toast.success("تم توليد المفتاح");
       navigator.clipboard.writeText(res.key).catch(() => {});
       qc.invalidateQueries({ queryKey: ["owner", "api-keys"] });
