@@ -116,69 +116,39 @@ function SiteDetailPage() {
         <StatCard icon={KeyRound} label="مفاتيح API" value={keys.filter((k: ApiKey) => !k.revoked_at).length} />
       </div>
 
-      {/* Quick start */}
+      {/* Unified connect snippet */}
       <Panel
-        title="بدء سريع — 4 خطوات"
-        right={
-          <button
-            onClick={() => {
-              const starter = `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <title>${site.name}</title>
-</head>
-<body>
-  <h1>مرحباً بـ ${site.name}</h1>
-  <button id="add">إضافة سجل تجريبي</button>
-  <pre id="out"></pre>
-
-  <!-- 1) سكربت HN-DATA -->
-  <script src="${baseUrl}/hn-data.js"></script>
-  <script>
-    // 2) تهيئة بالمفتاح
-    const db = HNData.init({
-      apiKey: '${apiKeyForSnippets}',
-      baseUrl: '${baseUrl}'
-    });
-
-    // 3) إضافة سجل
-    document.getElementById('add').onclick = async () => {
-      await db.insert('posts', { title: 'Hello', created: Date.now() });
-      // 4) قراءة آخر السجلات
-      const { items } = await db.list('posts', { limit: 10 });
-      document.getElementById('out').textContent = JSON.stringify(items, null, 2);
-    };
-  </script>
-</body>
-</html>`;
-              navigator.clipboard.writeText(starter);
-              toast.success("تم نسخ ملف HTML جاهز — الصقه في موقعك");
-            }}
-            disabled={!activeKey?.full_key}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 text-xs font-bold shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FileCode2 className="h-4 w-4" /> نسخ ملف HTML جاهز
-          </button>
-        }
+        title="🔗 سكربت الربط الموحّد — لصقة واحدة وانتهيت"
         className="mb-6 border-2 border-emerald-500/40 bg-emerald-500/5"
       >
-        {!activeKey?.full_key && (
-          <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-2 text-xs">
-            ابدأ بتوليد مفتاح API من الأسفل ثم ارجع هنا لنسخ الملف الجاهز.
+        {!activeKey?.full_key ? (
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-2 text-xs">
+            ولّد مفتاح API من الأسفل أولاً، وستظهر اللصقة الجاهزة هنا تلقائياً.
           </div>
+        ) : (
+          <>
+            <p className="text-xs text-muted-foreground mb-3">
+              انسخ هذه الكتلة والصقها داخل <code className="font-mono text-foreground">&lt;head&gt;</code> في موقعك. بعدها يكون لديك في كل صفحة:
+              <code className="font-mono text-primary mx-1">window.HN.db</code>،
+              <code className="font-mono text-primary mx-1">window.HN.storage</code>،
+              <code className="font-mono text-primary mx-1">window.HN.auth</code>.
+            </p>
+            <UnifiedConnectSnippet
+              baseUrl={baseUrl}
+              apiKey={apiKeyForSnippets}
+              appKey={workspace?.slug ?? site.site_host}
+            />
+            <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-2 text-[11px]">
+              <UseHint icon={KeyRound} text="ضع الكتلة في <head>" />
+              <UseHint icon={Database} text="await HN.db.insert('posts',{...})" />
+              <UseHint icon={HardDrive} text="await HN.storage.upload(file)" />
+              <UseHint icon={ShieldCheck} text="HN.auth.signIn() / HN.auth.user" />
+            </div>
+          </>
         )}
-        <ol className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <QuickStep n={1} icon={KeyRound} title="ولّد مفتاح API"
-            desc="من قسم «مفاتيح API» في الأسفل — انقر «توليد مفتاح»." />
-          <QuickStep n={2} icon={Rocket} title="انسخ الكود"
-            desc="استخدم زر «نسخ ملف HTML جاهز» أعلاه، أو انسخ أي كود من «أكواد الربط»." />
-          <QuickStep n={3} icon={Code2} title="الصق في موقعك"
-            desc="ضع الكود في صفحة HTML أو قبل </body> في موقعك." />
-          <QuickStep n={4} icon={CheckCircle2} title="جرّب الإرسال"
-            desc="نفّذ insert واحد — سيظهر الجدول تلقائياً في «الجداول المُكتشفة»." />
-        </ol>
       </Panel>
+
+
 
 
       {/* Glossary / reference table */}
