@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { buildObjectKey, putStorageObject, removeStorageObject } from "@/lib/platform/storage.server";
 
 function randomKey(prefix: string, len = 24) {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz";
@@ -194,4 +195,130 @@ export const listStorageObjects = createServerFn({ method: "GET" })
     const { data: rows, error } = await query;
     if (error) throw new Error("storage_objects_read_failed");
     return { objects: rows ?? [] };
+  });
+
+function decodeBase64(input: string): ArrayBuffer {
+  const bin = atob(input);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes.buffer;
+}
+
+export const uploadStorageObject = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    workspaceId: string;
+    fileName: string;
+    contentType?: string;
+    dataBase64: string;
+    siteId?: string;
+    visibility?: "private" | "public";
+  }) =>
+    z.object({
+      workspaceId: z.string().uuid(),
+      fileName: z.string().trim().min(1).max(180),
+      contentType: z.string().trim().min(1).max(120).optional(),
+      dataBase64: z.string().min(1).max(15_000_000),
+      siteId: z.string().uuid().optional(),
+      visibility: z.enum(["private", "public"]).default("private"),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertWorkspaceOwner(data.workspaceId, hnUserId);
+
+    let siteHost: string | null = null;
+    if (data.siteId) {
+      const { data: site } = await supabaseAdmin
+        .from("hn_sites")
+        .select("site_host, workspace_id")
+        .eq("id", data.siteId)
+        .maybeSingle();
+      if (!site || site.workspace_id !== data.workspaceId) throw new Error("site_not_found");
+      siteHost = site.site_host;
+    }
+
+    const objectKey = buildObjectKey(data.workspaceId, data.fileName, siteHost);
+    const body = decodeBase64(data.dataBase64);
+    await putStorageObject(objectKey, body, data.contentType);
+
+    const { data: row, error } = await supabaseAdmin
+      .from("hn_storage_objects")
+      .insert({
+        workspace_id: data.workspaceId,
+        site_id: data.siteId ?? null,
+        uploaded_by_hn_user_id: hnUserId,
+        object_key: objectKey,
+        file_name: data.fileName,
+        content_type: data.contentType ?? null,
+        size_bytes: body.byteLength,
+        visibility: data.visibility,
+      })
+      .select("id, object_key, file_name, size_bytes, visibility, created_at")
+      .single();
+
+    if (error || !row) {
+      await removeStorageObject(objectKey).catch(() => {});
+      throw new Error("storage_write_failed");
+    }
+    return { object: row };
+  });
+
+export const deleteStorageObject = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { objectId: string }) =>
+    z.object({ objectId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    const { data: row } = await supabaseAdmin
+      .from("hn_storage_objects")
+      .select("id, object_key, workspace_id, hn_workspaces!inner(hn_user_id)")
+      .eq("id", data.objectId)
+      .eq("hn_workspaces.hn_user_id", hnUserId)
+      .maybeSingle();
+    if (!row) throw new Error("forbidden");
+
+    await removeStorageObject(row.object_key).catch(() => {});
+    await supabaseAdmin.from("hn_storage_objects").delete().eq("id", row.id);
+    return { ok: true };
+  });
+
+export const deleteSite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string }) =>
+    z.object({ siteId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertSiteOwner(data.siteId, hnUserId);
+    await supabaseAdmin.from("hn_sites").delete().eq("id", data.siteId);
+    return { ok: true };
+  });
+
+export const listHnUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { limit?: number }) =>
+    z.object({ limit: z.number().int().min(1).max(200).default(50) }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    // Only owners see all SSO users; others see just themselves.
+    const { data: ownerRow } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "owner")
+      .maybeSingle();
+    const isOwner = !!ownerRow;
+
+    let q = supabaseAdmin
+      .from("hn_users")
+      .select("id, hn_user_code, full_name, email, phone, source_app, plan, status, email_verified, last_login_at, created_at")
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    if (!isOwner) q = q.eq("auth_user_id", context.userId);
+
+    const { data: rows, error } = await q;
+    if (error) throw new Error("users_read_failed");
+    return { users: rows ?? [], isOwner };
   });
