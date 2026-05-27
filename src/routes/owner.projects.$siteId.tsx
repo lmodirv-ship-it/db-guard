@@ -457,3 +457,53 @@ function QuickStep({
   );
 }
 
+function UseHint({ icon: Icon, text }: { icon: React.ComponentType<{ className?: string }>; text: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-background/40 px-2.5 py-2 flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5 text-primary shrink-0" />
+      <code className="font-mono text-[10.5px] truncate">{text}</code>
+    </div>
+  );
+}
+
+function UnifiedConnectSnippet({ baseUrl, apiKey, appKey }: { baseUrl: string; apiKey: string; appKey: string }) {
+  const code = `<!-- HN Connect — لصقة موحّدة (Data + Storage + SSO) -->
+<script src="${baseUrl}/hn-data.js"></script>
+<script src="${baseUrl}/hn-storage.js"></script>
+<script src="${baseUrl}/hn-sso.js" data-app-key="${appKey}"></script>
+<script>
+  (function () {
+    var cfg = { apiKey: "${apiKey}", baseUrl: "${baseUrl}" };
+    window.HN = window.HN || {};
+    window.HN.db      = HNData.init(cfg);
+    window.HN.storage = HNStorage.init(cfg);
+    // تسجيل دخول/خروج موحّد:
+    window.HN.auth = {
+      signIn:  function () { window.HN.signIn && window.HN.signIn(); },
+      signOut: function () { window.HN.signOut && window.HN.signOut(); },
+      get user() { return window.HN.user || null; }
+    };
+    console.log("[HN] connected →", cfg.baseUrl);
+  })();
+</script>`;
+  return (
+    <div className="rounded-xl border-2 border-emerald-500/40 bg-background/60 overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-emerald-500/10">
+        <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+          <FileCode2 className="h-4 w-4" /> الصق هذا في &lt;head&gt;
+        </div>
+        <button
+          onClick={() => { navigator.clipboard.writeText(code); toast.success("تم نسخ سكربت الربط الموحّد"); }}
+          className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-[11px] font-bold"
+        >
+          <Copy className="h-3 w-3" /> نسخ كل شيء
+        </button>
+      </div>
+      <pre className="p-3 text-[11px] font-mono overflow-x-auto leading-relaxed text-foreground/90 whitespace-pre select-all">
+{code}
+      </pre>
+    </div>
+  );
+}
+
+
