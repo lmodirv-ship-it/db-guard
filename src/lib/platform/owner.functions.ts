@@ -95,3 +95,82 @@ export const ownerRevokeApiKey = createServerFn({ method: "POST" })
     if (error) throw new Error("revoke_failed");
     return { ok: true };
   });
+
+// -------------------- Sites (projects) --------------------
+
+export const listOwnerSites = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertOwner(context.userId);
+    const { data, error } = await supabaseAdmin
+      .from("hn_sites")
+      .select("id, name, site_url, site_host, workspace_id, status, auth_enabled, storage_enabled, data_enabled, verified_at, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error("list_failed");
+    return { sites: data ?? [] };
+  });
+
+export const ownerAddSite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { workspaceId: string; name: string; siteUrl: string }) =>
+    z.object({
+      workspaceId: z.string().uuid(),
+      name: z.string().trim().min(1).max(80),
+      siteUrl: z.string().trim().url().max(2048),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertOwner(context.userId);
+    let host: string;
+    try {
+      host = new URL(data.siteUrl).hostname.toLowerCase();
+    } catch {
+      throw new Error("invalid_url");
+    }
+    const { data: row, error } = await supabaseAdmin
+      .from("hn_sites")
+      .insert({
+        workspace_id: data.workspaceId,
+        name: data.name,
+        site_url: data.siteUrl,
+        site_host: host,
+        verified_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+    if (error || !row) throw new Error(error?.message ?? "create_failed");
+    return { id: row.id };
+  });
+
+export const ownerDeleteSite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string }) =>
+    z.object({ siteId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertOwner(context.userId);
+    const { error } = await supabaseAdmin.from("hn_sites").delete().eq("id", data.siteId);
+    if (error) throw new Error("delete_failed");
+    return { ok: true };
+  });
+
+export const ownerToggleSiteFeature = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string; feature: "auth" | "storage" | "data"; enabled: boolean }) =>
+    z.object({
+      siteId: z.string().uuid(),
+      feature: z.enum(["auth", "storage", "data"]),
+      enabled: z.boolean(),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertOwner(context.userId);
+    const col = `${data.feature}_enabled` as "auth_enabled" | "storage_enabled" | "data_enabled";
+    const { error } = await supabaseAdmin
+      .from("hn_sites")
+      .update({ [col]: data.enabled })
+      .eq("id", data.siteId);
+    if (error) throw new Error("update_failed");
+    return { ok: true };
+  });
+
