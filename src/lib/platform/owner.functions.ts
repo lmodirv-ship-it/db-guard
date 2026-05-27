@@ -12,7 +12,10 @@ import { ensureOwnerWorkspaceSupabase } from "@/lib/hn/ensure-supabase-workspace
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
-  .handler(async () => {
+  .handler(async ({ context }) => {
+    // Guarantee at least one workspace exists for this owner.
+    await ensureOwnerWorkspaceSupabase({ email: context.email });
+
     const { data: ws, error } = await supabaseAdmin
       .from("hn_workspaces")
       .select("id, name, slug, hn_user_id, created_at")
@@ -26,6 +29,7 @@ export const listOwnerWorkspaces = createServerFn({ method: "GET" })
     const workspaces = (ws ?? []).map((w) => ({ ...w, hn_users: byId.get(w.hn_user_id) ?? null }));
     return { workspaces };
   });
+
 
 export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
