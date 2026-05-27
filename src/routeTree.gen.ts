@@ -83,6 +83,10 @@ import { Route as ApiPublicSsoMeRouteImport } from './routes/api/public/sso/me'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
+import { Route as ApiHnAuthSignupRouteImport } from './routes/api/hn/auth/signup'
+import { Route as ApiHnAuthMeRouteImport } from './routes/api/hn/auth/me'
+import { Route as ApiHnAuthLogoutRouteImport } from './routes/api/hn/auth/logout'
+import { Route as ApiHnAuthLoginRouteImport } from './routes/api/hn/auth/login'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
 import { Route as ApiPublicV1StorageFileRouteImport } from './routes/api/public/v1/storage.file'
 import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
@@ -458,6 +462,26 @@ const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
   path: '/api/projects/$id/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnAuthSignupRoute = ApiHnAuthSignupRouteImport.update({
+  id: '/api/hn/auth/signup',
+  path: '/api/hn/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnAuthMeRoute = ApiHnAuthMeRouteImport.update({
+  id: '/api/hn/auth/me',
+  path: '/api/hn/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnAuthLogoutRoute = ApiHnAuthLogoutRouteImport.update({
+  id: '/api/hn/auth/logout',
+  path: '/api/hn/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnAuthLoginRoute = ApiHnAuthLoginRouteImport.update({
+  id: '/api/hn/auth/login',
+  path: '/api/hn/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -541,6 +565,10 @@ export interface FileRoutesByFullPath {
   '/api/tables/': typeof ApiTablesIndexRoute
   '/api/team/': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/hn/auth/login': typeof ApiHnAuthLoginRoute
+  '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
+  '/api/hn/auth/me': typeof ApiHnAuthMeRoute
+  '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -618,6 +646,10 @@ export interface FileRoutesByTo {
   '/api/tables': typeof ApiTablesIndexRoute
   '/api/team': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/hn/auth/login': typeof ApiHnAuthLoginRoute
+  '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
+  '/api/hn/auth/me': typeof ApiHnAuthMeRoute
+  '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -698,6 +730,10 @@ export interface FileRoutesById {
   '/api/tables/': typeof ApiTablesIndexRoute
   '/api/team/': typeof ApiTeamIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/hn/auth/login': typeof ApiHnAuthLoginRoute
+  '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
+  '/api/hn/auth/me': typeof ApiHnAuthMeRoute
+  '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -779,6 +815,10 @@ export interface FileRouteTypes {
     | '/api/tables/'
     | '/api/team/'
     | '/api/admin/users/$id'
+    | '/api/hn/auth/login'
+    | '/api/hn/auth/logout'
+    | '/api/hn/auth/me'
+    | '/api/hn/auth/signup'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -856,6 +896,10 @@ export interface FileRouteTypes {
     | '/api/tables'
     | '/api/team'
     | '/api/admin/users/$id'
+    | '/api/hn/auth/login'
+    | '/api/hn/auth/logout'
+    | '/api/hn/auth/me'
+    | '/api/hn/auth/signup'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -935,6 +979,10 @@ export interface FileRouteTypes {
     | '/api/tables/'
     | '/api/team/'
     | '/api/admin/users/$id'
+    | '/api/hn/auth/login'
+    | '/api/hn/auth/logout'
+    | '/api/hn/auth/me'
+    | '/api/hn/auth/signup'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -983,6 +1031,10 @@ export interface RootRouteChildren {
   ApiProjectsIndexRoute: typeof ApiProjectsIndexRoute
   ApiTablesIndexRoute: typeof ApiTablesIndexRoute
   ApiTeamIndexRoute: typeof ApiTeamIndexRoute
+  ApiHnAuthLoginRoute: typeof ApiHnAuthLoginRoute
+  ApiHnAuthLogoutRoute: typeof ApiHnAuthLogoutRoute
+  ApiHnAuthMeRoute: typeof ApiHnAuthMeRoute
+  ApiHnAuthSignupRoute: typeof ApiHnAuthSignupRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
@@ -1514,6 +1566,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdAnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/auth/signup': {
+      id: '/api/hn/auth/signup'
+      path: '/api/hn/auth/signup'
+      fullPath: '/api/hn/auth/signup'
+      preLoaderRoute: typeof ApiHnAuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/auth/me': {
+      id: '/api/hn/auth/me'
+      path: '/api/hn/auth/me'
+      fullPath: '/api/hn/auth/me'
+      preLoaderRoute: typeof ApiHnAuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/auth/logout': {
+      id: '/api/hn/auth/logout'
+      path: '/api/hn/auth/logout'
+      fullPath: '/api/hn/auth/logout'
+      preLoaderRoute: typeof ApiHnAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/auth/login': {
+      id: '/api/hn/auth/login'
+      path: '/api/hn/auth/login'
+      fullPath: '/api/hn/auth/login'
+      preLoaderRoute: typeof ApiHnAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/users/$id': {
       id: '/api/admin/users/$id'
       path: '/$id'
@@ -1709,6 +1789,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsIndexRoute: ApiProjectsIndexRoute,
   ApiTablesIndexRoute: ApiTablesIndexRoute,
   ApiTeamIndexRoute: ApiTeamIndexRoute,
+  ApiHnAuthLoginRoute: ApiHnAuthLoginRoute,
+  ApiHnAuthLogoutRoute: ApiHnAuthLogoutRoute,
+  ApiHnAuthMeRoute: ApiHnAuthMeRoute,
+  ApiHnAuthSignupRoute: ApiHnAuthSignupRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
@@ -1722,13 +1806,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
