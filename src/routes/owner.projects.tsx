@@ -62,11 +62,13 @@ function ProjectsPage() {
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [wsId, setWsId] = useState("");
+  const [justCreated, setJustCreated] = useState<{ id: string; apiKey: string; name: string; siteUrl: string } | null>(null);
 
   const create = useMutation({
     mutationFn: () => addSite({ data: { workspaceId: wsId, name, siteUrl: url } }),
-    onSuccess: () => {
-      toast.success("تمت إضافة المشروع");
+    onSuccess: (r: { id: string; apiKey: string; name: string; siteUrl: string }) => {
+      toast.success("تمت إضافة المشروع وتوليد المفتاح");
+      setJustCreated(r);
       setName(""); setUrl("");
       qc.invalidateQueries({ queryKey: ["owner", "sites"] });
     },
