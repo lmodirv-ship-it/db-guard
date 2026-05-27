@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { HnAuthShell, HnField } from "@/components/hn/HnAuthShell";
 import { Mail, Lock, Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
+import { lovable } from "@/integrations/lovable/index";
+
 
 export const Route = createFileRoute("/login")({
   head: () => ({
