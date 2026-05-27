@@ -529,4 +529,32 @@ function UnifiedConnectSnippet({ baseUrl, apiKey, appKey }: { baseUrl: string; a
   );
 }
 
+function SsoLinkRow({ label, url }: { label: string; url: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/60 overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-primary/5">
+        <span className="text-[11px] font-bold text-primary">{label}</span>
+        <div className="flex items-center gap-1.5">
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] hover:border-primary/40"
+          >
+            <ExternalLink className="h-3 w-3" /> فتح
+          </a>
+          <button
+            onClick={() => { navigator.clipboard.writeText(url); toast.success("تم نسخ الرابط"); }}
+            className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2.5 py-1 text-[11px] font-bold hover:opacity-90"
+          >
+            <Copy className="h-3 w-3" /> نسخ
+          </button>
+        </div>
+      </div>
+      <code className="block px-3 py-2 text-[11px] font-mono break-all text-foreground/90 select-all">{url}</code>
+    </div>
+  );
+}
+
+
 
