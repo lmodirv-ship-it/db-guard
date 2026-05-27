@@ -173,6 +173,8 @@ export async function consumeTicket(opts: {
     .maybeSingle();
   if (tErr) throw new Error(tErr.message);
   if (!ticketRow) throw new Error("invalid_ticket");
+  // Bind ticket to the exact app it was issued for — prevents cross-app replay.
+  if (ticketRow.target_app !== opts.app_key) throw new Error("invalid_ticket");
   if (ticketRow.used_at) throw new Error("ticket_used");
   if (new Date(ticketRow.expires_at).getTime() < Date.now()) throw new Error("ticket_expired");
 

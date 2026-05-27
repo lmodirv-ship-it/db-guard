@@ -55,12 +55,19 @@ export const Route = createFileRoute("/api/public/v1/storage/file")({
         const obj = await getStorageObject(row.object_key);
         if (!obj) return new Response("Not found", { status: 404, headers: CORS });
 
+        // Sanitize filename to prevent header injection (strip CR/LF/quote/backslash)
+        // and provide an RFC 5987 UTF-8 encoded variant for non-ASCII safety.
+        const safeAscii = (row.file_name || "file")
+          .replace(/[\r\n"\\]/g, "_")
+          .replace(/[^\x20-\x7E]/g, "_")
+          .slice(0, 180);
+        const encoded = encodeURIComponent(row.file_name || "file");
         return new Response(obj.body, {
           status: 200,
           headers: {
             ...CORS,
             "Content-Type": row.content_type || obj.httpMetadata?.contentType || "application/octet-stream",
-            "Content-Disposition": `inline; filename="${row.file_name}"`,
+            "Content-Disposition": `inline; filename="${safeAscii}"; filename*=UTF-8''${encoded}`,
             "Cache-Control": row.visibility === "public" ? "public, max-age=31536000, immutable" : "private, no-store",
           },
         });
