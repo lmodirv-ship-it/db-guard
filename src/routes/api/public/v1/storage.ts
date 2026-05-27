@@ -2,15 +2,32 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { verifyApiKey } from "@/lib/platform/verify-api-key.server";
+import { verifySiteSlug } from "@/lib/platform/verify-site.server";
 import { buildObjectKey, putStorageObject, removeStorageObject } from "@/lib/platform/storage.server";
 import { withApiLog } from "@/lib/platform/api-log.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key, X-HN-Site",
   "Access-Control-Max-Age": "86400",
 };
+
+async function resolveAuth(request: Request): Promise<
+  | { ok: true; workspace_id: string; hn_user_id: string; site_id?: string; site_host?: string; storage_ok?: boolean }
+  | { ok: false; error: string; status: number }
+> {
+  const slug = request.headers.get("x-hn-site");
+  if (slug) {
+    const { site, reason } = await verifySiteSlug(slug, request.headers.get("origin"));
+    if (!site) return { ok: false, error: reason ?? "invalid_site", status: reason === "origin_not_allowed" ? 403 : 401 };
+    if (!site.storage_enabled) return { ok: false, error: "storage_not_enabled", status: 403 };
+    return { ok: true, workspace_id: site.workspace_id, hn_user_id: site.hn_user_id, site_id: site.site_id, site_host: site.site_host, storage_ok: true };
+  }
+  const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
+  if (!key) return { ok: false, error: "invalid_api_key", status: 401 };
+  return { ok: true, workspace_id: key.workspace_id, hn_user_id: key.hn_user_id };
+}
 
 const UploadBody = z.object({
   fileName: z.string().trim().min(1).max(180),
