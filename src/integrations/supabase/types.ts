@@ -574,6 +574,7 @@ export type Database = {
       }
       hn_sites: {
         Row: {
+          allowed_origins: string[]
           auth_enabled: boolean
           created_at: string
           data_enabled: boolean
@@ -581,6 +582,7 @@ export type Database = {
           name: string
           site_host: string
           site_url: string
+          slug: string
           sso_app_key: string | null
           status: string
           storage_enabled: boolean
@@ -590,6 +592,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          allowed_origins?: string[]
           auth_enabled?: boolean
           created_at?: string
           data_enabled?: boolean
@@ -597,6 +600,7 @@ export type Database = {
           name: string
           site_host: string
           site_url: string
+          slug: string
           sso_app_key?: string | null
           status?: string
           storage_enabled?: boolean
@@ -606,6 +610,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          allowed_origins?: string[]
           auth_enabled?: boolean
           created_at?: string
           data_enabled?: boolean
@@ -613,6 +618,7 @@ export type Database = {
           name?: string
           site_host?: string
           site_url?: string
+          slug?: string
           sso_app_key?: string | null
           status?: string
           storage_enabled?: boolean
