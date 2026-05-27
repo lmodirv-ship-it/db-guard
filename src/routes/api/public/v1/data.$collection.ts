@@ -81,7 +81,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
           .insert({
             workspace_id: key.workspace_id,
             collection: col.data,
-            data: parsed.data.data,
+            data: parsed.data.data as never,
           })
           .select("id, data, created_at")
           .single();

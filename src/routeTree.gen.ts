@@ -77,6 +77,7 @@ import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
+import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -419,6 +420,12 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiAdminUsersRoute,
 } as any)
+const ApiPublicV1DataCollectionRoute =
+  ApiPublicV1DataCollectionRouteImport.update({
+    id: '/api/public/v1/data/$collection',
+    path: '/api/public/v1/data/$collection',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -489,6 +496,7 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -557,6 +565,7 @@ export interface FileRoutesByTo {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -628,6 +637,7 @@ export interface FileRoutesById {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -700,6 +710,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
+    | '/api/public/v1/data/$collection'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -768,6 +779,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id'
+    | '/api/public/v1/data/$collection'
   id:
     | '__root__'
     | '/'
@@ -838,6 +850,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
+    | '/api/public/v1/data/$collection'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -878,6 +891,7 @@ export interface RootRouteChildren {
   ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
+  ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1358,6 +1372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminUsersIdRouteImport
       parentRoute: typeof ApiAdminUsersRoute
     }
+    '/api/public/v1/data/$collection': {
+      id: '/api/public/v1/data/$collection'
+      path: '/api/public/v1/data/$collection'
+      fullPath: '/api/public/v1/data/$collection'
+      preLoaderRoute: typeof ApiPublicV1DataCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1509,6 +1530,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
+  ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
