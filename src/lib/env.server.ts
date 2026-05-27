@@ -58,7 +58,7 @@ export function checkEnv(): EnvCheck {
     ok: true,
     env: {
       ...(collected as Omit<ServerEnv, "HN_DB_URL">),
-      HN_DB_URL: collected.HN_DB_DIRECT_URL || runtimeDbUrl,
+      HN_DB_URL: collected.HN_DB_DIRECT_URL as string,
     },
   };
 }
