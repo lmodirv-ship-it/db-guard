@@ -7,10 +7,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireHnOwner } from "@/lib/auth/hn-owner-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.server";
+import { ensureOwnerWorkspaceSupabase } from "@/lib/hn/ensure-supabase-workspace.server";
+
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
-  .handler(async () => {
+  .handler(async ({ context }) => {
+    // Guarantee at least one workspace exists for this owner.
+    await ensureOwnerWorkspaceSupabase({ email: context.email });
+
     const { data: ws, error } = await supabaseAdmin
       .from("hn_workspaces")
       .select("id, name, slug, hn_user_id, created_at")
@@ -24,6 +29,7 @@ export const listOwnerWorkspaces = createServerFn({ method: "GET" })
     const workspaces = (ws ?? []).map((w) => ({ ...w, hn_users: byId.get(w.hn_user_id) ?? null }));
     return { workspaces };
   });
+
 
 export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
   .middleware([requireHnOwner])
@@ -103,9 +109,9 @@ export const listOwnerSites = createServerFn({ method: "GET" })
 
 export const ownerAddSite = createServerFn({ method: "POST" })
   .middleware([requireHnOwner])
-  .inputValidator((d: { workspaceId: string; name: string; siteUrl: string }) =>
+  .inputValidator((d: { workspaceId?: string; name: string; siteUrl: string }) =>
     z.object({
-      workspaceId: z.string().uuid(),
+      workspaceId: z.string().uuid().optional().or(z.literal("")),
       name: z.string().trim().min(1).max(80),
       siteUrl: z.string().trim().url().max(2048),
     }).parse(d),
@@ -117,17 +123,36 @@ export const ownerAddSite = createServerFn({ method: "POST" })
     } catch {
       throw new Error("invalid_url");
     }
-    const { data: ws } = await supabaseAdmin
-      .from("hn_workspaces")
-      .select("id, hn_user_id")
-      .eq("id", data.workspaceId)
-      .maybeSingle();
-    if (!ws) throw new Error("workspace_not_found");
+
+    // Resolve workspace: explicit ID → lookup; else auto-create for owner.
+    let wsId: string;
+    let wsUserId: string;
+    if (data.workspaceId) {
+      const { data: ws } = await supabaseAdmin
+        .from("hn_workspaces")
+        .select("id, hn_user_id")
+        .eq("id", data.workspaceId)
+        .maybeSingle();
+      if (ws) {
+        wsId = ws.id;
+        wsUserId = ws.hn_user_id;
+      } else {
+        const ensured = await ensureOwnerWorkspaceSupabase({ email: context.email });
+        wsId = ensured.workspaceId;
+        wsUserId = ensured.hnUserId;
+      }
+    } else {
+      const ensured = await ensureOwnerWorkspaceSupabase({ email: context.email });
+      wsId = ensured.workspaceId;
+      wsUserId = ensured.hnUserId;
+    }
+    const ws = { id: wsId, hn_user_id: wsUserId };
+
 
     const { data: row, error } = await supabaseAdmin
       .from("hn_sites")
       .insert({
-        workspace_id: data.workspaceId,
+        workspace_id: ws.id,
         name: data.name,
         site_url: data.siteUrl,
         site_host: host,
