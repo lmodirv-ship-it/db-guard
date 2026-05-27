@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RuntimeRouteImport } from './routes/runtime'
 import { Route as QuickstartRouteImport } from './routes/quickstart'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RuntimeIndexRouteImport } from './routes/runtime.index'
 import { Route as OwnerIndexRouteImport } from './routes/owner.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
@@ -53,6 +55,7 @@ import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
+import { Route as RuntimeSitesSlugRouteImport } from './routes/runtime.sites.$slug'
 import { Route as OwnerProjectsSiteIdRouteImport } from './routes/owner.projects.$siteId'
 import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
 import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
@@ -91,6 +94,10 @@ import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 import { Route as ApiHnStorageIdRouteImport } from './routes/api/hn/storage/$id'
 import { Route as ApiHnSitesDiscoverRouteImport } from './routes/api/hn/sites/discover'
+import { Route as ApiHnRuntimeMetricsRouteImport } from './routes/api/hn/runtime/metrics'
+import { Route as ApiHnRuntimeJobsRouteImport } from './routes/api/hn/runtime/jobs'
+import { Route as ApiHnRuntimeHealthRouteImport } from './routes/api/hn/runtime/health'
+import { Route as ApiHnRuntimeEventsRouteImport } from './routes/api/hn/runtime/events'
 import { Route as ApiHnAuthSignupRouteImport } from './routes/api/hn/auth/signup'
 import { Route as ApiHnAuthMeRouteImport } from './routes/api/hn/auth/me'
 import { Route as ApiHnAuthLogoutRouteImport } from './routes/api/hn/auth/logout'
@@ -99,11 +106,18 @@ import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$i
 import { Route as ApiHnDbCollectionIndexRouteImport } from './routes/api/hn/db/$collection/index'
 import { Route as ApiPublicV1StorageFileRouteImport } from './routes/api/public/v1/storage.file'
 import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
+import { Route as ApiHnRuntimeWorkerTickRouteImport } from './routes/api/hn/runtime/worker.tick'
+import { Route as ApiHnRuntimeSitesSlugRouteImport } from './routes/api/hn/runtime/sites.$slug'
 import { Route as ApiHnDbCollectionIdRouteImport } from './routes/api/hn/db/$collection/$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RuntimeRoute = RuntimeRouteImport.update({
+  id: '/runtime',
+  path: '/runtime',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuickstartRoute = QuickstartRouteImport.update({
@@ -130,6 +144,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RuntimeIndexRoute = RuntimeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RuntimeRoute,
 } as any)
 const OwnerIndexRoute = OwnerIndexRouteImport.update({
   id: '/',
@@ -320,6 +339,11 @@ const ApiApiKeysIndexRoute = ApiApiKeysIndexRouteImport.update({
   id: '/api/api-keys/',
   path: '/api/api-keys/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RuntimeSitesSlugRoute = RuntimeSitesSlugRouteImport.update({
+  id: '/sites/$slug',
+  path: '/sites/$slug',
+  getParentRoute: () => RuntimeRoute,
 } as any)
 const OwnerProjectsSiteIdRoute = OwnerProjectsSiteIdRouteImport.update({
   id: '/$siteId',
@@ -512,6 +536,26 @@ const ApiHnSitesDiscoverRoute = ApiHnSitesDiscoverRouteImport.update({
   path: '/api/hn/sites/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnRuntimeMetricsRoute = ApiHnRuntimeMetricsRouteImport.update({
+  id: '/api/hn/runtime/metrics',
+  path: '/api/hn/runtime/metrics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnRuntimeJobsRoute = ApiHnRuntimeJobsRouteImport.update({
+  id: '/api/hn/runtime/jobs',
+  path: '/api/hn/runtime/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnRuntimeHealthRoute = ApiHnRuntimeHealthRouteImport.update({
+  id: '/api/hn/runtime/health',
+  path: '/api/hn/runtime/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnRuntimeEventsRoute = ApiHnRuntimeEventsRouteImport.update({
+  id: '/api/hn/runtime/events',
+  path: '/api/hn/runtime/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHnAuthSignupRoute = ApiHnAuthSignupRouteImport.update({
   id: '/api/hn/auth/signup',
   path: '/api/hn/auth/signup',
@@ -553,6 +597,16 @@ const ApiPublicV1DataCollectionRoute =
     path: '/api/public/v1/data/$collection',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiHnRuntimeWorkerTickRoute = ApiHnRuntimeWorkerTickRouteImport.update({
+  id: '/api/hn/runtime/worker/tick',
+  path: '/api/hn/runtime/worker/tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnRuntimeSitesSlugRoute = ApiHnRuntimeSitesSlugRouteImport.update({
+  id: '/api/hn/runtime/sites/$slug',
+  path: '/api/hn/runtime/sites/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHnDbCollectionIdRoute = ApiHnDbCollectionIdRouteImport.update({
   id: '/api/hn/db/$collection/$id',
   path: '/api/hn/db/$collection/$id',
@@ -565,6 +619,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/quickstart': typeof QuickstartRoute
+  '/runtime': typeof RuntimeRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -599,6 +654,7 @@ export interface FileRoutesByFullPath {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
+  '/runtime/': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -623,6 +679,7 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -633,6 +690,10 @@ export interface FileRoutesByFullPath {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/runtime/events': typeof ApiHnRuntimeEventsRoute
+  '/api/hn/runtime/health': typeof ApiHnRuntimeHealthRoute
+  '/api/hn/runtime/jobs': typeof ApiHnRuntimeJobsRoute
+  '/api/hn/runtime/metrics': typeof ApiHnRuntimeMetricsRoute
   '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
@@ -648,6 +709,8 @@ export interface FileRoutesByFullPath {
   '/api/hn/storage/': typeof ApiHnStorageIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
+  '/api/hn/runtime/sites/$slug': typeof ApiHnRuntimeSitesSlugRoute
+  '/api/hn/runtime/worker/tick': typeof ApiHnRuntimeWorkerTickRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
   '/api/hn/db/$collection/': typeof ApiHnDbCollectionIndexRoute
@@ -690,6 +753,7 @@ export interface FileRoutesByTo {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/owner': typeof OwnerIndexRoute
+  '/runtime': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -714,6 +778,7 @@ export interface FileRoutesByTo {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
   '/api/backups': typeof ApiBackupsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
@@ -724,6 +789,10 @@ export interface FileRoutesByTo {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/runtime/events': typeof ApiHnRuntimeEventsRoute
+  '/api/hn/runtime/health': typeof ApiHnRuntimeHealthRoute
+  '/api/hn/runtime/jobs': typeof ApiHnRuntimeJobsRoute
+  '/api/hn/runtime/metrics': typeof ApiHnRuntimeMetricsRoute
   '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
@@ -739,6 +808,8 @@ export interface FileRoutesByTo {
   '/api/hn/storage': typeof ApiHnStorageIndexRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
   '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
+  '/api/hn/runtime/sites/$slug': typeof ApiHnRuntimeSitesSlugRoute
+  '/api/hn/runtime/worker/tick': typeof ApiHnRuntimeWorkerTickRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
   '/api/hn/db/$collection': typeof ApiHnDbCollectionIndexRoute
@@ -750,6 +821,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/owner': typeof OwnerRouteWithChildren
   '/quickstart': typeof QuickstartRoute
+  '/runtime': typeof RuntimeRouteWithChildren
   '/signup': typeof SignupRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/api-keys': typeof DashboardApiKeysRoute
@@ -784,6 +856,7 @@ export interface FileRoutesById {
   '/projects/$id': typeof ProjectsIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/owner/': typeof OwnerIndexRoute
+  '/runtime/': typeof RuntimeIndexRoute
   '/api/admin/api-logs': typeof ApiAdminApiLogsRoute
   '/api/admin/audit-logs': typeof ApiAdminAuditLogsRoute
   '/api/admin/db-status': typeof ApiAdminDbStatusRoute
@@ -808,6 +881,7 @@ export interface FileRoutesById {
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
   '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
+  '/runtime/sites/$slug': typeof RuntimeSitesSlugRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -818,6 +892,10 @@ export interface FileRoutesById {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/runtime/events': typeof ApiHnRuntimeEventsRoute
+  '/api/hn/runtime/health': typeof ApiHnRuntimeHealthRoute
+  '/api/hn/runtime/jobs': typeof ApiHnRuntimeJobsRoute
+  '/api/hn/runtime/metrics': typeof ApiHnRuntimeMetricsRoute
   '/api/hn/sites/discover': typeof ApiHnSitesDiscoverRoute
   '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
@@ -833,6 +911,8 @@ export interface FileRoutesById {
   '/api/hn/storage/': typeof ApiHnStorageIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
+  '/api/hn/runtime/sites/$slug': typeof ApiHnRuntimeSitesSlugRoute
+  '/api/hn/runtime/worker/tick': typeof ApiHnRuntimeWorkerTickRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
   '/api/hn/db/$collection/': typeof ApiHnDbCollectionIndexRoute
@@ -845,6 +925,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/owner'
     | '/quickstart'
+    | '/runtime'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -879,6 +960,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
+    | '/runtime/'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -903,6 +985,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -913,6 +996,10 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/runtime/events'
+    | '/api/hn/runtime/health'
+    | '/api/hn/runtime/jobs'
+    | '/api/hn/runtime/metrics'
     | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
@@ -928,6 +1015,8 @@ export interface FileRouteTypes {
     | '/api/hn/storage/'
     | '/api/projects/$id/'
     | '/api/hn/db/$collection/$id'
+    | '/api/hn/runtime/sites/$slug'
+    | '/api/hn/runtime/worker/tick'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
     | '/api/hn/db/$collection/'
@@ -970,6 +1059,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard'
     | '/owner'
+    | '/runtime'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -994,6 +1084,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys'
     | '/api/backups'
     | '/api/projects'
@@ -1004,6 +1095,10 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/runtime/events'
+    | '/api/hn/runtime/health'
+    | '/api/hn/runtime/jobs'
+    | '/api/hn/runtime/metrics'
     | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
@@ -1019,6 +1114,8 @@ export interface FileRouteTypes {
     | '/api/hn/storage'
     | '/api/projects/$id'
     | '/api/hn/db/$collection/$id'
+    | '/api/hn/runtime/sites/$slug'
+    | '/api/hn/runtime/worker/tick'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
     | '/api/hn/db/$collection'
@@ -1029,6 +1126,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/owner'
     | '/quickstart'
+    | '/runtime'
     | '/signup'
     | '/api/health'
     | '/dashboard/api-keys'
@@ -1063,6 +1161,7 @@ export interface FileRouteTypes {
     | '/projects/$id'
     | '/dashboard/'
     | '/owner/'
+    | '/runtime/'
     | '/api/admin/api-logs'
     | '/api/admin/audit-logs'
     | '/api/admin/db-status'
@@ -1087,6 +1186,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
     | '/owner/projects/$siteId'
+    | '/runtime/sites/$slug'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -1097,6 +1197,10 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/runtime/events'
+    | '/api/hn/runtime/health'
+    | '/api/hn/runtime/jobs'
+    | '/api/hn/runtime/metrics'
     | '/api/hn/sites/discover'
     | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
@@ -1112,6 +1216,8 @@ export interface FileRouteTypes {
     | '/api/hn/storage/'
     | '/api/projects/$id/'
     | '/api/hn/db/$collection/$id'
+    | '/api/hn/runtime/sites/$slug'
+    | '/api/hn/runtime/worker/tick'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
     | '/api/hn/db/$collection/'
@@ -1123,6 +1229,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OwnerRoute: typeof OwnerRouteWithChildren
   QuickstartRoute: typeof QuickstartRoute
+  RuntimeRoute: typeof RuntimeRouteWithChildren
   SignupRoute: typeof SignupRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
@@ -1157,6 +1264,10 @@ export interface RootRouteChildren {
   ApiHnAuthLogoutRoute: typeof ApiHnAuthLogoutRoute
   ApiHnAuthMeRoute: typeof ApiHnAuthMeRoute
   ApiHnAuthSignupRoute: typeof ApiHnAuthSignupRoute
+  ApiHnRuntimeEventsRoute: typeof ApiHnRuntimeEventsRoute
+  ApiHnRuntimeHealthRoute: typeof ApiHnRuntimeHealthRoute
+  ApiHnRuntimeJobsRoute: typeof ApiHnRuntimeJobsRoute
+  ApiHnRuntimeMetricsRoute: typeof ApiHnRuntimeMetricsRoute
   ApiHnSitesDiscoverRoute: typeof ApiHnSitesDiscoverRoute
   ApiHnStorageIdRoute: typeof ApiHnStorageIdRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
@@ -1170,6 +1281,8 @@ export interface RootRouteChildren {
   ApiHnStorageIndexRoute: typeof ApiHnStorageIndexRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
   ApiHnDbCollectionIdRoute: typeof ApiHnDbCollectionIdRoute
+  ApiHnRuntimeSitesSlugRoute: typeof ApiHnRuntimeSitesSlugRoute
+  ApiHnRuntimeWorkerTickRoute: typeof ApiHnRuntimeWorkerTickRoute
   ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
   ApiHnDbCollectionIndexRoute: typeof ApiHnDbCollectionIndexRoute
 }
@@ -1181,6 +1294,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/runtime': {
+      id: '/runtime'
+      path: '/runtime'
+      fullPath: '/runtime'
+      preLoaderRoute: typeof RuntimeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quickstart': {
@@ -1217,6 +1337,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/runtime/': {
+      id: '/runtime/'
+      path: '/'
+      fullPath: '/runtime/'
+      preLoaderRoute: typeof RuntimeIndexRouteImport
+      parentRoute: typeof RuntimeRoute
     }
     '/owner/': {
       id: '/owner/'
@@ -1484,6 +1611,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiApiKeysIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/runtime/sites/$slug': {
+      id: '/runtime/sites/$slug'
+      path: '/sites/$slug'
+      fullPath: '/runtime/sites/$slug'
+      preLoaderRoute: typeof RuntimeSitesSlugRouteImport
+      parentRoute: typeof RuntimeRoute
+    }
     '/owner/projects/$siteId': {
       id: '/owner/projects/$siteId'
       path: '/$siteId'
@@ -1750,6 +1884,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHnSitesDiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/runtime/metrics': {
+      id: '/api/hn/runtime/metrics'
+      path: '/api/hn/runtime/metrics'
+      fullPath: '/api/hn/runtime/metrics'
+      preLoaderRoute: typeof ApiHnRuntimeMetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/runtime/jobs': {
+      id: '/api/hn/runtime/jobs'
+      path: '/api/hn/runtime/jobs'
+      fullPath: '/api/hn/runtime/jobs'
+      preLoaderRoute: typeof ApiHnRuntimeJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/runtime/health': {
+      id: '/api/hn/runtime/health'
+      path: '/api/hn/runtime/health'
+      fullPath: '/api/hn/runtime/health'
+      preLoaderRoute: typeof ApiHnRuntimeHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/runtime/events': {
+      id: '/api/hn/runtime/events'
+      path: '/api/hn/runtime/events'
+      fullPath: '/api/hn/runtime/events'
+      preLoaderRoute: typeof ApiHnRuntimeEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hn/auth/signup': {
       id: '/api/hn/auth/signup'
       path: '/api/hn/auth/signup'
@@ -1804,6 +1966,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/v1/data/$collection'
       fullPath: '/api/public/v1/data/$collection'
       preLoaderRoute: typeof ApiPublicV1DataCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/runtime/worker/tick': {
+      id: '/api/hn/runtime/worker/tick'
+      path: '/api/hn/runtime/worker/tick'
+      fullPath: '/api/hn/runtime/worker/tick'
+      preLoaderRoute: typeof ApiHnRuntimeWorkerTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/runtime/sites/$slug': {
+      id: '/api/hn/runtime/sites/$slug'
+      path: '/api/hn/runtime/sites/$slug'
+      fullPath: '/api/hn/runtime/sites/$slug'
+      preLoaderRoute: typeof ApiHnRuntimeSitesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/hn/db/$collection/$id': {
@@ -1920,6 +2096,19 @@ const OwnerRouteChildren: OwnerRouteChildren = {
 
 const OwnerRouteWithChildren = OwnerRoute._addFileChildren(OwnerRouteChildren)
 
+interface RuntimeRouteChildren {
+  RuntimeIndexRoute: typeof RuntimeIndexRoute
+  RuntimeSitesSlugRoute: typeof RuntimeSitesSlugRoute
+}
+
+const RuntimeRouteChildren: RuntimeRouteChildren = {
+  RuntimeIndexRoute: RuntimeIndexRoute,
+  RuntimeSitesSlugRoute: RuntimeSitesSlugRoute,
+}
+
+const RuntimeRouteWithChildren =
+  RuntimeRoute._addFileChildren(RuntimeRouteChildren)
+
 interface ApiAdminUsersRouteChildren {
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
 }
@@ -1963,6 +2152,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OwnerRoute: OwnerRouteWithChildren,
   QuickstartRoute: QuickstartRoute,
+  RuntimeRoute: RuntimeRouteWithChildren,
   SignupRoute: SignupRoute,
   ApiHealthRoute: ApiHealthRoute,
   ProjectsIdRoute: ProjectsIdRoute,
@@ -1997,6 +2187,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnAuthLogoutRoute: ApiHnAuthLogoutRoute,
   ApiHnAuthMeRoute: ApiHnAuthMeRoute,
   ApiHnAuthSignupRoute: ApiHnAuthSignupRoute,
+  ApiHnRuntimeEventsRoute: ApiHnRuntimeEventsRoute,
+  ApiHnRuntimeHealthRoute: ApiHnRuntimeHealthRoute,
+  ApiHnRuntimeJobsRoute: ApiHnRuntimeJobsRoute,
+  ApiHnRuntimeMetricsRoute: ApiHnRuntimeMetricsRoute,
   ApiHnSitesDiscoverRoute: ApiHnSitesDiscoverRoute,
   ApiHnStorageIdRoute: ApiHnStorageIdRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
@@ -2010,6 +2204,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnStorageIndexRoute: ApiHnStorageIndexRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
   ApiHnDbCollectionIdRoute: ApiHnDbCollectionIdRoute,
+  ApiHnRuntimeSitesSlugRoute: ApiHnRuntimeSitesSlugRoute,
+  ApiHnRuntimeWorkerTickRoute: ApiHnRuntimeWorkerTickRoute,
   ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,
   ApiHnDbCollectionIndexRoute: ApiHnDbCollectionIndexRoute,
 }

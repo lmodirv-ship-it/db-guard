@@ -6,6 +6,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSql } from "@/lib/db/client.server";
 import { verifyPassword } from "@/lib/auth/password.server";
 import { issueSession } from "@/lib/hn/sessions.server";
+import { emit } from "@/lib/hn/events.server";
+import { recordMetric } from "@/lib/hn/monitoring.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -39,11 +41,15 @@ export const Route = createFileRoute("/api/hn/auth/login")({
 
         if (!rows.length) {
           await verifyPassword(password, "pbkdf2$100000$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+          await emit({ type: "auth.login_failed", severity: "warn", source: "api", payload: { email, reason: "no_user" } });
           return json(401, { ok: false, error: "invalid_credentials" });
         }
         const u = rows[0];
         const ok = await verifyPassword(password, u.password_hash);
-        if (!ok) return json(401, { ok: false, error: "invalid_credentials" });
+        if (!ok) {
+          await emit({ type: "auth.login_failed", severity: "warn", source: "api", payload: { email, reason: "bad_password" } });
+          return json(401, { ok: false, error: "invalid_credentials" });
+        }
 
         const { token, session } = await issueSession({
           tenantId: u.tenant_id, userId: u.id,
@@ -53,6 +59,9 @@ export const Route = createFileRoute("/api/hn/auth/login")({
             ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
             ?? null,
         });
+
+        await emit({ type: "auth.login", source: "api", tenantId: u.tenant_id, actor: u.id, payload: { email, app: site ?? "hn-sdk" } });
+        await recordMetric("requests", 1, "tenant", u.tenant_id, { route: "auth.login" });
 
         return json(200, {
           ok: true,
