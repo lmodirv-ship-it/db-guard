@@ -148,6 +148,7 @@ export const createApiKey = createServerFn({ method: "POST" })
         key_hash: hash,
         key_prefix: prefix,
         key_hint: hint,
+        full_key: key,
       })
       .select("id, label, key_prefix, key_hint, created_at")
       .single();
