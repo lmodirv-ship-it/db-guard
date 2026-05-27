@@ -60,6 +60,7 @@ import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiPublicConfigRouteImport } from './routes/api/public/config'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
 import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
+import { Route as ApiHnRolesRouteImport } from './routes/api/hn/roles'
 import { Route as ApiBillingUsageRouteImport } from './routes/api/billing/usage'
 import { Route as ApiBillingPlansRouteImport } from './routes/api/billing/plans'
 import { Route as ApiAuthSignupRouteImport } from './routes/api/auth/signup'
@@ -74,6 +75,7 @@ import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-stat
 import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
 import { Route as ApiAdminApiLogsRouteImport } from './routes/api/admin/api-logs'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
+import { Route as ApiHnSitesIndexRouteImport } from './routes/api/hn/sites/index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
 import { Route as ApiTablesIdColumnsRouteImport } from './routes/api/tables/$id/columns'
@@ -346,6 +348,11 @@ const ApiJobsDrainRoute = ApiJobsDrainRouteImport.update({
   path: '/api/jobs/drain',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnRolesRoute = ApiHnRolesRouteImport.update({
+  id: '/api/hn/roles',
+  path: '/api/hn/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBillingUsageRoute = ApiBillingUsageRouteImport.update({
   id: '/api/billing/usage',
   path: '/api/billing/usage',
@@ -414,6 +421,11 @@ const ApiAdminApiLogsRoute = ApiAdminApiLogsRouteImport.update({
 const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   id: '/api/projects/$id/',
   path: '/api/projects/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHnSitesIndexRoute = ApiHnSitesIndexRouteImport.update({
+  id: '/api/hn/sites/',
+  path: '/api/hn/sites/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailQueueProcessRoute =
@@ -550,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
+  '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/public/config': typeof ApiPublicConfigRoute
@@ -578,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/hn/sites/': typeof ApiHnSitesIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
@@ -631,6 +645,7 @@ export interface FileRoutesByTo {
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
+  '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/public/config': typeof ApiPublicConfigRoute
@@ -659,6 +674,7 @@ export interface FileRoutesByTo {
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/hn/sites': typeof ApiHnSitesIndexRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
@@ -715,6 +731,7 @@ export interface FileRoutesById {
   '/api/auth/signup': typeof ApiAuthSignupRoute
   '/api/billing/plans': typeof ApiBillingPlansRoute
   '/api/billing/usage': typeof ApiBillingUsageRoute
+  '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
   '/api/public/config': typeof ApiPublicConfigRoute
@@ -743,6 +760,7 @@ export interface FileRoutesById {
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/hn/sites/': typeof ApiHnSitesIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
@@ -800,6 +818,7 @@ export interface FileRouteTypes {
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
+    | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/public/config'
@@ -828,6 +847,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
+    | '/api/hn/sites/'
     | '/api/projects/$id/'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
@@ -881,6 +901,7 @@ export interface FileRouteTypes {
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
+    | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/public/config'
@@ -909,6 +930,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
+    | '/api/hn/sites'
     | '/api/projects/$id'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
@@ -964,6 +986,7 @@ export interface FileRouteTypes {
     | '/api/auth/signup'
     | '/api/billing/plans'
     | '/api/billing/usage'
+    | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
     | '/api/public/config'
@@ -992,6 +1015,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
+    | '/api/hn/sites/'
     | '/api/projects/$id/'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
@@ -1019,6 +1043,7 @@ export interface RootRouteChildren {
   ApiAuthSignupRoute: typeof ApiAuthSignupRoute
   ApiBillingPlansRoute: typeof ApiBillingPlansRoute
   ApiBillingUsageRoute: typeof ApiBillingUsageRoute
+  ApiHnRolesRoute: typeof ApiHnRolesRoute
   ApiJobsDrainRoute: typeof ApiJobsDrainRoute
   ApiJobsEnqueueRoute: typeof ApiJobsEnqueueRoute
   ApiPublicConfigRoute: typeof ApiPublicConfigRoute
@@ -1042,6 +1067,7 @@ export interface RootRouteChildren {
   ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
   ApiPublicV1StorageRoute: typeof ApiPublicV1StorageRouteWithChildren
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  ApiHnSitesIndexRoute: typeof ApiHnSitesIndexRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
   ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
 }
@@ -1405,6 +1431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiJobsDrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/roles': {
+      id: '/api/hn/roles'
+      path: '/api/hn/roles'
+      fullPath: '/api/hn/roles'
+      preLoaderRoute: typeof ApiHnRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/billing/usage': {
       id: '/api/billing/usage'
       path: '/api/billing/usage'
@@ -1501,6 +1534,13 @@ declare module '@tanstack/react-router' {
       path: '/api/projects/$id'
       fullPath: '/api/projects/$id/'
       preLoaderRoute: typeof ApiProjectsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/sites/': {
+      id: '/api/hn/sites/'
+      path: '/api/hn/sites'
+      fullPath: '/api/hn/sites/'
+      preLoaderRoute: typeof ApiHnSitesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
@@ -1777,6 +1817,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSignupRoute: ApiAuthSignupRoute,
   ApiBillingPlansRoute: ApiBillingPlansRoute,
   ApiBillingUsageRoute: ApiBillingUsageRoute,
+  ApiHnRolesRoute: ApiHnRolesRoute,
   ApiJobsDrainRoute: ApiJobsDrainRoute,
   ApiJobsEnqueueRoute: ApiJobsEnqueueRoute,
   ApiPublicConfigRoute: ApiPublicConfigRoute,
@@ -1800,9 +1841,20 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
   ApiPublicV1StorageRoute: ApiPublicV1StorageRouteWithChildren,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  ApiHnSitesIndexRoute: ApiHnSitesIndexRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
   ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
