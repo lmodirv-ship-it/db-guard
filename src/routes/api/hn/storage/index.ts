@@ -70,7 +70,7 @@ export const Route = createFileRoute("/api/hn/storage/")({
           const key = `${tenantPrefix(ctx.tenantId)}${id}-${fileName}`;
           const ct = body.contentType || "application/octet-stream";
           const r2 = await getR2();
-          await r2.put(key, bytes.buffer, { httpMetadata: { contentType: ct } });
+          await r2.put(key, bytes.buffer as ArrayBuffer, { httpMetadata: { contentType: ct } });
           return json(200, {
             ok: true,
             file: { id, key, size: bytes.byteLength, contentType: ct, fileName },
