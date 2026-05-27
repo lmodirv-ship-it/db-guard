@@ -1,21 +1,12 @@
 /**
  * Owner-only server functions.
+ * Auth: HN session cookie (hn_session) + role='owner' in Neon users table.
  */
 import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireHnOwner } from "@/lib/auth/hn-owner-middleware.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateApiKey, hashApiKey, keyPrefix } from "@/lib/platform/api-keys.server";
-
-async function assertOwner(userId: string) {
-  const { data } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "owner")
-    .maybeSingle();
-  if (!data) throw new Error("forbidden");
-}
 
 export const listOwnerWorkspaces = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
