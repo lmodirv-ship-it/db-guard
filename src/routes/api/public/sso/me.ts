@@ -4,6 +4,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { getSessionUser } from "@/lib/sso/sso.server";
+import { withApiLog } from "@/lib/platform/api-log.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/api/public/sso/me")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
-      GET: async ({ request }) => {
+      GET: withApiLog(async ({ request }) => {
         const auth = request.headers.get("authorization") || "";
         const token = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
         if (!token) return json(401, { ok: false, error: "missing_token" });
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/api/public/sso/me")({
           console.error("sso_me_failed", err);
           return json(500, { ok: false, error: "lookup_failed" });
         }
-      },
+      }),
     },
   },
 });
