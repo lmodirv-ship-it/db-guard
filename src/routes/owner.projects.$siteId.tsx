@@ -156,12 +156,12 @@ function SiteDetailPage() {
               toast.success("تم نسخ ملف HTML جاهز — الصقه في موقعك");
             }}
             disabled={!activeKey?.full_key}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 text-xs font-bold shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FileCode2 className="h-3.5 w-3.5" /> نسخ ملف HTML جاهز
+            <FileCode2 className="h-4 w-4" /> نسخ ملف HTML جاهز
           </button>
         }
-        className="mb-6"
+        className="mb-6 border-2 border-emerald-500/40 bg-emerald-500/5"
       >
         {!activeKey?.full_key && (
           <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-2 text-xs">
