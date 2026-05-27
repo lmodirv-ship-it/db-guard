@@ -130,6 +130,18 @@ function ProjectsPage() {
         </form>
       </Panel>
 
+      {justCreated && (
+        <JustCreatedPanel
+          name={justCreated.name}
+          siteUrl={justCreated.siteUrl}
+          siteId={justCreated.id}
+          apiKey={justCreated.apiKey}
+          onClose={() => setJustCreated(null)}
+        />
+      )}
+
+
+
       <Panel title={`جميع المشاريع (${sites.length})`}>
         {sitesQ.isLoading ? (
           <div className="py-10 text-center text-sm text-muted-foreground">جارٍ التحميل…</div>
