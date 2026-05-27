@@ -11,7 +11,7 @@ import {
   ownerDeleteSite,
   ownerToggleSiteFeature,
 } from "@/lib/platform/owner.functions";
-import { FolderKanban, Plus, Trash2, ExternalLink, ShieldCheck, Loader2, Database, HardDrive, KeyRound } from "lucide-react";
+import { FolderKanban, Plus, Trash2, ExternalLink, ShieldCheck, Loader2, Database, HardDrive, KeyRound, Copy, FileCode2, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
 
 type Site = {
