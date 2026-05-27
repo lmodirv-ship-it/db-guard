@@ -118,6 +118,13 @@ export const ownerAddSite = createServerFn({ method: "POST" })
     } catch {
       throw new Error("invalid_url");
     }
+    const { data: ws } = await supabaseAdmin
+      .from("hn_workspaces")
+      .select("id, hn_user_id")
+      .eq("id", data.workspaceId)
+      .maybeSingle();
+    if (!ws) throw new Error("workspace_not_found");
+
     const { data: row, error } = await supabaseAdmin
       .from("hn_sites")
       .insert({
@@ -130,7 +137,24 @@ export const ownerAddSite = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !row) throw new Error(error?.message ?? "create_failed");
-    return { id: row.id };
+
+    // Auto-generate an API key for this new site so the owner gets
+    // everything ready to paste immediately.
+    const key = generateApiKey();
+    const hash = await hashApiKey(key);
+    const prefix = keyPrefix(key);
+    const hint = `${prefix}…${key.slice(-4)}`;
+    await supabaseAdmin.from("hn_api_keys").insert({
+      hn_user_id: ws.hn_user_id,
+      workspace_id: ws.id,
+      label: `${data.name} — auto`,
+      key_hash: hash,
+      key_prefix: prefix,
+      key_hint: hint,
+      full_key: key,
+    });
+
+    return { id: row.id, apiKey: key, name: data.name, siteUrl: data.siteUrl };
   });
 
 export const ownerDeleteSite = createServerFn({ method: "POST" })
