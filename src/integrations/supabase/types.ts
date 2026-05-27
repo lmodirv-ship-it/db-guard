@@ -385,6 +385,60 @@ export type Database = {
           },
         ]
       }
+      hn_api_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          duration_ms: number | null
+          endpoint: string
+          error: string | null
+          hn_user_id: string | null
+          id: number
+          ip: string | null
+          method: string
+          origin: string | null
+          request_bytes: number | null
+          response_bytes: number | null
+          status: number
+          user_agent: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          endpoint: string
+          error?: string | null
+          hn_user_id?: string | null
+          id?: number
+          ip?: string | null
+          method: string
+          origin?: string | null
+          request_bytes?: number | null
+          response_bytes?: number | null
+          status: number
+          user_agent?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          endpoint?: string
+          error?: string | null
+          hn_user_id?: string | null
+          id?: number
+          ip?: string | null
+          method?: string
+          origin?: string | null
+          request_bytes?: number | null
+          response_bytes?: number | null
+          status?: number
+          user_agent?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       hn_data_records: {
         Row: {
           collection: string
