@@ -54,7 +54,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
-      GET: async ({ request }) => {
+      GET: withApiLog(async ({ request }) => {
         const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
 
@@ -89,7 +89,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
           })),
         });
       },
-      POST: async ({ request }) => {
+      POST: withApiLog(async ({ request }) => {
         const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
 
@@ -136,7 +136,7 @@ export const Route = createFileRoute("/api/public/v1/storage")({
           return json(code, { ok: false, error: msg });
         }
       },
-      DELETE: async ({ request }) => {
+      DELETE: withApiLog(async ({ request }) => {
         const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
         if (!key) return json(401, { ok: false, error: "invalid_api_key" });
 
