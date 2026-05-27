@@ -181,6 +181,43 @@ function SiteDetailPage() {
       </Panel>
 
 
+      {/* Glossary / reference table */}
+      <Panel title="ما هي هذه العناصر؟ — دليل سريع" className="mb-6">
+        <p className="text-xs text-muted-foreground mb-3">
+          جدول يشرح كل ما هو متاح في هذه الصفحة ودوره، حتى تعرف ماذا تستخدم ومتى.
+        </p>
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-xs">
+            <thead className="bg-muted/40 text-right">
+              <tr>
+                <th className="px-3 py-2 font-semibold">العنصر</th>
+                <th className="px-3 py-2 font-semibold">ما هو؟</th>
+                <th className="px-3 py-2 font-semibold">متى تستخدمه؟</th>
+              </tr>
+            </thead>
+            <tbody className="text-right">
+              {[
+                { name: "مفتاح API", what: "كلمة سر سرية تربط موقعك بحسابك في hn-bd.online.", when: "تضعه في الكود ليتعرّف السيرفر على موقعك ويسمح له بحفظ وقراءة البيانات." },
+                { name: "Data (قاعدة بيانات)", what: "تخزين سجلات JSON منظّمة في «Collections» (جداول).", when: "لحفظ منشورات، مستخدمين، طلبات، تعليقات… أي بيانات يكتبها موقعك." },
+                { name: "Storage (ملفات)", what: "رفع وتخزين ملفات (صور، PDF، فيديو…) مع روابط جاهزة.", when: "لرفع صور الملف الشخصي، مرفقات، أو أي ملف يرفعه المستخدم." },
+                { name: "Auth / SSO", what: "تسجيل دخول موحّد — مستخدم واحد لكل مواقعك.", when: "عندما تريد أن يدخل المستخدم بحساب واحد على جميع مواقعك." },
+                { name: "Collection (مجموعة)", what: "اسم جدول داخل Data — مثل posts أو users.", when: "يُنشأ تلقائياً بمجرد أول insert باسم جديد." },
+                { name: "REST API", what: "نقاط نهاية HTTP مباشرة بدون SDK (للأدوات والسيرفرات).", when: "إذا كنت تستدعي من سيرفر، Postman، أو curl بدلاً من المتصفح." },
+                { name: "hn-data.js", what: "مكتبة JS صغيرة تختصر استدعاءات Data.", when: "ضعه في موقعك لتكتب db.insert / db.list بدل fetch يدوي." },
+                { name: "hn-storage.js", what: "مكتبة JS لرفع الملفات بسطر واحد.", when: "لرفع ملف من <input type=\"file\"> مباشرة." },
+                { name: "hn-sso.js", what: "مكتبة JS لتفعيل الدخول الموحّد.", when: "ضعه في <head> ليتعرّف موقعك على المستخدم الحالي." },
+              ].map((row) => (
+                <tr key={row.name} className="border-t border-border">
+                  <td className="px-3 py-2 font-semibold text-primary whitespace-nowrap">{row.name}</td>
+                  <td className="px-3 py-2 text-foreground/90">{row.what}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{row.when}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
       {/* Features */}
       <Panel title="الميزات المُفعّلة" className="mb-6">
         <div className="grid grid-cols-3 gap-2">
