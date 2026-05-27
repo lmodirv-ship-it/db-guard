@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { verifyApiKey } from "@/lib/platform/verify-api-key.server";
 import { buildObjectKey, putStorageObject, removeStorageObject } from "@/lib/platform/storage.server";
+import { withApiLog } from "@/lib/platform/api-log.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
