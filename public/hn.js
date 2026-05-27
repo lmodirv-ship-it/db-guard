@@ -80,15 +80,19 @@
     };
     if (opts.body !== undefined) init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body);
     var attempt = 0;
+    var t0 = Date.now();
     function go() {
       attempt++;
+      log("→", init.method, path, opts.body);
       return fetch(ep(path), init).then(function (r) {
         if (r.status === 401) { setToken(null); setUser(null); }
-        return r.json().catch(function () { return { ok: false, error: "non_json", status: r.status }; });
+        return r.json().catch(function () { return { ok: false, error: "non_json", status: r.status }; })
+          .then(function (j) { log("←", init.method, path, r.status, (Date.now() - t0) + "ms", j); return j; });
       }).catch(function (e) {
         if (attempt < 3 && navigator.onLine) {
           return new Promise(function (res) { setTimeout(res, 300 * attempt); }).then(go);
         }
+        log("✗", init.method, path, e);
         return { ok: false, error: "network_error", message: String(e) };
       });
     }
