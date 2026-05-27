@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
 
-      GET: withApiLog(async ({ request, params }) => {
+      GET: withApiLog<{ collection: string }>(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         return json(200, { ok: true, items: data ?? [], total: count ?? 0, limit, offset }, idHeaders(key));
       }),
 
-      POST: withApiLog(async ({ request, params }) => {
+      POST: withApiLog<{ collection: string }>(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         return json(201, { ok: true, id: data.id, data: data.data, created_at: data.created_at }, idHeaders(key));
       }),
 
-      DELETE: withApiLog(async ({ request, params }) => {
+      DELETE: withApiLog<{ collection: string }>(async ({ request, params }) => {
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
