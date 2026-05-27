@@ -21,6 +21,7 @@ export function HnAuthShell({
           <div className="flex flex-col items-center w-full">
             {/* mobile logo */}
             <div className="lg:hidden mb-6 text-center">
+              <div className="text-2xl font-black leading-none mb-1" style={{ color: "var(--hn-text-muted)", fontFamily: "Outfit, sans-serif" }}>1</div>
               <div className="hn-text-gold text-5xl font-black" style={{ fontFamily: "Outfit, sans-serif" }}>HN</div>
               <p className="text-xs mt-1" style={{ color: "var(--hn-text-muted)" }}>حساب موحّد لجميع خدمات HN</p>
             </div>

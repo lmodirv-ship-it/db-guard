@@ -21,6 +21,7 @@ export function HnServicesPanel() {
     <div className="hidden lg:flex flex-col items-center text-center px-6 py-8">
       {/* Logo + headline */}
       <div className="mb-2">
+        <div className="text-3xl font-black leading-none mb-1" style={{ color: "var(--hn-text-muted)", fontFamily: "Outfit, sans-serif" }}>1</div>
         <div className="hn-text-gold text-6xl font-black tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>HN</div>
       </div>
       <h1 className="text-4xl font-black leading-tight mb-2" style={{ color: "var(--hn-text)" }}>
