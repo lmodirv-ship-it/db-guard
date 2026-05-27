@@ -69,8 +69,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const url = new URL(request.url);
         const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 50), 1), 200);
@@ -92,8 +93,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         let body: unknown;
         try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }, idHeaders(key)); }
@@ -121,8 +123,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const id = new URL(request.url).searchParams.get("id");
         if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json(400, { ok: false, error: "invalid_id" }, idHeaders(key));
