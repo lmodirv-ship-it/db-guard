@@ -169,14 +169,6 @@ function ProjectsPage() {
                     </button>
                   </div>
 
-                    <button
-                      onClick={() => { if (confirm(`حذف ${s.name}؟`)) remove.mutate(s.id); }}
-                      className="p-2 rounded-lg hover:bg-destructive/10 text-destructive"
-                      title="حذف"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
 
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     <FeatureToggle
