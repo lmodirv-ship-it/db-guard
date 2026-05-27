@@ -400,3 +400,21 @@ function Snippet({ icon: Icon, title, code }: { icon: React.ComponentType<{ clas
     </div>
   );
 }
+
+function QuickStep({
+  n, icon: Icon, title, desc,
+}: { n: number; icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) {
+  return (
+    <li className="relative rounded-xl border border-border bg-background/40 p-3">
+      <span className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground text-[11px] font-bold grid place-items-center">
+        {n}
+      </span>
+      <div className="flex items-center gap-2 mb-1.5">
+        <Icon className="h-4 w-4 text-primary" />
+        <span className="text-xs font-semibold">{title}</span>
+      </div>
+      <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
+    </li>
+  );
+}
+
