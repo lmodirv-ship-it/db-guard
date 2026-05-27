@@ -49,6 +49,7 @@ import { Route as ApiTablesIndexRouteImport } from './routes/api/tables/index'
 import { Route as ApiProjectsIndexRouteImport } from './routes/api/projects/index'
 import { Route as ApiBackupsIndexRouteImport } from './routes/api/backups/index'
 import { Route as ApiApiKeysIndexRouteImport } from './routes/api/api-keys/index'
+import { Route as OwnerProjectsSiteIdRouteImport } from './routes/owner.projects.$siteId'
 import { Route as DashboardTablesIdRouteImport } from './routes/dashboard.tables.$id'
 import { Route as ApiTablesIdRouteImport } from './routes/api/tables/$id'
 import { Route as ApiSsoSignupRouteImport } from './routes/api/sso/signup'
@@ -282,6 +283,11 @@ const ApiApiKeysIndexRoute = ApiApiKeysIndexRouteImport.update({
   path: '/api/api-keys/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OwnerProjectsSiteIdRoute = OwnerProjectsSiteIdRouteImport.update({
+  id: '/$siteId',
+  path: '/$siteId',
+  getParentRoute: () => OwnerProjectsRoute,
+} as any)
 const DashboardTablesIdRoute = DashboardTablesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -471,7 +477,7 @@ export interface FileRoutesByFullPath {
   '/owner/health': typeof OwnerHealthRoute
   '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
-  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/projects': typeof OwnerProjectsRouteWithChildren
   '/owner/records': typeof OwnerRecordsRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
@@ -500,6 +506,7 @@ export interface FileRoutesByFullPath {
   '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -543,7 +550,7 @@ export interface FileRoutesByTo {
   '/owner/health': typeof OwnerHealthRoute
   '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
-  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/projects': typeof OwnerProjectsRouteWithChildren
   '/owner/records': typeof OwnerRecordsRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByTo {
   '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
   '/api/api-keys': typeof ApiApiKeysIndexRoute
   '/api/backups': typeof ApiBackupsIndexRoute
   '/api/projects': typeof ApiProjectsIndexRoute
@@ -618,7 +626,7 @@ export interface FileRoutesById {
   '/owner/health': typeof OwnerHealthRoute
   '/owner/integrations': typeof OwnerIntegrationsRoute
   '/owner/jobs': typeof OwnerJobsRoute
-  '/owner/projects': typeof OwnerProjectsRoute
+  '/owner/projects': typeof OwnerProjectsRouteWithChildren
   '/owner/records': typeof OwnerRecordsRoute
   '/owner/roles': typeof OwnerRolesRoute
   '/owner/settings': typeof OwnerSettingsRoute
@@ -647,6 +655,7 @@ export interface FileRoutesById {
   '/api/sso/signup': typeof ApiSsoSignupRoute
   '/api/tables/$id': typeof ApiTablesIdRouteWithChildren
   '/dashboard/tables/$id': typeof DashboardTablesIdRoute
+  '/owner/projects/$siteId': typeof OwnerProjectsSiteIdRoute
   '/api/api-keys/': typeof ApiApiKeysIndexRoute
   '/api/backups/': typeof ApiBackupsIndexRoute
   '/api/projects/': typeof ApiProjectsIndexRoute
@@ -723,6 +732,7 @@ export interface FileRouteTypes {
     | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
+    | '/owner/projects/$siteId'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -795,6 +805,7 @@ export interface FileRouteTypes {
     | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
+    | '/owner/projects/$siteId'
     | '/api/api-keys'
     | '/api/backups'
     | '/api/projects'
@@ -869,6 +880,7 @@ export interface FileRouteTypes {
     | '/api/sso/signup'
     | '/api/tables/$id'
     | '/dashboard/tables/$id'
+    | '/owner/projects/$siteId'
     | '/api/api-keys/'
     | '/api/backups/'
     | '/api/projects/'
@@ -1213,6 +1225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiApiKeysIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/owner/projects/$siteId': {
+      id: '/owner/projects/$siteId'
+      path: '/$siteId'
+      fullPath: '/owner/projects/$siteId'
+      preLoaderRoute: typeof OwnerProjectsSiteIdRouteImport
+      parentRoute: typeof OwnerProjectsRoute
+    }
     '/dashboard/tables/$id': {
       id: '/dashboard/tables/$id'
       path: '/$id'
@@ -1486,6 +1505,18 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface OwnerProjectsRouteChildren {
+  OwnerProjectsSiteIdRoute: typeof OwnerProjectsSiteIdRoute
+}
+
+const OwnerProjectsRouteChildren: OwnerProjectsRouteChildren = {
+  OwnerProjectsSiteIdRoute: OwnerProjectsSiteIdRoute,
+}
+
+const OwnerProjectsRouteWithChildren = OwnerProjectsRoute._addFileChildren(
+  OwnerProjectsRouteChildren,
+)
+
 interface OwnerRouteChildren {
   OwnerAlertsRoute: typeof OwnerAlertsRoute
   OwnerApiKeysRoute: typeof OwnerApiKeysRoute
@@ -1495,7 +1526,7 @@ interface OwnerRouteChildren {
   OwnerHealthRoute: typeof OwnerHealthRoute
   OwnerIntegrationsRoute: typeof OwnerIntegrationsRoute
   OwnerJobsRoute: typeof OwnerJobsRoute
-  OwnerProjectsRoute: typeof OwnerProjectsRoute
+  OwnerProjectsRoute: typeof OwnerProjectsRouteWithChildren
   OwnerRecordsRoute: typeof OwnerRecordsRoute
   OwnerRolesRoute: typeof OwnerRolesRoute
   OwnerSettingsRoute: typeof OwnerSettingsRoute
@@ -1514,7 +1545,7 @@ const OwnerRouteChildren: OwnerRouteChildren = {
   OwnerHealthRoute: OwnerHealthRoute,
   OwnerIntegrationsRoute: OwnerIntegrationsRoute,
   OwnerJobsRoute: OwnerJobsRoute,
-  OwnerProjectsRoute: OwnerProjectsRoute,
+  OwnerProjectsRoute: OwnerProjectsRouteWithChildren,
   OwnerRecordsRoute: OwnerRecordsRoute,
   OwnerRolesRoute: OwnerRolesRoute,
   OwnerSettingsRoute: OwnerSettingsRoute,

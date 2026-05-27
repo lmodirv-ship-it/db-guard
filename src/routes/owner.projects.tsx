@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageHeader, Panel, EmptyState } from "@/components/owner/PageShell";
@@ -139,25 +140,26 @@ function ProjectsPage() {
               return (
                 <div key={s.id} className="rounded-xl border border-border bg-background/40 p-4">
                   <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <div className="min-w-0">
+                    <Link
+                      to="/owner/projects/$siteId"
+                      params={{ siteId: s.id }}
+                      className="min-w-0 flex-1 group"
+                    >
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold">{s.name}</span>
+                        <span className="font-semibold group-hover:text-primary transition">{s.name}</span>
                         {s.verified_at && (
                           <span className="inline-flex items-center gap-1 text-[10px] rounded-full bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
                             <ShieldCheck className="h-3 w-3" /> verified
                           </span>
                         )}
                       </div>
-                      <a
-                        href={s.site_url} target="_blank" rel="noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-1 mt-0.5"
-                      >
+                      <div className="text-xs text-muted-foreground font-mono inline-flex items-center gap-1 mt-0.5 truncate">
                         <ExternalLink className="h-3 w-3" /> {s.site_url}
-                      </a>
-                      <div className="text-[11px] text-muted-foreground mt-1">
-                        {ws?.name ?? "—"}
                       </div>
-                    </div>
+                      <div className="text-[11px] text-muted-foreground mt-1">
+                        {ws?.name ?? "—"} · اضغط للإدارة والربط
+                      </div>
+                    </Link>
                     <button
                       onClick={() => { if (confirm(`حذف ${s.name}؟`)) remove.mutate(s.id); }}
                       className="p-2 rounded-lg hover:bg-destructive/10 text-destructive"
@@ -166,6 +168,7 @@ function ProjectsPage() {
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
+
 
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     <FeatureToggle
