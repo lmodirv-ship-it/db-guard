@@ -28,11 +28,11 @@ export const Route = createFileRoute("/api/auth/login")({
         const sql = getSql();
         try {
           const rows = (await sql`
-            SELECT id, tenant_id, password_hash
+            SELECT id, tenant_id, password_hash, role
             FROM users
             WHERE email = ${email}
             LIMIT 1
-          `) as Array<{ id: string; tenant_id: string; password_hash: string }>;
+          `) as Array<{ id: string; tenant_id: string; password_hash: string; role: string }>;
 
           if (rows.length === 0) {
             // Same delay path as wrong password to avoid user enumeration.
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/api/auth/login")({
             email,
           });
           return jsonOk(
-            { user: { id: row.id, email, tenantId: row.tenant_id } },
+            { user: { id: row.id, email, tenantId: row.tenant_id, role: row.role } },
             { headers: { "Set-Cookie": buildSessionCookie(token) } },
           );
         } catch (err) {

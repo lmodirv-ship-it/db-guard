@@ -52,7 +52,7 @@ function LoginPage() {
         if (ownerRes.ok) {
           const data = await ownerRes.json().catch(() => null);
           if (data?.ok) {
-            const isOwner = /lmodirv@gmail\.com/i.test(email.trim());
+            const isOwner = data?.user?.role === "owner";
             window.location.href = isOwner ? "/owner" : "/dashboard";
             return;
           }

@@ -30,7 +30,7 @@ export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await supabaseAdmin
       .from("hn_api_keys")
-      .select("id, label, key_prefix, key_hint, full_key, workspace_id, hn_user_id, created_at, last_used_at, revoked_at")
+      .select("id, label, key_prefix, key_hint, workspace_id, hn_user_id, created_at, last_used_at, revoked_at")
       .order("created_at", { ascending: false });
     if (error) throw new Error("list_failed");
     return { keys: data ?? [] };
@@ -67,7 +67,6 @@ export const ownerGenerateApiKey = createServerFn({ method: "POST" })
         key_hash: hash,
         key_prefix: prefix,
         key_hint: hint,
-        full_key: key,
       })
       .select("id")
       .single();
@@ -151,7 +150,6 @@ export const ownerAddSite = createServerFn({ method: "POST" })
       key_hash: hash,
       key_prefix: prefix,
       key_hint: hint,
-      full_key: key,
     });
 
     return { id: row.id, apiKey: key, name: data.name, siteUrl: data.siteUrl };
@@ -192,7 +190,7 @@ export const getSiteOverview = createServerFn({ method: "GET" })
 
     const { data: keys } = await supabaseAdmin
       .from("hn_api_keys")
-      .select("id, label, key_prefix, key_hint, full_key, created_at, last_used_at, revoked_at")
+      .select("id, label, key_prefix, key_hint, created_at, last_used_at, revoked_at")
       .eq("workspace_id", site.workspace_id)
       .order("created_at", { ascending: false });
 
