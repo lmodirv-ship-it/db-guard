@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { verifyApiKey } from "@/lib/platform/verify-api-key.server";
+import { verifySiteSlug } from "@/lib/platform/verify-site.server";
 import { getStorageObject } from "@/lib/platform/storage.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key, X-HN-Site",
   "Access-Control-Max-Age": "86400",
 };
 
@@ -33,8 +34,17 @@ export const Route = createFileRoute("/api/public/v1/storage/file")({
         }
 
         if (row.visibility !== "public") {
-          const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-          if (!key || key.workspace_id !== row.workspace_id) {
+          let authorized = false;
+          const slug = request.headers.get("x-hn-site");
+          if (slug) {
+            const { site } = await verifySiteSlug(slug, request.headers.get("origin"));
+            if (site && site.workspace_id === row.workspace_id) authorized = true;
+          }
+          if (!authorized) {
+            const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
+            if (key && key.workspace_id === row.workspace_id) authorized = true;
+          }
+          if (!authorized) {
             return new Response(JSON.stringify({ ok: false, error: "forbidden" }), {
               status: 401,
               headers: { "Content-Type": "application/json", ...CORS },
