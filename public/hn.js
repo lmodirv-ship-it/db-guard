@@ -12,7 +12,12 @@
   var script = document.currentScript;
   var BASE = (script && script.getAttribute("data-base")) || "https://hn-bd.online";
   var SITE_SLUG = (script && script.getAttribute("data-site")) || "";
+  var DEBUG = !!(script && script.getAttribute("data-debug"));
   var TOKEN_KEY = "hn_token";
+  function log() {
+    if (!DEBUG) return;
+    try { console.log.apply(console, ["[HN]"].concat([].slice.call(arguments))); } catch (_) {}
+  }
   var USER_KEY = "hn_user";
 
   if (!SITE_SLUG) {

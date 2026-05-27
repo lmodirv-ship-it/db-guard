@@ -58,6 +58,7 @@ import { Route as ApiSsoSignupRouteImport } from './routes/api/sso/signup'
 import { Route as ApiSsoLoginRouteImport } from './routes/api/sso/login'
 import { Route as ApiRecordsIdRouteImport } from './routes/api/records/$id'
 import { Route as ApiPublicConfigRouteImport } from './routes/api/public/config'
+import { Route as ApiPublicAnalyticsRouteImport } from './routes/api/public/analytics'
 import { Route as ApiJobsEnqueueRouteImport } from './routes/api/jobs/enqueue'
 import { Route as ApiJobsDrainRouteImport } from './routes/api/jobs/drain'
 import { Route as ApiHnRolesRouteImport } from './routes/api/hn/roles'
@@ -342,6 +343,11 @@ const ApiPublicConfigRoute = ApiPublicConfigRouteImport.update({
   path: '/api/public/config',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAnalyticsRoute = ApiPublicAnalyticsRouteImport.update({
+  id: '/api/public/analytics',
+  path: '/api/public/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiJobsEnqueueRoute = ApiJobsEnqueueRouteImport.update({
   id: '/api/jobs/enqueue',
   path: '/api/jobs/enqueue',
@@ -589,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByTo {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -766,6 +774,7 @@ export interface FileRoutesById {
   '/api/hn/roles': typeof ApiHnRolesRoute
   '/api/jobs/drain': typeof ApiJobsDrainRoute
   '/api/jobs/enqueue': typeof ApiJobsEnqueueRoute
+  '/api/public/analytics': typeof ApiPublicAnalyticsRoute
   '/api/public/config': typeof ApiPublicConfigRoute
   '/api/records/$id': typeof ApiRecordsIdRoute
   '/api/sso/login': typeof ApiSsoLoginRoute
@@ -857,6 +866,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -944,6 +954,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -1033,6 +1044,7 @@ export interface FileRouteTypes {
     | '/api/hn/roles'
     | '/api/jobs/drain'
     | '/api/jobs/enqueue'
+    | '/api/public/analytics'
     | '/api/public/config'
     | '/api/records/$id'
     | '/api/sso/login'
@@ -1094,6 +1106,7 @@ export interface RootRouteChildren {
   ApiHnRolesRoute: typeof ApiHnRolesRoute
   ApiJobsDrainRoute: typeof ApiJobsDrainRoute
   ApiJobsEnqueueRoute: typeof ApiJobsEnqueueRoute
+  ApiPublicAnalyticsRoute: typeof ApiPublicAnalyticsRoute
   ApiPublicConfigRoute: typeof ApiPublicConfigRoute
   ApiRecordsIdRoute: typeof ApiRecordsIdRoute
   ApiSsoLoginRoute: typeof ApiSsoLoginRoute
@@ -1467,6 +1480,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/config'
       fullPath: '/api/public/config'
       preLoaderRoute: typeof ApiPublicConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/analytics': {
+      id: '/api/public/analytics'
+      path: '/api/public/analytics'
+      fullPath: '/api/public/analytics'
+      preLoaderRoute: typeof ApiPublicAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/jobs/enqueue': {
@@ -1900,6 +1920,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnRolesRoute: ApiHnRolesRoute,
   ApiJobsDrainRoute: ApiJobsDrainRoute,
   ApiJobsEnqueueRoute: ApiJobsEnqueueRoute,
+  ApiPublicAnalyticsRoute: ApiPublicAnalyticsRoute,
   ApiPublicConfigRoute: ApiPublicConfigRoute,
   ApiRecordsIdRoute: ApiRecordsIdRoute,
   ApiSsoLoginRoute: ApiSsoLoginRoute,
