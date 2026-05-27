@@ -1,46 +1,161 @@
 /**
- * HN Connect — سطر واحد لربط أي موقع بـ hn-bd.online
+ * HN SDK — single-line integration for any external site.
  *
- * الاستعمال (الجديد، الموصى به):
- *   <script src="https://hn-bd.online/hn.js" data-site="hn-chat"></script>
+ *   <script src="https://hn-bd.online/hn.js" data-site="site-slug"></script>
  *
- * يقوم تلقائيًا بـ:
- *   1. جلب الإعدادات العامة من /api/public/config?site=hn-chat
- *   2. التحقق من أن دومين الموقع الحالي ضمن allowed_origins
- *   3. تهيئة HN.db و HN.storage و HN.auth بدون أي مفاتيح في المتصفح
+ * Exposes window.HN = { auth, db, storage, users, permissions, analytics, ready }
+ * All calls authenticate with an opaque bearer token (hns_…) stored in localStorage.
  *
- * الإعدادات السرية (مفاتيح API) تبقى دائمًا على الخادم.
- *
- * (متوافق مع الطريقة القديمة data-key="dbg_…" للسيرفر-إلى-سيرفر فقط)
+ * Independent of Supabase. Talks to /api/hn/* and /api/public/config.
  */
 (function () {
   var script = document.currentScript;
   var BASE = (script && script.getAttribute("data-base")) || "https://hn-bd.online";
   var SITE_SLUG = (script && script.getAttribute("data-site")) || "";
-  var LEGACY_KEY = (script && script.getAttribute("data-key")) || "";
-  var APP_KEY = (script && script.getAttribute("data-app")) || "";
-  var STORAGE = "hn_sso";
+  var TOKEN_KEY = "hn_token";
+  var USER_KEY = "hn_user";
 
-  if (!SITE_SLUG && !LEGACY_KEY) {
-    console.error("[HN] data-site (slug) is required on the <script> tag.");
+  if (!SITE_SLUG) {
+    console.error("[HN] data-site is required on the <script> tag.");
     return;
   }
 
   // ---------- helpers ----------
-  function endpoint(p) { return BASE.replace(/\/$/, "") + p; }
-  function authHeaders(extra) {
-    var h = extra || {};
-    if (SITE_SLUG) h["X-HN-Site"] = SITE_SLUG;
-    else if (LEGACY_KEY) h["X-HN-Api-Key"] = LEGACY_KEY;
+  function ep(p) { return BASE.replace(/\/$/, "") + p; }
+  function getToken() { try { return localStorage.getItem(TOKEN_KEY) || null; } catch (_) { return null; } }
+  function setToken(t) {
+    try {
+      if (t) localStorage.setItem(TOKEN_KEY, t);
+      else   localStorage.removeItem(TOKEN_KEY);
+    } catch (_) {}
+  }
+  function setUser(u) {
+    try {
+      if (u) localStorage.setItem(USER_KEY, JSON.stringify(u));
+      else   localStorage.removeItem(USER_KEY);
+    } catch (_) {}
+    HN.user = u || null;
+  }
+  function loadUser() {
+    try { return JSON.parse(localStorage.getItem(USER_KEY) || "null"); } catch (_) { return null; }
+  }
+  function headers(extra) {
+    var h = { "X-HN-Site": SITE_SLUG };
+    var t = getToken();
+    if (t) h["Authorization"] = "Bearer " + t;
+    if (extra) for (var k in extra) h[k] = extra[k];
     return h;
   }
-  function jsonHeaders() { return authHeaders({ "Content-Type": "application/json" }); }
-  function loadSso() {
-    try { return JSON.parse(localStorage.getItem(STORAGE) || "null"); } catch (_) { return null; }
+  function jsonHeaders() { return headers({ "Content-Type": "application/json" }); }
+
+  // ---------- offline queue (for non-critical writes) ----------
+  var QUEUE_KEY = "hn_queue";
+  function loadQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); } catch (_) { return []; } }
+  function saveQueue(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch (_) {} }
+  function enqueue(req) {
+    var q = loadQueue(); q.push(req); saveQueue(q);
   }
-  function saveSso(v) { localStorage.setItem(STORAGE, JSON.stringify(v)); }
-  function clearSso() { localStorage.removeItem(STORAGE); }
-  function readAsBase64(file) {
+  function drainQueue() {
+    if (!navigator.onLine) return;
+    var q = loadQueue();
+    if (!q.length) return;
+    saveQueue([]);
+    q.forEach(function (r) {
+      fetch(ep(r.path), { method: r.method, headers: jsonHeaders(), body: r.body }).catch(function () { enqueue(r); });
+    });
+  }
+  window.addEventListener("online", drainQueue);
+
+  // ---------- core request with retry ----------
+  function request(path, opts) {
+    opts = opts || {};
+    var init = {
+      method: opts.method || "GET",
+      headers: opts.json ? jsonHeaders() : headers(opts.headers),
+    };
+    if (opts.body !== undefined) init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body);
+    var attempt = 0;
+    function go() {
+      attempt++;
+      return fetch(ep(path), init).then(function (r) {
+        if (r.status === 401) { setToken(null); setUser(null); }
+        return r.json().catch(function () { return { ok: false, error: "non_json", status: r.status }; });
+      }).catch(function (e) {
+        if (attempt < 3 && navigator.onLine) {
+          return new Promise(function (res) { setTimeout(res, 300 * attempt); }).then(go);
+        }
+        return { ok: false, error: "network_error", message: String(e) };
+      });
+    }
+    return go();
+  }
+
+  // ---------- HN.auth ----------
+  var auth = {
+    signup: function (email, password, name) {
+      return request("/api/hn/auth/signup", {
+        method: "POST", json: true,
+        body: { email: email, password: password, name: name, site: SITE_SLUG },
+      }).then(function (r) {
+        if (r && r.ok && r.token) { setToken(r.token); setUser(r.user); }
+        return r;
+      });
+    },
+    login: function (email, password) {
+      return request("/api/hn/auth/login", {
+        method: "POST", json: true,
+        body: { email: email, password: password, site: SITE_SLUG },
+      }).then(function (r) {
+        if (r && r.ok && r.token) { setToken(r.token); setUser(r.user); }
+        return r;
+      });
+    },
+    logout: function () {
+      return request("/api/hn/auth/logout", { method: "POST" }).finally(function () {
+        setToken(null); setUser(null);
+      });
+    },
+    me: function () {
+      if (!getToken()) return Promise.resolve(null);
+      return request("/api/hn/auth/me").then(function (r) {
+        if (r && r.ok) setUser(r.user);
+        return r;
+      });
+    },
+    token: getToken,
+  };
+
+  // ---------- HN.db ----------
+  var db = {
+    list: function (collection, opts) {
+      opts = opts || {};
+      var qs = "?limit=" + (opts.limit || 50) + "&offset=" + (opts.offset || 0);
+      return request("/api/hn/db/" + encodeURIComponent(collection) + "/" + qs);
+    },
+    insert: function (collection, data) {
+      var path = "/api/hn/db/" + encodeURIComponent(collection) + "/";
+      if (!navigator.onLine) {
+        enqueue({ path: path, method: "POST", body: JSON.stringify({ data: data }) });
+        return Promise.resolve({ ok: true, queued: true });
+      }
+      return request(path, { method: "POST", json: true, body: { data: data } });
+    },
+    update: function (collection, id, data) {
+      return request(
+        "/api/hn/db/" + encodeURIComponent(collection) + "/" + encodeURIComponent(id),
+        { method: "PATCH", json: true, body: { data: data } },
+      );
+    },
+    delete: function (collection, id) {
+      return request(
+        "/api/hn/db/" + encodeURIComponent(collection) + "/" + encodeURIComponent(id),
+        { method: "DELETE" },
+      );
+    },
+  };
+
+  // ---------- HN.storage ----------
+  function readAsB64(file) {
     return new Promise(function (resolve, reject) {
       var r = new FileReader();
       r.onload = function () {
@@ -52,160 +167,77 @@
       r.readAsDataURL(file);
     });
   }
-
-  // ---------- DB ----------
-  var db = {
-    list: function (collection, opts) {
-      opts = opts || {};
-      var qs = new URLSearchParams({
-        limit: String(opts.limit || 50),
-        offset: String(opts.offset || 0),
-      }).toString();
-      return fetch(endpoint("/api/public/v1/data/" + encodeURIComponent(collection) + "?" + qs), {
-        headers: authHeaders(),
-      }).then(function (r) { return r.json(); });
-    },
-    insert: function (collection, data) {
-      return fetch(endpoint("/api/public/v1/data/" + encodeURIComponent(collection)), {
-        method: "POST", headers: jsonHeaders(),
-        body: JSON.stringify({ data: data || {} }),
-      }).then(function (r) { return r.json(); });
-    },
-    remove: function (collection, id) {
-      return fetch(endpoint("/api/public/v1/data/" + encodeURIComponent(collection) + "?id=" + encodeURIComponent(id)), {
-        method: "DELETE", headers: authHeaders(),
-      }).then(function (r) { return r.json(); });
-    },
-  };
-
-  // ---------- Storage ----------
   var storage = {
     upload: function (file, opts) {
       opts = opts || {};
-      return readAsBase64(file).then(function (b64) {
-        return fetch(endpoint("/api/public/v1/storage"), {
-          method: "POST", headers: jsonHeaders(),
-          body: JSON.stringify({
+      return readAsB64(file).then(function (b64) {
+        return request("/api/hn/storage/", {
+          method: "POST", json: true,
+          body: {
             fileName: opts.fileName || file.name,
             contentType: opts.contentType || file.type || "application/octet-stream",
             dataBase64: b64,
-            siteHost: opts.siteHost || location.host,
-            visibility: opts.visibility || "private",
-          }),
-        }).then(function (r) { return r.json(); });
+          },
+        });
       });
     },
     list: function (opts) {
       opts = opts || {};
-      var p = new URLSearchParams();
-      if (opts.limit) p.set("limit", String(opts.limit));
-      p.set("siteHost", opts.siteHost || location.host);
-      return fetch(endpoint("/api/public/v1/storage?" + p.toString()), {
-        headers: authHeaders(),
-      }).then(function (r) { return r.json(); });
+      return request("/api/hn/storage/?limit=" + (opts.limit || 50));
     },
-    remove: function (key) {
-      return fetch(endpoint("/api/public/v1/storage?key=" + encodeURIComponent(key)), {
-        method: "DELETE", headers: authHeaders(),
-      }).then(function (r) { return r.json(); });
+    delete: function (id) {
+      return request("/api/hn/storage/" + encodeURIComponent(id), { method: "DELETE" });
     },
-    fileUrl: function (key) {
-      return endpoint("/api/public/v1/storage/file?key=" + encodeURIComponent(key));
+    url: function (id) {
+      return ep("/api/hn/storage/" + encodeURIComponent(id));
     },
   };
 
-  // ---------- Auth / SSO ----------
-  var state = loadSso();
-  var auth = {
-    user: state && state.user,
-    session_token: state && state.session_token,
-    login: function (opts) {
-      opts = opts || {};
-      var url = endpoint("/login")
-        + "?app=" + encodeURIComponent(APP_KEY || SITE_SLUG || location.host)
-        + "&redirect=" + encodeURIComponent(opts.returnTo || location.href);
-      location.href = url;
-    },
-    signup: function (opts) {
-      opts = opts || {};
-      var url = endpoint("/signup")
-        + "?app=" + encodeURIComponent(APP_KEY || SITE_SLUG || location.host)
-        + "&redirect=" + encodeURIComponent(opts.returnTo || location.href);
-      location.href = url;
-    },
-    logout: function () {
-      clearSso();
-      HN.auth.user = null;
-      HN.auth.session_token = null;
-      HN.user = null;
-    },
-    me: function () {
-      if (!HN.auth.session_token) return Promise.resolve(null);
-      return fetch(endpoint("/api/public/sso/me"), {
-        headers: { Authorization: "Bearer " + HN.auth.session_token },
-      }).then(function (r) { return r.json(); });
+  // ---------- HN.permissions ----------
+  var permissions = {
+    list: function () { return request("/api/hn/roles"); },
+    has: function (code) {
+      return auth.me().then(function (r) {
+        return !!(r && r.ok && r.permissions && r.permissions.indexOf(code) >= 0);
+      });
     },
   };
 
-  // ---------- Expose ----------
+  // ---------- HN.users (current only — admin endpoints arrive separately) ----------
+  var users = { me: auth.me };
+
+  // ---------- HN.analytics (lightweight beacon) ----------
+  var analytics = {
+    track: function (event, props) {
+      try {
+        var body = JSON.stringify({ event: event, props: props || {}, ts: Date.now(), site: SITE_SLUG });
+        if (navigator.sendBeacon) navigator.sendBeacon(ep("/api/public/analytics"), body);
+        else fetch(ep("/api/public/analytics"), { method: "POST", headers: { "Content-Type": "application/json" }, body: body, keepalive: true }).catch(function () {});
+      } catch (_) {}
+    },
+  };
+
+  // ---------- expose + boot ----------
   window.HN = {
-    db: db,
-    storage: storage,
-    auth: auth,
-    user: auth.user,
-    site: SITE_SLUG,
+    auth: auth, db: db, storage: storage,
+    users: users, permissions: permissions, analytics: analytics,
+    site: SITE_SLUG, baseUrl: BASE,
+    user: loadUser(),
     config: null,
     ready: null,
-    baseUrl: BASE,
+    version: "2.0.0",
   };
 
-  // ---------- HN Connect: fetch public config + validate origin ----------
-  if (SITE_SLUG) {
-    HN.ready = fetch(endpoint("/api/public/config?site=" + encodeURIComponent(SITE_SLUG)))
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        if (!j || !j.ok) {
-          console.error("[HN] Connect failed:", (j && j.error) || "unknown");
-          return null;
-        }
-        HN.config = j.site;
-        if (!APP_KEY) APP_KEY = j.site.app_key || SITE_SLUG;
-        // Optional client-side sanity check (the server has already validated Origin).
-        var here = location.protocol + "//" + location.host;
-        var origins = j.site.allowed_origins || [];
-        var ok = origins.length === 0
-          || origins.some(function (o) { return String(o).toLowerCase().replace(/\/$/, "") === here.toLowerCase(); })
-          || here.indexOf("localhost") >= 0 || here.indexOf("127.0.0.1") >= 0;
-        if (!ok) console.warn("[HN] current origin not in allowed list:", here, origins);
-        window.dispatchEvent(new CustomEvent("hn:ready", { detail: j.site }));
-        return j.site;
-      })
-      .catch(function (e) {
-        console.error("[HN] Connect error:", e);
-        return null;
-      });
-  } else {
-    HN.ready = Promise.resolve(null);
-  }
-
-  // ---------- Capture SSO ticket on return ----------
-  var params = new URLSearchParams(location.search);
-  var ticket = params.get("hn_ticket");
-  if (ticket) {
-    fetch(endpoint("/api/public/sso/verify"), {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ticket: ticket, app_key: APP_KEY || SITE_SLUG || location.host }),
-    }).then(function (r) { return r.json(); }).then(function (j) {
-      if (j && j.ok) {
-        saveSso({ user: j.user, session_token: j.session_token, expires_at: j.expires_at });
-        HN.auth.user = j.user;
-        HN.auth.session_token = j.session_token;
-        HN.user = j.user;
-        params.delete("hn_ticket");
-        var q = params.toString();
-        history.replaceState({}, "", location.pathname + (q ? "?" + q : "") + location.hash);
-        window.dispatchEvent(new CustomEvent("hn:signin", { detail: j.user }));
-      }
-    }).catch(function () {});
-  }
+  HN.ready = fetch(ep("/api/public/config?site=" + encodeURIComponent(SITE_SLUG)))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !j.ok) { console.error("[HN] config failed:", j && j.error); return null; }
+      HN.config = j.site;
+      window.dispatchEvent(new CustomEvent("hn:ready", { detail: j.site }));
+      // refresh /me silently if we have a token
+      if (getToken()) auth.me();
+      drainQueue();
+      return j.site;
+    })
+    .catch(function (e) { console.error("[HN] connect error:", e); return null; });
 })();
