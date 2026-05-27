@@ -167,3 +167,86 @@ function QuickStart() {
     </div>
   );
 }
+
+function UniversalSignupLink() {
+  const [siteUrl, setSiteUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const universal = `${BASE}/signup`;
+  const personalized = siteUrl
+    ? `${BASE}/signup?redirect=${encodeURIComponent(siteUrl)}`
+    : universal;
+
+  const copy = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <section className="border-2 border-primary/40 bg-primary/5 rounded-2xl p-6 space-y-4">
+      <div className="flex items-center gap-3">
+        <span className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
+          <Link2 className="w-5 h-5" />
+        </span>
+        <div>
+          <h3 className="text-xl font-bold">رابط التسجيل الموحّد</h3>
+          <p className="text-xs text-muted-foreground">
+            رابط واحد ترسله لمستخدميك من أي موقع — يسجّلون مرّة واحدة على HN ويعودون مسجَّلين إلى موقعك.
+          </p>
+        </div>
+      </div>
+
+      {/* Universal URL */}
+      <div className="rounded-xl border border-border bg-background/60 overflow-hidden">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-primary/10">
+          <span className="text-xs font-bold text-primary">🌐 الرابط العام (يصلح لأي موقع)</span>
+          <div className="flex items-center gap-1.5">
+            <a href={universal} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-[11px] hover:border-primary/40">
+              <ExternalLink className="h-3 w-3" /> فتح
+            </a>
+            <button onClick={() => copy(universal)}
+              className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2.5 py-1 text-[11px] font-bold hover:opacity-90">
+              {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />} نسخ
+            </button>
+          </div>
+        </div>
+        <code className="block px-3 py-2.5 text-sm font-mono break-all select-all">{universal}</code>
+      </div>
+
+      {/* Personalized URL builder */}
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-muted-foreground">
+          أو أنشئ رابطاً مخصصاً يُعيد المستخدم تلقائياً إلى موقعك بعد التسجيل:
+        </label>
+        <input
+          type="url"
+          value={siteUrl}
+          onChange={(e) => setSiteUrl(e.target.value)}
+          placeholder="https://my-site.lovable.app"
+          dir="ltr"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm font-mono focus:border-primary outline-none"
+        />
+        {siteUrl && (
+          <div className="rounded-xl border border-border bg-background/60 overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-emerald-500/10">
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">✨ رابطك المخصّص</span>
+              <button onClick={() => copy(personalized)}
+                className="inline-flex items-center gap-1 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 text-[11px] font-bold">
+                <Copy className="h-3 w-3" /> نسخ
+              </button>
+            </div>
+            <code className="block px-3 py-2 text-xs font-mono break-all select-all">{personalized}</code>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-lg bg-muted/40 border border-border px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+        <strong className="text-foreground">طريقة الاستخدام:</strong> ضع الرابط كزر «إنشاء حساب» أو «دخول» في موقعك.
+        المستخدم يضغطه → يفتح صفحة HN الموحّدة → يسجّل/يدخل → يعود إلى موقعك مع <code className="font-mono">?hn_ticket=…</code> →
+        سكربت <code className="font-mono">hn-sso.js</code> يحوّل التذكرة إلى جلسة تلقائياً.
+      </div>
+    </section>
+  );
+}
