@@ -36,6 +36,7 @@ import { Route as OwnerApiKeysRouteImport } from './routes/owner.api-keys'
 import { Route as OwnerAlertsRouteImport } from './routes/owner.alerts'
 import { Route as DashboardTeamRouteImport } from './routes/dashboard.team'
 import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
+import { Route as DashboardSitesDiscoverRouteImport } from './routes/dashboard.sites-discover'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardSdkTestRouteImport } from './routes/dashboard.sdk-test'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
@@ -233,6 +234,11 @@ const DashboardTeamRoute = DashboardTeamRouteImport.update({
 const DashboardTablesRoute = DashboardTablesRouteImport.update({
   id: '/tables',
   path: '/tables',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSitesDiscoverRoute = DashboardSitesDiscoverRouteImport.update({
+  id: '/sites-discover',
+  path: '/sites-discover',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
@@ -571,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/sites-discover': typeof DashboardSitesDiscoverRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -661,6 +668,7 @@ export interface FileRoutesByTo {
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/sites-discover': typeof DashboardSitesDiscoverRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -754,6 +762,7 @@ export interface FileRoutesById {
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/sdk-test': typeof DashboardSdkTestRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/sites-discover': typeof DashboardSitesDiscoverRoute
   '/dashboard/tables': typeof DashboardTablesRouteWithChildren
   '/dashboard/team': typeof DashboardTeamRoute
   '/owner/alerts': typeof OwnerAlertsRoute
@@ -848,6 +857,7 @@ export interface FileRouteTypes {
     | '/dashboard/records'
     | '/dashboard/sdk-test'
     | '/dashboard/settings'
+    | '/dashboard/sites-discover'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -938,6 +948,7 @@ export interface FileRouteTypes {
     | '/dashboard/records'
     | '/dashboard/sdk-test'
     | '/dashboard/settings'
+    | '/dashboard/sites-discover'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -1030,6 +1041,7 @@ export interface FileRouteTypes {
     | '/dashboard/records'
     | '/dashboard/sdk-test'
     | '/dashboard/settings'
+    | '/dashboard/sites-discover'
     | '/dashboard/tables'
     | '/dashboard/team'
     | '/owner/alerts'
@@ -1351,6 +1363,13 @@ declare module '@tanstack/react-router' {
       path: '/tables'
       fullPath: '/dashboard/tables'
       preLoaderRoute: typeof DashboardTablesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/sites-discover': {
+      id: '/dashboard/sites-discover'
+      path: '/sites-discover'
+      fullPath: '/dashboard/sites-discover'
+      preLoaderRoute: typeof DashboardSitesDiscoverRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/settings': {
@@ -1820,6 +1839,7 @@ interface DashboardRouteChildren {
   DashboardRecordsRoute: typeof DashboardRecordsRoute
   DashboardSdkTestRoute: typeof DashboardSdkTestRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardSitesDiscoverRoute: typeof DashboardSitesDiscoverRoute
   DashboardTablesRoute: typeof DashboardTablesRouteWithChildren
   DashboardTeamRoute: typeof DashboardTeamRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -1836,6 +1856,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardRecordsRoute: DashboardRecordsRoute,
   DashboardSdkTestRoute: DashboardSdkTestRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardSitesDiscoverRoute: DashboardSitesDiscoverRoute,
   DashboardTablesRoute: DashboardTablesRouteWithChildren,
   DashboardTeamRoute: DashboardTeamRoute,
   DashboardIndexRoute: DashboardIndexRoute,
@@ -1995,3 +2016,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
