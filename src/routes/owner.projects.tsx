@@ -71,6 +71,7 @@ function ProjectsPage() {
       setJustCreated(r);
       setName(""); setUrl("");
       qc.invalidateQueries({ queryKey: ["owner", "sites"] });
+      qc.invalidateQueries({ queryKey: ["owner", "workspaces"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -98,7 +99,7 @@ function ProjectsPage() {
 
       <Panel title="إضافة مشروع جديد" className="mb-6">
         <form
-          onSubmit={(e) => { e.preventDefault(); if (wsId && name && url) create.mutate(); }}
+          onSubmit={(e) => { e.preventDefault(); if (name && url) create.mutate(); }}
           className="grid grid-cols-1 md:grid-cols-4 gap-3"
         >
           <select
@@ -106,7 +107,9 @@ function ProjectsPage() {
             onChange={(e) => setWsId(e.target.value)}
             className="h-10 rounded-xl bg-muted/40 border border-border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
           >
-            {workspaces.length === 0 && <option value="">لا يوجد مساحات عمل</option>}
+            {workspaces.length === 0 && (
+              <option value="">سيتم إنشاء مساحة العمل تلقائيًا</option>
+            )}
             {workspaces.map((w) => (
               <option key={w.id} value={w.id}>{w.name}</option>
             ))}
@@ -122,7 +125,7 @@ function ProjectsPage() {
             className="h-10 rounded-xl bg-muted/40 border border-border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
           />
           <button
-            type="submit" disabled={create.isPending || !wsId || !name || !url}
+            type="submit" disabled={create.isPending || !name || !url}
             className="h-10 px-4 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} إضافة
