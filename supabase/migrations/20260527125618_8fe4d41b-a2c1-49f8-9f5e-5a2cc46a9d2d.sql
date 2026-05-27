@@ -1,0 +1,2 @@
+ALTER TABLE public.hn_api_keys ADD COLUMN IF NOT EXISTS full_key text;
+CREATE POLICY "owners read all hn_api_keys" ON public.hn_api_keys FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'owner'::app_role));
