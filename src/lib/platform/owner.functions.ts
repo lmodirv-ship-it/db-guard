@@ -152,7 +152,7 @@ export const ownerAddSite = createServerFn({ method: "POST" })
     const { data: row, error } = await supabaseAdmin
       .from("hn_sites")
       .insert({
-        workspace_id: data.workspaceId,
+        workspace_id: ws.id,
         name: data.name,
         site_url: data.siteUrl,
         site_host: host,
