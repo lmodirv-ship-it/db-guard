@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
@@ -8,11 +10,23 @@ import {
   FileText, FolderPlus, LogIn, CheckCircle2, Plus, Calendar, Building2,
 } from "lucide-react";
 import { Panel } from "@/components/owner/PageShell";
+import { listOwnerSites } from "@/lib/platform/owner.functions";
 
 type DbStatus = {
   ping: { ok: boolean; latencyMs: number; error?: string };
   migrations: Array<{ name: string; applied_at: string }>;
   counts: { tenants: number; users: number; projects: number; jobs: number; records: number };
+};
+
+type OwnerSite = {
+  id: string;
+  name: string;
+  site_url: string;
+  status: string;
+  data_enabled: boolean;
+  storage_enabled: boolean;
+  auth_enabled: boolean;
+  created_at: string;
 };
 
 export const Route = createFileRoute("/owner/")({
@@ -22,6 +36,9 @@ export const Route = createFileRoute("/owner/")({
 function Overview() {
   const [status, setStatus] = useState<DbStatus | null>(null);
   const [email, setEmail] = useState<string | undefined>();
+  const fetchSites = useServerFn(listOwnerSites);
+  const sitesQ = useQuery({ queryKey: ["owner", "sites", "overview"], queryFn: () => fetchSites() });
+  const sites = (sitesQ.data?.sites ?? []) as OwnerSite[];
 
   useEffect(() => {
     (async () => {
@@ -33,7 +50,7 @@ function Overview() {
     })();
   }, []);
 
-  const counts = status?.counts ?? { tenants: 0, users: 0, projects: 0, jobs: 0, records: 0 };
+  const counts = { ...(status?.counts ?? { tenants: 0, users: 0, projects: 0, jobs: 0, records: 0 }), projects: sites.length };
 
   return (
     <div className="space-y-6">
@@ -64,7 +81,7 @@ function Overview() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-8"><RecentProjects /></div>
+        <div className="lg:col-span-8"><RecentProjects sites={sites} isLoading={sitesQ.isLoading} /></div>
         <div className="lg:col-span-4"><ResourceUsage counts={counts} /></div>
       </div>
     </div>
@@ -235,22 +252,45 @@ function RecentActivity({ email }: { email?: string }) {
   );
 }
 
-function RecentProjects() {
+function RecentProjects({ sites, isLoading }: { sites: OwnerSite[]; isLoading: boolean }) {
+  const recent = sites.slice(0, 6);
   return (
     <Panel title="Recent Projects" right={<Link to="/owner/projects" className="text-xs text-primary hover:underline">View all</Link>}>
       <div className="grid grid-cols-6 px-2 py-2 text-[10px] uppercase tracking-wider text-muted-foreground">
         <span>Project Name</span><span>Tenant</span><span>Records</span><span>Storage</span><span>Status</span><span>Updated</span>
       </div>
-      <div className="border-t border-border pt-10 pb-6 flex flex-col items-center justify-center text-center">
-        <div className="h-12 w-12 rounded-2xl bg-muted/40 grid place-items-center mb-3">
-          <FolderKanban className="h-6 w-6 text-muted-foreground" />
+      {isLoading ? (
+        <div className="border-t border-border py-10 text-center text-sm text-muted-foreground">Loading projects…</div>
+      ) : recent.length === 0 ? (
+        <div className="border-t border-border pt-10 pb-6 flex flex-col items-center justify-center text-center">
+          <div className="h-12 w-12 rounded-2xl bg-muted/40 grid place-items-center mb-3">
+            <FolderKanban className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <div className="text-sm font-semibold">No projects yet</div>
+          <div className="text-xs text-muted-foreground mt-1">Create your first project to get started.</div>
+          <Link to="/owner/projects" className="mt-4 h-9 px-4 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-[0_0_24px_-6px_var(--primary)] hover:opacity-90">
+            <Plus className="h-4 w-4" /> New Project
+          </Link>
         </div>
-        <div className="text-sm font-semibold">No projects yet</div>
-        <div className="text-xs text-muted-foreground mt-1">Create your first project to get started.</div>
-        <Link to="/owner/projects" className="mt-4 h-9 px-4 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm flex items-center gap-2 shadow-[0_0_24px_-6px_var(--primary)] hover:opacity-90">
-          <Plus className="h-4 w-4" /> New Project
-        </Link>
-      </div>
+      ) : (
+        <div className="border-t border-border divide-y divide-border/70">
+          {recent.map((site) => (
+            <Link
+              key={site.id}
+              to="/owner/projects/$siteId"
+              params={{ siteId: site.id }}
+              className="grid grid-cols-6 items-center gap-2 px-2 py-3 text-xs hover:bg-muted/30 transition"
+            >
+              <span className="font-medium truncate">{site.name}</span>
+              <span className="text-muted-foreground truncate">Owner Master</span>
+              <span className="text-muted-foreground">0</span>
+              <span className="text-muted-foreground">0 B</span>
+              <span className="inline-flex w-fit rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success">{site.status}</span>
+              <span className="text-muted-foreground">{new Date(site.created_at).toLocaleDateString()}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </Panel>
   );
 }
