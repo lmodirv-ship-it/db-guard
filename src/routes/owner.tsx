@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FolderKanban, Database, Activity, Files,
-  Users, ShieldCheck, KeyRound,
+  Users, ShieldCheck, KeyRound, Lock,
   ScrollText, BellRing, HeartPulse,
   Plug, Settings as SettingsIcon,
   Search, Bell, HelpCircle, Sun, ChevronDown, Sparkles, Building2,
@@ -28,10 +28,11 @@ const NAV: NavSection[] = [
     { label: "Files",    icon: Files,        to: "/owner/files" },
   ]},
   { title: "Access & Security", items: [
-    { label: "Tenants",  icon: Building2,    to: "/owner/tenants" },
-    { label: "Users",    icon: Users,        to: "/owner/users" },
-    { label: "Roles",    icon: ShieldCheck,  to: "/owner/roles" },
-    { label: "API Keys", icon: KeyRound,     to: "/owner/api-keys" },
+    { label: "Tenants",        icon: Building2,    to: "/owner/tenants" },
+    { label: "Users",          icon: Users,        to: "/owner/users" },
+    { label: "Authentication", icon: Lock,         to: "/owner/auth" },
+    { label: "Roles",          icon: ShieldCheck,  to: "/owner/roles" },
+    { label: "API Keys",       icon: KeyRound,     to: "/owner/api-keys" },
   ]},
   { title: "Monitoring", items: [
     { label: "Audit Logs",    icon: ScrollText, to: "/owner/audit-logs" },
