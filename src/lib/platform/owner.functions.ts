@@ -165,10 +165,13 @@ export const ownerToggleSiteFeature = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertOwner(context.userId);
-    const col = `${data.feature}_enabled` as "auth_enabled" | "storage_enabled" | "data_enabled";
+    const patch: { auth_enabled?: boolean; storage_enabled?: boolean; data_enabled?: boolean } = {};
+    if (data.feature === "auth") patch.auth_enabled = data.enabled;
+    else if (data.feature === "storage") patch.storage_enabled = data.enabled;
+    else patch.data_enabled = data.enabled;
     const { error } = await supabaseAdmin
       .from("hn_sites")
-      .update({ [col]: data.enabled })
+      .update(patch)
       .eq("id", data.siteId);
     if (error) throw new Error("update_failed");
     return { ok: true };
