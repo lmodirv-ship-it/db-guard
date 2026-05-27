@@ -44,20 +44,35 @@ export const listAllApiKeysForOwner = createServerFn({ method: "GET" })
 
 export const ownerGenerateApiKey = createServerFn({ method: "POST" })
   .middleware([requireHnOwner])
-  .inputValidator((d: { workspaceId: string; label?: string }) =>
+  .inputValidator((d: { workspaceId?: string; label?: string }) =>
     z.object({
-      workspaceId: z.string().uuid(),
+      workspaceId: z.string().uuid().optional().or(z.literal("")),
       label: z.string().trim().min(1).max(40).default("owner-generated"),
     }).parse(d),
   )
   .handler(async ({ context, data }) => {
-
-    const { data: ws } = await supabaseAdmin
-      .from("hn_workspaces")
-      .select("id, hn_user_id")
-      .eq("id", data.workspaceId)
-      .maybeSingle();
-    if (!ws) throw new Error("workspace_not_found");
+    // Resolve workspace: explicit ID → lookup; fall back to auto-create.
+    let wsId: string;
+    let wsUserId: string;
+    if (data.workspaceId) {
+      const { data: ws } = await supabaseAdmin
+        .from("hn_workspaces")
+        .select("id, hn_user_id")
+        .eq("id", data.workspaceId)
+        .maybeSingle();
+      if (ws) {
+        wsId = ws.id;
+        wsUserId = ws.hn_user_id;
+      } else {
+        const ensured = await ensureOwnerWorkspaceSupabase({ email: context.email });
+        wsId = ensured.workspaceId;
+        wsUserId = ensured.hnUserId;
+      }
+    } else {
+      const ensured = await ensureOwnerWorkspaceSupabase({ email: context.email });
+      wsId = ensured.workspaceId;
+      wsUserId = ensured.hnUserId;
+    }
 
     const key = generateApiKey();
     const hash = await hashApiKey(key);
@@ -67,8 +82,8 @@ export const ownerGenerateApiKey = createServerFn({ method: "POST" })
     const { data: row, error } = await supabaseAdmin
       .from("hn_api_keys")
       .insert({
-        hn_user_id: ws.hn_user_id,
-        workspace_id: ws.id,
+        hn_user_id: wsUserId,
+        workspace_id: wsId,
         label: data.label,
         key_hash: hash,
         key_prefix: prefix,
@@ -77,7 +92,7 @@ export const ownerGenerateApiKey = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !row) throw new Error("create_failed");
-    return { id: row.id, key };
+    return { id: row.id, key, workspaceId: wsId };
   });
 
 export const ownerRevokeApiKey = createServerFn({ method: "POST" })
