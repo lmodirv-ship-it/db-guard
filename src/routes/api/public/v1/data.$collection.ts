@@ -15,12 +15,13 @@ import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { verifyApiKey } from "@/lib/platform/verify-api-key.server";
+import { verifySiteSlug } from "@/lib/platform/verify-site.server";
 import { withApiLog } from "@/lib/platform/api-log.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-HN-Api-Key, X-HN-Site",
   "Access-Control-Max-Age": "86400",
 };
 
@@ -34,8 +35,29 @@ function json(status: number, body: unknown, extra?: Record<string, string>) {
   });
 }
 
-function idHeaders(key: { workspace_id: string; key_id: string }) {
-  return { "x-hn-workspace": key.workspace_id, "x-hn-key-id": key.key_id };
+function idHeaders(key: { workspace_id: string; key_id?: string }) {
+  return { "x-hn-workspace": key.workspace_id, "x-hn-key-id": key.key_id ?? "site" };
+}
+
+/**
+ * Accept either an API key (server-side) OR an HN Connect site slug + valid Origin.
+ */
+async function resolveAuth(request: Request): Promise<
+  | { ok: true; workspace_id: string; hn_user_id: string; key_id?: string }
+  | { ok: false; error: string; status: number }
+> {
+  const slug = request.headers.get("x-hn-site");
+  if (slug) {
+    const { site, reason } = await verifySiteSlug(slug, request.headers.get("origin"));
+    if (!site) {
+      return { ok: false, error: reason ?? "invalid_site", status: reason === "origin_not_allowed" ? 403 : 401 };
+    }
+    if (!site.data_enabled) return { ok: false, error: "data_not_enabled", status: 403 };
+    return { ok: true, workspace_id: site.workspace_id, hn_user_id: site.hn_user_id };
+  }
+  const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
+  if (!key) return { ok: false, error: "invalid_api_key", status: 401 };
+  return { ok: true, workspace_id: key.workspace_id, hn_user_id: key.hn_user_id, key_id: key.key_id };
 }
 
 export const Route = createFileRoute("/api/public/v1/data/$collection")({
@@ -47,8 +69,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const url = new URL(request.url);
         const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 50), 1), 200);
@@ -70,8 +93,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         let body: unknown;
         try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }, idHeaders(key)); }
@@ -99,8 +123,9 @@ export const Route = createFileRoute("/api/public/v1/data/$collection")({
         const col = CollectionParam.safeParse(params.collection);
         if (!col.success) return json(400, { ok: false, error: "invalid_collection" });
 
-        const key = await verifyApiKey(request.headers.get("x-hn-api-key"));
-        if (!key) return json(401, { ok: false, error: "invalid_api_key" });
+        const auth = await resolveAuth(request);
+        if (!auth.ok) return json(auth.status, { ok: false, error: auth.error });
+        const key = auth;
 
         const id = new URL(request.url).searchParams.get("id");
         if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return json(400, { ok: false, error: "invalid_id" }, idHeaders(key));
