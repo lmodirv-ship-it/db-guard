@@ -75,6 +75,7 @@ import { Route as ApiAdminDbStatusRouteImport } from './routes/api/admin/db-stat
 import { Route as ApiAdminAuditLogsRouteImport } from './routes/api/admin/audit-logs'
 import { Route as ApiAdminApiLogsRouteImport } from './routes/api/admin/api-logs'
 import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$id/index'
+import { Route as ApiHnStorageIndexRouteImport } from './routes/api/hn/storage/index'
 import { Route as ApiHnSitesIndexRouteImport } from './routes/api/hn/sites/index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
@@ -85,13 +86,16 @@ import { Route as ApiPublicSsoMeRouteImport } from './routes/api/public/sso/me'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
+import { Route as ApiHnStorageIdRouteImport } from './routes/api/hn/storage/$id'
 import { Route as ApiHnAuthSignupRouteImport } from './routes/api/hn/auth/signup'
 import { Route as ApiHnAuthMeRouteImport } from './routes/api/hn/auth/me'
 import { Route as ApiHnAuthLogoutRouteImport } from './routes/api/hn/auth/logout'
 import { Route as ApiHnAuthLoginRouteImport } from './routes/api/hn/auth/login'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
+import { Route as ApiHnDbCollectionIndexRouteImport } from './routes/api/hn/db/$collection/index'
 import { Route as ApiPublicV1StorageFileRouteImport } from './routes/api/public/v1/storage.file'
 import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
+import { Route as ApiHnDbCollectionIdRouteImport } from './routes/api/hn/db/$collection/$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -423,6 +427,11 @@ const ApiProjectsIdIndexRoute = ApiProjectsIdIndexRouteImport.update({
   path: '/api/projects/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnStorageIndexRoute = ApiHnStorageIndexRouteImport.update({
+  id: '/api/hn/storage/',
+  path: '/api/hn/storage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHnSitesIndexRoute = ApiHnSitesIndexRouteImport.update({
   id: '/api/hn/sites/',
   path: '/api/hn/sites/',
@@ -474,6 +483,11 @@ const ApiProjectsIdAnalyzeRoute = ApiProjectsIdAnalyzeRouteImport.update({
   path: '/api/projects/$id/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHnStorageIdRoute = ApiHnStorageIdRouteImport.update({
+  id: '/api/hn/storage/$id',
+  path: '/api/hn/storage/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHnAuthSignupRoute = ApiHnAuthSignupRouteImport.update({
   id: '/api/hn/auth/signup',
   path: '/api/hn/auth/signup',
@@ -499,6 +513,11 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiAdminUsersRoute,
 } as any)
+const ApiHnDbCollectionIndexRoute = ApiHnDbCollectionIndexRouteImport.update({
+  id: '/api/hn/db/$collection/',
+  path: '/api/hn/db/$collection/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1StorageFileRoute = ApiPublicV1StorageFileRouteImport.update({
   id: '/file',
   path: '/file',
@@ -510,6 +529,11 @@ const ApiPublicV1DataCollectionRoute =
     path: '/api/public/v1/data/$collection',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiHnDbCollectionIdRoute = ApiHnDbCollectionIdRouteImport.update({
+  id: '/api/hn/db/$collection/$id',
+  path: '/api/hn/db/$collection/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -582,6 +606,7 @@ export interface FileRoutesByFullPath {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -592,9 +617,12 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/hn/sites/': typeof ApiHnSitesIndexRoute
+  '/api/hn/storage/': typeof ApiHnStorageIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
+  '/api/hn/db/$collection/': typeof ApiHnDbCollectionIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -665,6 +693,7 @@ export interface FileRoutesByTo {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -675,9 +704,12 @@ export interface FileRoutesByTo {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/hn/sites': typeof ApiHnSitesIndexRoute
+  '/api/hn/storage': typeof ApiHnStorageIndexRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
+  '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
+  '/api/hn/db/$collection': typeof ApiHnDbCollectionIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -751,6 +783,7 @@ export interface FileRoutesById {
   '/api/hn/auth/logout': typeof ApiHnAuthLogoutRoute
   '/api/hn/auth/me': typeof ApiHnAuthMeRoute
   '/api/hn/auth/signup': typeof ApiHnAuthSignupRoute
+  '/api/hn/storage/$id': typeof ApiHnStorageIdRoute
   '/api/projects/$id/analyze': typeof ApiProjectsIdAnalyzeRoute
   '/api/projects/$id/import': typeof ApiProjectsIdImportRoute
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
@@ -761,9 +794,12 @@ export interface FileRoutesById {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/hn/sites/': typeof ApiHnSitesIndexRoute
+  '/api/hn/storage/': typeof ApiHnStorageIndexRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/hn/db/$collection/$id': typeof ApiHnDbCollectionIdRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
   '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
+  '/api/hn/db/$collection/': typeof ApiHnDbCollectionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -838,6 +874,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -848,9 +885,12 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/hn/sites/'
+    | '/api/hn/storage/'
     | '/api/projects/$id/'
+    | '/api/hn/db/$collection/$id'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
+    | '/api/hn/db/$collection/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -921,6 +961,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -931,9 +972,12 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/hn/sites'
+    | '/api/hn/storage'
     | '/api/projects/$id'
+    | '/api/hn/db/$collection/$id'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
+    | '/api/hn/db/$collection'
   id:
     | '__root__'
     | '/'
@@ -1006,6 +1050,7 @@ export interface FileRouteTypes {
     | '/api/hn/auth/logout'
     | '/api/hn/auth/me'
     | '/api/hn/auth/signup'
+    | '/api/hn/storage/$id'
     | '/api/projects/$id/analyze'
     | '/api/projects/$id/import'
     | '/api/projects/$id/verify'
@@ -1016,9 +1061,12 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/hn/sites/'
+    | '/api/hn/storage/'
     | '/api/projects/$id/'
+    | '/api/hn/db/$collection/$id'
     | '/api/public/v1/data/$collection'
     | '/api/public/v1/storage/file'
+    | '/api/hn/db/$collection/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1060,6 +1108,7 @@ export interface RootRouteChildren {
   ApiHnAuthLogoutRoute: typeof ApiHnAuthLogoutRoute
   ApiHnAuthMeRoute: typeof ApiHnAuthMeRoute
   ApiHnAuthSignupRoute: typeof ApiHnAuthSignupRoute
+  ApiHnStorageIdRoute: typeof ApiHnStorageIdRoute
   ApiProjectsIdAnalyzeRoute: typeof ApiProjectsIdAnalyzeRoute
   ApiProjectsIdImportRoute: typeof ApiProjectsIdImportRoute
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
@@ -1068,8 +1117,11 @@ export interface RootRouteChildren {
   ApiPublicV1StorageRoute: typeof ApiPublicV1StorageRouteWithChildren
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiHnSitesIndexRoute: typeof ApiHnSitesIndexRoute
+  ApiHnStorageIndexRoute: typeof ApiHnStorageIndexRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
+  ApiHnDbCollectionIdRoute: typeof ApiHnDbCollectionIdRoute
   ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
+  ApiHnDbCollectionIndexRoute: typeof ApiHnDbCollectionIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1536,6 +1588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/storage/': {
+      id: '/api/hn/storage/'
+      path: '/api/hn/storage'
+      fullPath: '/api/hn/storage/'
+      preLoaderRoute: typeof ApiHnStorageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hn/sites/': {
       id: '/api/hn/sites/'
       path: '/api/hn/sites'
@@ -1606,6 +1665,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsIdAnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hn/storage/$id': {
+      id: '/api/hn/storage/$id'
+      path: '/api/hn/storage/$id'
+      fullPath: '/api/hn/storage/$id'
+      preLoaderRoute: typeof ApiHnStorageIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hn/auth/signup': {
       id: '/api/hn/auth/signup'
       path: '/api/hn/auth/signup'
@@ -1641,6 +1707,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminUsersIdRouteImport
       parentRoute: typeof ApiAdminUsersRoute
     }
+    '/api/hn/db/$collection/': {
+      id: '/api/hn/db/$collection/'
+      path: '/api/hn/db/$collection'
+      fullPath: '/api/hn/db/$collection/'
+      preLoaderRoute: typeof ApiHnDbCollectionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/storage/file': {
       id: '/api/public/v1/storage/file'
       path: '/file'
@@ -1653,6 +1726,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/v1/data/$collection'
       fullPath: '/api/public/v1/data/$collection'
       preLoaderRoute: typeof ApiPublicV1DataCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hn/db/$collection/$id': {
+      id: '/api/hn/db/$collection/$id'
+      path: '/api/hn/db/$collection/$id'
+      fullPath: '/api/hn/db/$collection/$id'
+      preLoaderRoute: typeof ApiHnDbCollectionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -1834,6 +1914,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHnAuthLogoutRoute: ApiHnAuthLogoutRoute,
   ApiHnAuthMeRoute: ApiHnAuthMeRoute,
   ApiHnAuthSignupRoute: ApiHnAuthSignupRoute,
+  ApiHnStorageIdRoute: ApiHnStorageIdRoute,
   ApiProjectsIdAnalyzeRoute: ApiProjectsIdAnalyzeRoute,
   ApiProjectsIdImportRoute: ApiProjectsIdImportRoute,
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
@@ -1842,8 +1923,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicV1StorageRoute: ApiPublicV1StorageRouteWithChildren,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiHnSitesIndexRoute: ApiHnSitesIndexRoute,
+  ApiHnStorageIndexRoute: ApiHnStorageIndexRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
+  ApiHnDbCollectionIdRoute: ApiHnDbCollectionIdRoute,
   ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,
+  ApiHnDbCollectionIndexRoute: ApiHnDbCollectionIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
