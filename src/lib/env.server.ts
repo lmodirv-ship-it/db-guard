@@ -51,10 +51,6 @@ export function checkEnv(): EnvCheck {
   if (collected.HN_JWT_SECRET && collected.HN_JWT_SECRET.length < 32) {
     invalid.push("HN_JWT_SECRET");
   }
-  if (collected.HN_MAIL_FROM && !/.+@.+\..+/.test(collected.HN_MAIL_FROM)) {
-    invalid.push("HN_MAIL_FROM");
-  }
-
   if (missing.length || invalid.length) {
     return { ok: false, missing, invalid };
   }
