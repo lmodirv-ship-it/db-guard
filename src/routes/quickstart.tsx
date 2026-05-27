@@ -112,6 +112,9 @@ function QuickStart() {
           </p>
         </section>
 
+        <UniversalSignupLink />
+
+
         <section className="space-y-3">
           <div className="flex items-center gap-3">
             <span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">1</span>
