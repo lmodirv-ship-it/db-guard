@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, Check, Rocket, Database, Lock, FolderOpen } from "lucide-react";
+import { Copy, Check, Rocket, Database, Lock, FolderOpen, Link2, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/quickstart")({
   head: () => ({
