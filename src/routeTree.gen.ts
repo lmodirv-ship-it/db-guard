@@ -72,12 +72,14 @@ import { Route as ApiProjectsIdIndexRouteImport } from './routes/api/projects/$i
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiTablesIdRecordsRouteImport } from './routes/api/tables/$id/records'
 import { Route as ApiTablesIdColumnsRouteImport } from './routes/api/tables/$id/columns'
+import { Route as ApiPublicV1StorageRouteImport } from './routes/api/public/v1/storage'
 import { Route as ApiPublicSsoVerifyRouteImport } from './routes/api/public/sso/verify'
 import { Route as ApiPublicSsoMeRouteImport } from './routes/api/public/sso/me'
 import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$id/verify'
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
+import { Route as ApiPublicV1StorageFileRouteImport } from './routes/api/public/v1/storage.file'
 import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
 
 const SignupRoute = SignupRouteImport.update({
@@ -396,6 +398,11 @@ const ApiTablesIdColumnsRoute = ApiTablesIdColumnsRouteImport.update({
   path: '/columns',
   getParentRoute: () => ApiTablesIdRoute,
 } as any)
+const ApiPublicV1StorageRoute = ApiPublicV1StorageRouteImport.update({
+  id: '/api/public/v1/storage',
+  path: '/api/public/v1/storage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSsoVerifyRoute = ApiPublicSsoVerifyRouteImport.update({
   id: '/api/public/sso/verify',
   path: '/api/public/sso/verify',
@@ -425,6 +432,11 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiAdminUsersRoute,
+} as any)
+const ApiPublicV1StorageFileRoute = ApiPublicV1StorageFileRouteImport.update({
+  id: '/file',
+  path: '/file',
+  getParentRoute: () => ApiPublicV1StorageRoute,
 } as any)
 const ApiPublicV1DataCollectionRoute =
   ApiPublicV1DataCollectionRouteImport.update({
@@ -499,11 +511,13 @@ export interface FileRoutesByFullPath {
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/public/sso/me': typeof ApiPublicSsoMeRoute
   '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
+  '/api/public/v1/storage': typeof ApiPublicV1StorageRouteWithChildren
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
+  '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -569,11 +583,13 @@ export interface FileRoutesByTo {
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/public/sso/me': typeof ApiPublicSsoMeRoute
   '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
+  '/api/public/v1/storage': typeof ApiPublicV1StorageRouteWithChildren
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
+  '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -642,11 +658,13 @@ export interface FileRoutesById {
   '/api/projects/$id/verify': typeof ApiProjectsIdVerifyRoute
   '/api/public/sso/me': typeof ApiPublicSsoMeRoute
   '/api/public/sso/verify': typeof ApiPublicSsoVerifyRoute
+  '/api/public/v1/storage': typeof ApiPublicV1StorageRouteWithChildren
   '/api/tables/$id/columns': typeof ApiTablesIdColumnsRoute
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
   '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
+  '/api/public/v1/storage/file': typeof ApiPublicV1StorageFileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -716,11 +734,13 @@ export interface FileRouteTypes {
     | '/api/projects/$id/verify'
     | '/api/public/sso/me'
     | '/api/public/sso/verify'
+    | '/api/public/v1/storage'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
     | '/api/public/v1/data/$collection'
+    | '/api/public/v1/storage/file'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -786,11 +806,13 @@ export interface FileRouteTypes {
     | '/api/projects/$id/verify'
     | '/api/public/sso/me'
     | '/api/public/sso/verify'
+    | '/api/public/v1/storage'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id'
     | '/api/public/v1/data/$collection'
+    | '/api/public/v1/storage/file'
   id:
     | '__root__'
     | '/'
@@ -858,11 +880,13 @@ export interface FileRouteTypes {
     | '/api/projects/$id/verify'
     | '/api/public/sso/me'
     | '/api/public/sso/verify'
+    | '/api/public/v1/storage'
     | '/api/tables/$id/columns'
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
     | '/api/public/v1/data/$collection'
+    | '/api/public/v1/storage/file'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -901,6 +925,7 @@ export interface RootRouteChildren {
   ApiProjectsIdVerifyRoute: typeof ApiProjectsIdVerifyRoute
   ApiPublicSsoMeRoute: typeof ApiPublicSsoMeRoute
   ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
+  ApiPublicV1StorageRoute: typeof ApiPublicV1StorageRouteWithChildren
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
   ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
@@ -1349,6 +1374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTablesIdColumnsRouteImport
       parentRoute: typeof ApiTablesIdRoute
     }
+    '/api/public/v1/storage': {
+      id: '/api/public/v1/storage'
+      path: '/api/public/v1/storage'
+      fullPath: '/api/public/v1/storage'
+      preLoaderRoute: typeof ApiPublicV1StorageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/sso/verify': {
       id: '/api/public/sso/verify'
       path: '/api/public/sso/verify'
@@ -1390,6 +1422,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/admin/users/$id'
       preLoaderRoute: typeof ApiAdminUsersIdRouteImport
       parentRoute: typeof ApiAdminUsersRoute
+    }
+    '/api/public/v1/storage/file': {
+      id: '/api/public/v1/storage/file'
+      path: '/file'
+      fullPath: '/api/public/v1/storage/file'
+      preLoaderRoute: typeof ApiPublicV1StorageFileRouteImport
+      parentRoute: typeof ApiPublicV1StorageRoute
     }
     '/api/public/v1/data/$collection': {
       id: '/api/public/v1/data/$collection'
@@ -1513,6 +1552,17 @@ const ApiTablesIdRouteWithChildren = ApiTablesIdRoute._addFileChildren(
   ApiTablesIdRouteChildren,
 )
 
+interface ApiPublicV1StorageRouteChildren {
+  ApiPublicV1StorageFileRoute: typeof ApiPublicV1StorageFileRoute
+}
+
+const ApiPublicV1StorageRouteChildren: ApiPublicV1StorageRouteChildren = {
+  ApiPublicV1StorageFileRoute: ApiPublicV1StorageFileRoute,
+}
+
+const ApiPublicV1StorageRouteWithChildren =
+  ApiPublicV1StorageRoute._addFileChildren(ApiPublicV1StorageRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
@@ -1549,6 +1599,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsIdVerifyRoute: ApiProjectsIdVerifyRoute,
   ApiPublicSsoMeRoute: ApiPublicSsoMeRoute,
   ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
+  ApiPublicV1StorageRoute: ApiPublicV1StorageRouteWithChildren,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
   ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,

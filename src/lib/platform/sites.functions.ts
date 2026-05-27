@@ -1,0 +1,197 @@
+import { z } from "zod";
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+function randomKey(prefix: string, len = 24) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz";
+  const bytes = crypto.getRandomValues(new Uint8Array(len));
+  let out = prefix;
+  for (const b of bytes) out += chars[b % chars.length];
+  return out;
+}
+
+async function resolveHnUser(authUserId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("hn_users")
+    .select("id")
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+  if (error || !data) throw new Error("hn_user_not_found");
+  return data.id as string;
+}
+
+async function ensureDefaultWorkspace(hnUserId: string) {
+  const { data: existing } = await supabaseAdmin
+    .from("hn_workspaces")
+    .select("id")
+    .eq("hn_user_id", hnUserId)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (existing) return existing.id as string;
+
+  const slug = `ws-${Math.random().toString(36).slice(2, 8)}`;
+  const { data: created, error } = await supabaseAdmin
+    .from("hn_workspaces")
+    .insert({ hn_user_id: hnUserId, name: "Default Workspace", slug })
+    .select("id")
+    .single();
+  if (error || !created) throw new Error("workspace_create_failed");
+  return created.id as string;
+}
+
+async function assertWorkspaceOwner(workspaceId: string, hnUserId: string) {
+  const { data } = await supabaseAdmin
+    .from("hn_workspaces")
+    .select("id")
+    .eq("id", workspaceId)
+    .eq("hn_user_id", hnUserId)
+    .maybeSingle();
+  if (!data) throw new Error("forbidden");
+}
+
+async function assertSiteOwner(siteId: string, hnUserId: string) {
+  const { data } = await supabaseAdmin
+    .from("hn_sites")
+    .select("id, workspace_id, hn_workspaces!inner(hn_user_id)")
+    .eq("id", siteId)
+    .eq("hn_workspaces.hn_user_id", hnUserId)
+    .maybeSingle();
+  if (!data) throw new Error("forbidden");
+  return data.workspace_id as string;
+}
+
+function parseSite(url: string) {
+  const u = new URL(url.trim());
+  return {
+    site_url: u.origin,
+    site_host: u.hostname.toLowerCase(),
+    name: u.hostname.replace(/^www\./, ""),
+  };
+}
+
+export const listSites = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { workspaceId: string }) =>
+    z.object({ workspaceId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await ensureDefaultWorkspace(hnUserId);
+    await assertWorkspaceOwner(data.workspaceId, hnUserId);
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("hn_sites")
+      .select("id, name, site_url, site_host, status, auth_enabled, storage_enabled, data_enabled, sso_app_key, storage_scope, verified_at, created_at")
+      .eq("workspace_id", data.workspaceId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error("sites_read_failed");
+    return { sites: rows ?? [] };
+  });
+
+export const registerSite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { workspaceId: string; url: string; name?: string }) =>
+    z.object({
+      workspaceId: z.string().uuid(),
+      url: z.string().url().max(500),
+      name: z.string().trim().min(2).max(80).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertWorkspaceOwner(data.workspaceId, hnUserId);
+    const parsed = parseSite(data.url);
+
+    const { data: row, error } = await supabaseAdmin
+      .from("hn_sites")
+      .upsert({
+        workspace_id: data.workspaceId,
+        name: data.name?.trim() || parsed.name,
+        site_url: parsed.site_url,
+        site_host: parsed.site_host,
+        status: "active",
+        verified_at: new Date().toISOString(),
+      }, { onConflict: "workspace_id,site_url" })
+      .select("id, name, site_url, site_host, status, auth_enabled, storage_enabled, data_enabled, sso_app_key, storage_scope, verified_at, created_at")
+      .single();
+
+    if (error || !row) throw new Error("site_register_failed");
+    return { site: row };
+  });
+
+export const enableSiteAuth = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string }) => z.object({ siteId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertSiteOwner(data.siteId, hnUserId);
+
+    const { data: existing } = await supabaseAdmin
+      .from("hn_sites")
+      .select("sso_app_key")
+      .eq("id", data.siteId)
+      .single();
+
+    const ssoAppKey = existing?.sso_app_key || randomKey("hnsso_");
+    const { data: row, error } = await supabaseAdmin
+      .from("hn_sites")
+      .update({ auth_enabled: true, sso_app_key: ssoAppKey })
+      .eq("id", data.siteId)
+      .select("id, sso_app_key, auth_enabled")
+      .single();
+
+    if (error || !row) throw new Error("site_auth_enable_failed");
+    return { site: row };
+  });
+
+export const enableSiteStorage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { siteId: string; scope?: "private" | "public" }) =>
+    z.object({
+      siteId: z.string().uuid(),
+      scope: z.enum(["private", "public"]).default("private"),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertSiteOwner(data.siteId, hnUserId);
+
+    const { data: row, error } = await supabaseAdmin
+      .from("hn_sites")
+      .update({ storage_enabled: true, storage_scope: data.scope })
+      .eq("id", data.siteId)
+      .select("id, storage_enabled, storage_scope")
+      .single();
+
+    if (error || !row) throw new Error("site_storage_enable_failed");
+    return { site: row };
+  });
+
+export const listStorageObjects = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { workspaceId: string; siteId?: string; limit?: number }) =>
+    z.object({
+      workspaceId: z.string().uuid(),
+      siteId: z.string().uuid().optional(),
+      limit: z.number().int().min(1).max(200).default(50),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const hnUserId = await resolveHnUser(context.userId);
+    await assertWorkspaceOwner(data.workspaceId, hnUserId);
+
+    let query = supabaseAdmin
+      .from("hn_storage_objects")
+      .select("id, site_id, object_key, file_name, content_type, size_bytes, visibility, created_at")
+      .eq("workspace_id", data.workspaceId)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+
+    if (data.siteId) query = query.eq("site_id", data.siteId);
+
+    const { data: rows, error } = await query;
+    if (error) throw new Error("storage_objects_read_failed");
+    return { objects: rows ?? [] };
+  });
