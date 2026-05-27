@@ -9,6 +9,7 @@
 import { z } from "zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { consumeTicket } from "@/lib/sso/sso.server";
+import { withApiLog } from "@/lib/platform/api-log.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/api/public/sso/verify")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
-      POST: async ({ request }) => {
+      POST: withApiLog(async ({ request }) => {
         let body: unknown;
         try { body = await request.json(); } catch { return json(400, { ok: false, error: "invalid_json" }); }
         const parsed = VerifySchema.safeParse(body);
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/api/public/sso/verify")({
               ? 401 : 500;
           return json(code, { ok: false, error: msg });
         }
-      },
+      }),
     },
   },
 });

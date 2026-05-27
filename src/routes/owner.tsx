@@ -40,6 +40,7 @@ const NAV: NavSection[] = [
   ]},
   { title: "Monitoring", items: [
     { label: "Audit Logs",    icon: ScrollText, to: "/owner/audit-logs" },
+    { label: "API Logs",      icon: Activity,   to: "/owner/api-logs" },
     { label: "Alerts",        icon: BellRing,   to: "/owner/alerts" },
     { label: "System Health", icon: HeartPulse, to: "/owner/health" },
   ]},
