@@ -382,6 +382,41 @@ export type Database = {
           },
         ]
       }
+      hn_data_records: {
+        Row: {
+          collection: string
+          created_at: string
+          data: Json
+          id: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          collection: string
+          created_at?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          collection?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hn_data_records_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "hn_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hn_databases: {
         Row: {
           created_at: string
