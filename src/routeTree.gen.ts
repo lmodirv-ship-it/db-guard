@@ -37,6 +37,7 @@ import { Route as DashboardTablesRouteImport } from './routes/dashboard.tables'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardRecordsRouteImport } from './routes/dashboard.records'
 import { Route as DashboardLogsRouteImport } from './routes/dashboard.logs'
+import { Route as DashboardHnDataRouteImport } from './routes/dashboard.hn-data'
 import { Route as DashboardDocsRouteImport } from './routes/dashboard.docs'
 import { Route as DashboardDatabasesRouteImport } from './routes/dashboard.databases'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
@@ -77,6 +78,7 @@ import { Route as ApiProjectsIdVerifyRouteImport } from './routes/api/projects/$
 import { Route as ApiProjectsIdImportRouteImport } from './routes/api/projects/$id/import'
 import { Route as ApiProjectsIdAnalyzeRouteImport } from './routes/api/projects/$id/analyze'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users.$id'
+import { Route as ApiPublicV1DataCollectionRouteImport } from './routes/api/public/v1/data.$collection'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -216,6 +218,11 @@ const DashboardRecordsRoute = DashboardRecordsRouteImport.update({
 const DashboardLogsRoute = DashboardLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardHnDataRoute = DashboardHnDataRouteImport.update({
+  id: '/hn-data',
+  path: '/hn-data',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardDocsRoute = DashboardDocsRouteImport.update({
@@ -419,6 +426,12 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiAdminUsersRoute,
 } as any)
+const ApiPublicV1DataCollectionRoute =
+  ApiPublicV1DataCollectionRouteImport.update({
+    id: '/api/public/v1/data/$collection',
+    path: '/api/public/v1/data/$collection',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -432,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/docs': typeof DashboardDocsRoute
+  '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -489,6 +503,7 @@ export interface FileRoutesByFullPath {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -500,6 +515,7 @@ export interface FileRoutesByTo {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/docs': typeof DashboardDocsRoute
+  '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -557,6 +573,7 @@ export interface FileRoutesByTo {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -571,6 +588,7 @@ export interface FileRoutesById {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/databases': typeof DashboardDatabasesRoute
   '/dashboard/docs': typeof DashboardDocsRoute
+  '/dashboard/hn-data': typeof DashboardHnDataRoute
   '/dashboard/logs': typeof DashboardLogsRoute
   '/dashboard/records': typeof DashboardRecordsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -628,6 +646,7 @@ export interface FileRoutesById {
   '/api/tables/$id/records': typeof ApiTablesIdRecordsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/projects/$id/': typeof ApiProjectsIdIndexRoute
+  '/api/public/v1/data/$collection': typeof ApiPublicV1DataCollectionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -643,6 +662,7 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/docs'
+    | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -700,6 +720,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
+    | '/api/public/v1/data/$collection'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -711,6 +732,7 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/docs'
+    | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -768,6 +790,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id'
+    | '/api/public/v1/data/$collection'
   id:
     | '__root__'
     | '/'
@@ -781,6 +804,7 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/dashboard/databases'
     | '/dashboard/docs'
+    | '/dashboard/hn-data'
     | '/dashboard/logs'
     | '/dashboard/records'
     | '/dashboard/settings'
@@ -838,6 +862,7 @@ export interface FileRouteTypes {
     | '/api/tables/$id/records'
     | '/lovable/email/queue/process'
     | '/api/projects/$id/'
+    | '/api/public/v1/data/$collection'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -878,6 +903,7 @@ export interface RootRouteChildren {
   ApiPublicSsoVerifyRoute: typeof ApiPublicSsoVerifyRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiProjectsIdIndexRoute: typeof ApiProjectsIdIndexRoute
+  ApiPublicV1DataCollectionRoute: typeof ApiPublicV1DataCollectionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1076,6 +1102,13 @@ declare module '@tanstack/react-router' {
       path: '/logs'
       fullPath: '/dashboard/logs'
       preLoaderRoute: typeof DashboardLogsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/hn-data': {
+      id: '/dashboard/hn-data'
+      path: '/hn-data'
+      fullPath: '/dashboard/hn-data'
+      preLoaderRoute: typeof DashboardHnDataRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/docs': {
@@ -1358,6 +1391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminUsersIdRouteImport
       parentRoute: typeof ApiAdminUsersRoute
     }
+    '/api/public/v1/data/$collection': {
+      id: '/api/public/v1/data/$collection'
+      path: '/api/public/v1/data/$collection'
+      fullPath: '/api/public/v1/data/$collection'
+      preLoaderRoute: typeof ApiPublicV1DataCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1379,6 +1419,7 @@ interface DashboardRouteChildren {
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardDatabasesRoute: typeof DashboardDatabasesRoute
   DashboardDocsRoute: typeof DashboardDocsRoute
+  DashboardHnDataRoute: typeof DashboardHnDataRoute
   DashboardLogsRoute: typeof DashboardLogsRoute
   DashboardRecordsRoute: typeof DashboardRecordsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -1393,6 +1434,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardDatabasesRoute: DashboardDatabasesRoute,
   DashboardDocsRoute: DashboardDocsRoute,
+  DashboardHnDataRoute: DashboardHnDataRoute,
   DashboardLogsRoute: DashboardLogsRoute,
   DashboardRecordsRoute: DashboardRecordsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
@@ -1509,17 +1551,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSsoVerifyRoute: ApiPublicSsoVerifyRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiProjectsIdIndexRoute: ApiProjectsIdIndexRoute,
+  ApiPublicV1DataCollectionRoute: ApiPublicV1DataCollectionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
