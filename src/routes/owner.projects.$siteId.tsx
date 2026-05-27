@@ -15,6 +15,18 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+type ApiKey = {
+  id: string;
+  label: string;
+  key_prefix: string;
+  key_hint: string;
+  full_key: string | null;
+  created_at: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+};
+type Collection = { name: string; count: number };
+
 export const Route = createFileRoute("/owner/projects/$siteId")({
   head: () => ({ meta: [{ title: "Project — DB·GUARD" }] }),
   component: SiteDetailPage,
