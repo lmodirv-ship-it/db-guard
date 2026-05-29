@@ -27,10 +27,14 @@ async function process(kind: JobKind, payload: Record<string, unknown>): Promise
   }
 }
 
+import { guardRuntime } from "@/lib/hn/runtime-guard.server";
+
 export const Route = createFileRoute("/api/hn/runtime/worker/tick")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         await heartbeat("runtime-worker", "running");
         const job = await claim(undefined, "runtime-worker");
         if (!job) {

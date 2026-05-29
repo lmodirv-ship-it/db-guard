@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { tail } from "@/lib/hn/events.server";
+import { guardRuntime } from "@/lib/hn/runtime-guard.server";
 
 export const Route = createFileRoute("/api/hn/runtime/events")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         const u = new URL(request.url);
         const limit = Number(u.searchParams.get("limit") ?? "100");
         const type = u.searchParams.get("type") ?? undefined;
