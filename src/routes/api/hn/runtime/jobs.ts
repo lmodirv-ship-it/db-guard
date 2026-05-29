@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { list, stats, enqueue, type JobKind, type JobStatus } from "@/lib/hn/queue.server";
+import { guardRuntime } from "@/lib/hn/runtime-guard.server";
 
 export const Route = createFileRoute("/api/hn/runtime/jobs")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         const u = new URL(request.url);
         const status = (u.searchParams.get("status") ?? undefined) as JobStatus | undefined;
         const limit = Number(u.searchParams.get("limit") ?? "50");
@@ -12,6 +15,8 @@ export const Route = createFileRoute("/api/hn/runtime/jobs")({
         return Response.json({ ok: true, jobs, stats: agg });
       },
       POST: async ({ request }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         const body = (await request.json().catch(() => ({}))) as {
           kind?: JobKind;
           payload?: Record<string, unknown>;

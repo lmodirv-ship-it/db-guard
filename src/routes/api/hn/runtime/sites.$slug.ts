@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { withBypass } from "@/lib/db/tenant.server";
 import { tail } from "@/lib/hn/events.server";
 import { metricSeries } from "@/lib/hn/monitoring.server";
+import { guardRuntime } from "@/lib/hn/runtime-guard.server";
 
 type Site = {
   id: string;
@@ -15,7 +16,9 @@ type Site = {
 export const Route = createFileRoute("/api/hn/runtime/sites/$slug")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ request, params }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         const rows = await withBypass<Site>((sql) => sql`
           SELECT id, slug, site_url, status, created_at, updated_at
           FROM hn_sites WHERE slug = ${params.slug} LIMIT 1

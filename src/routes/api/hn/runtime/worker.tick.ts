@@ -6,6 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { claim, complete, fail, type JobKind } from "@/lib/hn/queue.server";
 import { heartbeat, recordMetric } from "@/lib/hn/monitoring.server";
 import { emit } from "@/lib/hn/events.server";
+import { guardRuntime } from "@/lib/hn/runtime-guard.server";
 
 async function process(kind: JobKind, payload: Record<string, unknown>): Promise<Record<string, unknown>> {
   // Engine dispatch — minimal stubs for now. Each engine can grow into its own module.
@@ -30,7 +31,9 @@ async function process(kind: JobKind, payload: Record<string, unknown>): Promise
 export const Route = createFileRoute("/api/hn/runtime/worker/tick")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const denied = await guardRuntime(request);
+        if (denied) return denied;
         await heartbeat("runtime-worker", "running");
         const job = await claim(undefined, "runtime-worker");
         if (!job) {

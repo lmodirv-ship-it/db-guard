@@ -16,6 +16,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { requireHnAccess, hnAccessErrorResponse } from "@/lib/hn/access.server";
 import { withTenant } from "@/lib/db/tenant.server";
 import { ensureOwnerWorkspace } from "@/lib/hn/workspaces.server";
+import { safeFetch as ssrfSafeFetch, normalizeProjectUrl, UrlValidationError } from "@/lib/projects/url.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -33,12 +34,13 @@ const Schema = z.object({
 
 function normalizeUrl(input: string): URL | null {
   try {
-    let u = input.trim();
-    if (!/^https?:\/\//i.test(u)) u = "https://" + u;
-    const url = new URL(u);
-    if (!/^https?:$/.test(url.protocol)) return null;
-    return url;
-  } catch { return null; }
+    // Use SSRF-safe normalizer: blocks private IPs, loopback, metadata, etc.
+    const n = normalizeProjectUrl(input);
+    return new URL(n.normalized);
+  } catch (e) {
+    if (e instanceof UrlValidationError) return null;
+    return null;
+  }
 }
 
 function slugFromHost(host: string): string {
@@ -58,16 +60,19 @@ async function sha256Hex(s: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function safeFetch(url: string, init?: RequestInit, timeoutMs = 7000) {
-  const ctl = new AbortController();
-  const t = setTimeout(() => ctl.abort(), timeoutMs);
+async function safeFetch(url: string, init?: { headers?: Record<string, string> }, timeoutMs = 7000) {
   try {
-    const r = await fetch(url, { ...init, signal: ctl.signal, redirect: "follow" });
-    return { ok: true as const, response: r };
+    const res = await ssrfSafeFetch(url, {
+      timeoutMs,
+      headers: init?.headers,
+    });
+    // Adapt to legacy { ok, response } shape used by discoverSite.
+    const headers = new Headers();
+    if (res.contentType) headers.set("content-type", res.contentType);
+    const response = new Response(res.body, { status: res.status, headers });
+    return { ok: true as const, response };
   } catch (e) {
     return { ok: false as const, error: String((e as Error).message || e) };
-  } finally {
-    clearTimeout(t);
   }
 }
 
