@@ -1,5 +1,5 @@
 #!/bin/bash
-# Backup يومي لقاعدة بيانات hn-db.online
+# Backup يومي لقاعدة بيانات hn-bd.online
 # الاستخدام: ./backup.sh  أو في crontab: 0 3 * * * /root/hn-db/scripts/backup.sh
 
 set -e
