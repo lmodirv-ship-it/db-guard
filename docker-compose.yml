@@ -28,7 +28,7 @@ services:
       HN_DB_DIRECT_URL: postgres://app:${POSTGRES_PASSWORD:-changeme}@postgres:5432/appdb
       HN_JWT_SECRET: ${HN_JWT_SECRET}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
-      HN_MAIL_FROM: ${HN_MAIL_FROM:-noreply@hn-db.online}
+      HN_MAIL_FROM: ${HN_MAIL_FROM:-noreply@hn-bd.online}
     expose:
       - "3000"
     depends_on:
@@ -42,7 +42,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      DOMAIN: ${DOMAIN:-hn-db.online}
+      DOMAIN: ${DOMAIN:-hn-bd.online}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

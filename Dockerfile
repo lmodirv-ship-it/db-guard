@@ -1,4 +1,4 @@
-# Dockerfile لـ hn-db.online
+# Dockerfile لـ hn-bd.online
 FROM oven/bun:1-alpine AS build
 WORKDIR /app
 
