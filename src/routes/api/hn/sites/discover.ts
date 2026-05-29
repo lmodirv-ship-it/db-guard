@@ -34,12 +34,13 @@ const Schema = z.object({
 
 function normalizeUrl(input: string): URL | null {
   try {
-    let u = input.trim();
-    if (!/^https?:\/\//i.test(u)) u = "https://" + u;
-    const url = new URL(u);
-    if (!/^https?:$/.test(url.protocol)) return null;
-    return url;
-  } catch { return null; }
+    // Use SSRF-safe normalizer: blocks private IPs, loopback, metadata, etc.
+    const n = normalizeProjectUrl(input);
+    return new URL(n.normalized);
+  } catch (e) {
+    if (e instanceof UrlValidationError) return null;
+    return null;
+  }
 }
 
 function slugFromHost(host: string): string {
