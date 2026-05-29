@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: appdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+
+  neon-proxy:
+    image: ghcr.io/timowilhelm/local-neon-http-proxy:main
+    environment:
+      PG_CONNECTION_STRING: postgres://app:${POSTGRES_PASSWORD:-changeme}@postgres:5432/appdb
+    expose:
+      - "4444"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  app:
+    build: .
+    environment:
+      HN_DB_URL: postgres://app:${POSTGRES_PASSWORD:-changeme}@neon-proxy:4444/appdb?sslmode=disable
+      HN_DB_DIRECT_URL: postgres://app:${POSTGRES_PASSWORD:-changeme}@postgres:5432/appdb
+      HN_JWT_SECRET: ${HN_JWT_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      HN_MAIL_FROM: ${HN_MAIL_FROM:-noreply@hn-db.online}
+    expose:
+      - "3000"
+    depends_on:
+      - postgres
+      - neon-proxy
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-hn-db.online}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
